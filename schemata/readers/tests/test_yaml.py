@@ -1,5 +1,4 @@
 from .. import yaml
-from schemata.validators.validators import String, Number, Boolean, Integer
 from schemata.tests import get_fixture
 
 
@@ -14,19 +13,12 @@ def test_parse():
 
 def test_types():
     t = yaml.parse_file(TYPES)
-    assert isinstance(t['string'], String)
-    assert isinstance(t['number'], Number)
-    assert isinstance(t['boolean'], Boolean)
-    assert isinstance(t['integer'], Integer)
+    assert t['string'] == 'str()'
+    assert t['number'] == 'num()'
+    assert t['boolean'] == 'bool()'
+    assert t['integer'] == 'int()'
 
 
 def test_keywords():
     t = yaml.parse_file(KEYWORDS)
-    assert t['optional'].is_optional
-    assert t['min'].is_required
-    assert '?str' not in t['optional'].args
-    assert t['optional_min'].min == 1
-    for arg in t['optional_min'].args:
-        assert '=' not in arg
-    assert t['default'].default is True
-    assert t['max'].max == 100
+    assert t['optional_min'] == 'int(min=1, required=False)'

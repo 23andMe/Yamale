@@ -1,10 +1,6 @@
 from .base import Validator, MinMixin, MaxMixin
 
 
-def to_bool(b):
-    return b in ['true', '1', 't', 'y', 'yes', 'True']
-
-
 class String(MinMixin, MaxMixin, Validator):
     """String validator"""
     __tag__ = 'str'
@@ -12,8 +8,8 @@ class String(MinMixin, MaxMixin, Validator):
     def __init__(self, *args, **kwargs):
         super(String, self).__init__(*args, **kwargs)
 
-    def validate(self):
-        return isinstance(self.min, unicode)
+    def validate(self, value):
+        return isinstance(value, unicode)
 
 
 class Number(MinMixin, MaxMixin, Validator):
@@ -23,6 +19,9 @@ class Number(MinMixin, MaxMixin, Validator):
     def __init__(self, *args, **kwargs):
         super(Number, self).__init__(*args, **kwargs)
 
+    def validate(self, value):
+        return isinstance(value, float) or isinstance(value, int)
+
 
 class Integer(MinMixin, MaxMixin, Validator):
     """Integer validator"""
@@ -31,6 +30,9 @@ class Integer(MinMixin, MaxMixin, Validator):
     def __init__(self, *args, **kwargs):
         super(Integer, self).__init__(*args, **kwargs)
 
+    def validate(self, value):
+        return isinstance(value, int)
+
 
 class Boolean(Validator):
     """Boolean validator"""
@@ -38,7 +40,9 @@ class Boolean(Validator):
 
     def __init__(self, *args, **kwargs):
         super(Boolean, self).__init__(*args, **kwargs)
-        self.default = to_bool(kwargs.get('default'))
+
+    def validate(self, value):
+        return isinstance(value, bool)
 
 
 class List(Validator):
@@ -47,3 +51,6 @@ class List(Validator):
 
     def __init__(self, *args, **kwargs):
         super(List, self).__init__(*args, **kwargs)
+
+    def validate(self, value):
+        return isinstance(value, list)
