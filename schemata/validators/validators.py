@@ -9,7 +9,7 @@ class String(MinMixin, MaxMixin, Validator):
         super(String, self).__init__(*args, **kwargs)
 
     def validate(self, value):
-        return isinstance(value, unicode)
+        return isinstance(value, basestring)
 
 
 class Number(MinMixin, MaxMixin, Validator):

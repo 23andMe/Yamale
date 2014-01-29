@@ -3,6 +3,7 @@ from schemata.tests import get_fixture
 
 
 TYPES = get_fixture('types.yaml')
+NESTED = get_fixture('nested.yaml')
 KEYWORDS = get_fixture('keywords.yaml')
 
 
@@ -22,3 +23,8 @@ def test_types():
 def test_keywords():
     t = yaml.parse_file(KEYWORDS)
     assert t['optional_min'] == 'int(min=1, required=False)'
+
+
+def test_nested():
+    t = yaml.parse_file(NESTED)
+    assert t['list'][-1]['string'] == 'str()'
