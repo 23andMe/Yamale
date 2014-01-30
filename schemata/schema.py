@@ -47,7 +47,7 @@ class Schema(dict):
         Recursively run through a schema and a data structure,
         validating along the way.
 
-        Ignores fields in the data structure, but not in the schema.
+        Ignores fields that are in the data structure, but not in the schema.
         '''
         i = self._get_iter(schema)
 
