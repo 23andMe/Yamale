@@ -1,0 +1,14 @@
+string: "hello"
+number: 12
+integer: 3
+boolean: True
+nest:
+    integer: 1
+    nest:
+        string: "nested"
+        number: 4
+list:
+    - "yay"
+    - True
+    - integer: 1
+      string: 'sup'

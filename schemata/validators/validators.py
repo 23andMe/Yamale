@@ -8,7 +8,7 @@ class String(MinMixin, MaxMixin, Validator):
     def __init__(self, *args, **kwargs):
         super(String, self).__init__(*args, **kwargs)
 
-    def validate(self, value):
+    def is_valid(self, value):
         return isinstance(value, basestring)
 
 
@@ -19,7 +19,7 @@ class Number(MinMixin, MaxMixin, Validator):
     def __init__(self, *args, **kwargs):
         super(Number, self).__init__(*args, **kwargs)
 
-    def validate(self, value):
+    def is_valid(self, value):
         return isinstance(value, float) or isinstance(value, int)
 
 
@@ -30,7 +30,7 @@ class Integer(MinMixin, MaxMixin, Validator):
     def __init__(self, *args, **kwargs):
         super(Integer, self).__init__(*args, **kwargs)
 
-    def validate(self, value):
+    def is_valid(self, value):
         return isinstance(value, int)
 
 
@@ -41,7 +41,7 @@ class Boolean(Validator):
     def __init__(self, *args, **kwargs):
         super(Boolean, self).__init__(*args, **kwargs)
 
-    def validate(self, value):
+    def is_valid(self, value):
         return isinstance(value, bool)
 
 
@@ -52,5 +52,5 @@ class List(Validator):
     def __init__(self, *args, **kwargs):
         super(List, self).__init__(*args, **kwargs)
 
-    def validate(self, value):
+    def is_valid(self, value):
         return isinstance(value, list)

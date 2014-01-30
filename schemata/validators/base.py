@@ -8,35 +8,24 @@ class Validator(object):
         super(Validator, self).__init__()
         self.args = args
         self.kwargs = kwargs
-        self.is_required = kwargs.get('required', True)
+        self.is_required = bool(kwargs.get('required', True))
         self.is_optional = not self.is_required
 
-    def validate(self, value, cast=True):
-        """Check if ``value`` is valid and if so cast it.
+    def is_valid(self, value):
+        """Check if ``value`` is valid.
 
-        :param cast: If False, it indicates that the caller is interested only
-            on whether ``value`` is valid, not on casting it to the correct type.
-            This is essentially an optimization hint for cases that validation
-            can be done more efficiently than type conversion.
-
-        :raises ValidationError: If ``value`` is invalid.
-        :returns: The casted value if ``cast`` is True, otherwise anything.
+        :returns: False If ``value`` is invalid, otherwise True.
         """
         raise NotImplementedError
 
-    def is_valid(self, value):
-        """Check if the value is valid.
-
-        :returns: True if the value is valid, False if invalid.
-        """
-        try:
-            self.validate(value, adapt=False)
-            return True
-        except ValidationError:
-            return False
-
     def __repr__(self):
         return '%s(%s, %s)' % (self.__class__.__name__, self.args, self.kwargs)
+
+    def __eq__(self, other):
+        eq = []
+        eq.append(set(self.args) == set(other.args))
+        eq.append(self.kwargs == other.kwargs)
+        return all(eq)
 
 
 def get_kwarg(kwargs, key, type, default=None):
