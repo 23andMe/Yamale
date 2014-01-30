@@ -22,9 +22,9 @@ class Validator(object):
         return '%s(%s, %s)' % (self.__class__.__name__, self.args, self.kwargs)
 
     def __eq__(self, other):
-        eq = []
-        eq.append(set(self.args) == set(other.args))
-        eq.append(self.kwargs == other.kwargs)
+        eq = [isinstance(other, self.__class__),
+              set(self.args) == set(other.args),
+              self.kwargs == other.kwargs]
         return all(eq)
 
 

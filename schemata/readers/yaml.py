@@ -6,9 +6,9 @@ except ImportError:
                       'to validate YAML files')
 
 try:
-    from yaml import CLoader as Loader
+    from yaml import CSafeLoader as Loader
 except ImportError:
-    from yaml import Loader
+    from yaml import SafeLoader as Loader
 
 
 def parse_file(file_name):
