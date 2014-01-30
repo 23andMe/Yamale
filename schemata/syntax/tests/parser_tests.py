@@ -1,5 +1,7 @@
+from nose.tools import raises
+
 from .. import parser as par
-from schemata.validators import String
+from schemata.validators.validators import *
 
 
 def test_eval():
@@ -8,13 +10,18 @@ def test_eval():
 
 def test_types():
     assert par.parse('String()') == String()
-    # assert isinstance(par.parse('str()'), val.String)
-    # assert isinstance(par.parse('num()'), val.Number)
-    # assert isinstance(par.parse('int()'), val.Integer)
-    # assert isinstance(par.parse('bool()'), val.Boolean)
+    assert par.parse('str()') == String()
+    assert par.parse('num()') == Number()
+    assert par.parse('int()') == Integer()
+    assert par.parse('bool()') == Boolean()
+    assert par.parse('list(str())') == List(String())
 
 
 def test_required():
-    pass
-    # assert par.parse('str(required=True)').is_required
-    # assert par.parse('str(required=False)').is_optional
+    assert par.parse('str(required=True)').is_required
+    assert par.parse('str(required=False)').is_optional
+
+
+@raises(SyntaxError)
+def test_syntax_error():
+    par.parse('eval()')

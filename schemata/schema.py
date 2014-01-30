@@ -6,9 +6,10 @@ class Schema(dict):
     Makes a Schema object from a schema dict.
     Still acts like a dict. #NeverGrowUp
     """
-    def __init__(self, schema_dict):
+    def __init__(self, schema_dict, name=''):
         self._process_schema_dict(schema_dict)
         dict.__init__(self, schema_dict)
+        self.name = name
 
     def _is_dict(self, obj):
         return isinstance(obj, dict)

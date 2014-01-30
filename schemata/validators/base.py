@@ -23,7 +23,7 @@ class Validator(object):
 
     def __eq__(self, other):
         eq = [isinstance(other, self.__class__),
-              set(self.args) == set(other.args),
+              self.args == other.args,
               self.kwargs == other.kwargs]
         return all(eq)
 
