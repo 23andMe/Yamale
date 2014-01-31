@@ -6,4 +6,4 @@ bo:
 ---
 customer:
     name: str()
-    age: include('customer')
+    age: include('customer', required=False)

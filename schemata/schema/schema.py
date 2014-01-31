@@ -16,8 +16,10 @@ class Schema(dict):
         self.name = name
         self.custom_types = {}
 
-    def add_type(self, type_schema):
-        self.custom_types[type_schema.keys()[0]] = type_schema
+    def add_type(self, type_dict):
+        for custom_name, custom_type in type_dict.items():
+            t = Schema(custom_type, name=custom_name)
+            self.custom_types[custom_name] = t
 
     def _process_schema(self, schema):
         '''
@@ -30,26 +32,25 @@ class Schema(dict):
 
     def validate(self, data):
         try:
-            self._validate(self, data)
+            self._validate(data, custom_types=self.custom_types)
         except ValueError, e:
             raise ValueError('\nError validating data %s with schema %s\n %s' % (data.name, self.name, e.message))
 
-    def _validate(self, schema, data, prefix=''):
+    def _validate(self, data, custom_types=None, prefix=''):
         '''
         Run through a schema and a data structure,
         validating along the way.
 
         Ignores fields that are in the data structure, but not in the schema.
         '''
-        for pos, validator in schema.items():
+        for pos, validator in self.items():
             try:
 
                 if isinstance(validator, val.Include):
                     t = validator.type
-                    print t
-                    self.custom_types[t].validate(data, prefix=pos)
+                    self.custom_types[t]._validate(data, custom_types=custom_types, prefix=pos + '.')
 
-                if not validator.is_valid(data[prefix + pos]):
+                elif not validator.is_valid(data[prefix + pos]):
                     raise ValueError(
                         '\nFailed validation at %s:\n\t\t%s should be a %s.' %
                         (pos, data[pos], validator.__class__.__name__))

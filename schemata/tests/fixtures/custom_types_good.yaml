@@ -4,3 +4,6 @@ bob:
 jill:
     name: jill
     age: 2
+bo:
+    is:
+        awesome: True
