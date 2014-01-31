@@ -1,16 +1,16 @@
 #!/usr/bin/env python
-from readers import yaml
+import readers
 from schema import Schema
 from data import Data
 
 
 def schema(path):
-    raw_schema = yaml.parse_file(path)
+    raw_schema = readers.parse_file(path)
     return Schema(raw_schema, path)
 
 
 def data(path):
-    raw_data = yaml.parse_file(path)
+    raw_data = readers.parse_file(path)
     return Data(raw_data, path)
 
 
