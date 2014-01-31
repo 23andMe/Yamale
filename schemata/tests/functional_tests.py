@@ -61,7 +61,7 @@ def test_bad_nested():
     sch.validate(nested_schema, nested_bad_data)
 
 
-# def test_custom():
-#     custom = sch.make_schema(CUSTOM)
-#     custom_good = sch.make_data(CUSTOM_GOOD)
-#     assert sch.validate(custom, custom_good)
+def test_custom():
+    custom = sch.make_schema(CUSTOM)
+    custom_good = sch.make_data(CUSTOM_GOOD)
+    assert sch.validate(custom, custom_good)

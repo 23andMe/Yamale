@@ -18,7 +18,7 @@ def parse(validator_string, custom_types=None):
         tree = ast.parse(validator_string, mode='eval')
 
         for node in ast.walk(tree):
-            node = _process_node(node)
+            node = _process_node(tags, node)
 
         validator = eval(compile(tree, '<ast>', 'eval'))
 
@@ -27,7 +27,7 @@ def parse(validator_string, custom_types=None):
         raise SyntaxError('Invalid validation syntax in: %s' % validator_string)
 
 
-def _process_node(node):
+def _process_node(tags, node):
     if isinstance(node, ast.Call):
-        # Only allow functions we list in `tags`
+        # Only allow functions we list in `tags`.
         node.func.id = tags[node.func.id]
