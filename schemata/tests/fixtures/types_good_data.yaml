@@ -2,4 +2,4 @@ string: "hello"
 number: 12.1
 integer: 2
 boolean: True
-list: []
+list: ['hi']

@@ -1,5 +1,8 @@
 bob: customer()
 jill: customer()
+bo:
+    is:
+        awesome: bool()
 ---
 customer:
     name: str()

@@ -10,7 +10,10 @@ tags = {v.__tag__: v.__name__ for v in val.TYPES}
 tags.update({v.__name__: v.__name__ for v in val.TYPES})
 
 
-def parse(validator_string):
+def parse(validator_string, custom_types=None):
+    if custom_types is None:
+        custom_types = ()
+
     try:
         tree = ast.parse(validator_string, mode='eval')
 
