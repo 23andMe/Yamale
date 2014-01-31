@@ -1,5 +1,6 @@
 from .. import syntax
 from . import util
+from schemata import validators as val
 
 
 class Schema(dict):
@@ -31,9 +32,9 @@ class Schema(dict):
         try:
             self._validate(self, data)
         except ValueError, e:
-            raise ValueError('\nError validating data %s with schema %s. %s' % (data.name, self.name, e.message))
+            raise ValueError('\nError validating data %s with schema %s\n %s' % (data.name, self.name, e.message))
 
-    def _validate(self, schema, data):
+    def _validate(self, schema, data, prefix=''):
         '''
         Run through a schema and a data structure,
         validating along the way.
@@ -41,7 +42,21 @@ class Schema(dict):
         Ignores fields that are in the data structure, but not in the schema.
         '''
         for pos, validator in schema.items():
-            if not validator.is_valid(data[pos]):
+            try:
+
+                if isinstance(validator, val.Include):
+                    t = validator.type
+                    print t
+                    self.custom_types[t].validate(data, prefix=pos)
+
+                if not validator.is_valid(data[prefix + pos]):
+                    raise ValueError(
+                        '\nFailed validation at %s:\n\t\t%s should be a %s.' %
+                        (pos, data[pos], validator.__class__.__name__))
+
+            except KeyError:
+                if validator.is_optional:
+                    continue
                 raise ValueError(
-                    '\n\nFailed validation at %s:\n\t\t%s should be a %s.' %
-                    (pos, data[pos], validator.__class__.__name__))
+                    '\nFailed validation at %s:\n\t\t%s not found.' %
+                    (pos, validator.__class__.__name__))

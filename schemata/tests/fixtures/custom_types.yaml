@@ -1,10 +1,9 @@
-bob: customer()
-jill: customer()
+bob: include('customer')
+jill: include('customer')
 bo:
     is:
         awesome: bool()
 ---
 customer:
     name: str()
-    age: int()
-
+    age: include('customer')

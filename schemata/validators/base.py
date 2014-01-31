@@ -8,6 +8,7 @@ class Validator(object):
         super(Validator, self).__init__()
         self.args = args
         self.kwargs = kwargs
+        self.schema = kwargs.get('schema') or {}
         self.is_required = bool(kwargs.get('required', True))
         self.is_optional = not self.is_required
 

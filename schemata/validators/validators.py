@@ -54,3 +54,15 @@ class List(Validator):
 
     def is_valid(self, value):
         return isinstance(value, list)
+
+
+class Include(Validator):
+    """Include validator"""
+    __tag__ = 'include'
+
+    def __init__(self, *args, **kwargs):
+        super(Include, self).__init__(*args, **kwargs)
+        self.type = args[0]
+
+    def is_valid(self, value):
+        self.schema.custom_type[self.custom].validate(value)
