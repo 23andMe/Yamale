@@ -41,7 +41,10 @@ class Schema(dict):
                 schema[key] = syntax.parse(value)
 
     def validate(self, data):
-        self._validate(self, data, [])
+        try:
+            self._validate(self, data, [])
+        except ValueError, e:
+            raise ValueError('Error validating %s: ' % data.name + e.message)
 
     def _validate(self, schema, data, position):
         '''
