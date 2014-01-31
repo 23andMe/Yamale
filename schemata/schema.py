@@ -10,6 +10,10 @@ class Schema(dict):
         self._process_schema_dict(schema_dict)
         dict.__init__(self, schema_dict)
         self.name = name
+        self.custom_types = {}
+
+    def add(schema):
+        pass
 
     def _is_dict(self, obj):
         return isinstance(obj, dict)
@@ -44,7 +48,7 @@ class Schema(dict):
         try:
             self._validate(self, data, [])
         except ValueError, e:
-            raise ValueError('Error validating %s: ' % data.name + e.message)
+            raise ValueError('\nError validating data %s with schema %s. %s' % (data.name, self.name, e.message))
 
     def _validate(self, schema, data, position):
         '''
@@ -61,6 +65,6 @@ class Schema(dict):
             else:
                 if not validator.is_valid(data[key]):
                     raise ValueError(
-                        'Failed validating at %s, %s should be a %s.' %
+                        '\n\nFailed validation at %s:\n\t\t%s should be a %s.' %
                         (position + [key], data[key], validator.__class__.__name__)
                     )

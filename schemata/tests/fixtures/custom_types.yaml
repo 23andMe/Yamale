@@ -1,0 +1,7 @@
+bob: customer()
+jill: customer()
+---
+customer:
+    name: str()
+    age: int()
+

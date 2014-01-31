@@ -13,4 +13,4 @@ except ImportError:
 
 def parse_file(file_name):
     with open(file_name) as f:
-        return yaml.load(f, Loader=Loader)
+        return yaml.load_all(f, Loader=Loader)

@@ -14,6 +14,9 @@ NESTED_BAD = get_fixture('nested_bad_data.yaml')
 
 KEYWORDS = get_fixture('keywords.yaml')
 
+CUSTOM = get_fixture('custom_types.yaml')
+CUSTOM_GOOD = get_fixture('custom_types_good.yaml')
+
 
 def test_tests():
     ''' Make sure the test runner is working.'''
@@ -57,3 +60,8 @@ def test_bad_nested():
     nested_bad_data = data(NESTED_BAD)
     validate(nested_schema, nested_bad_data)
 
+
+def test_custom():
+    custom = schema(CUSTOM)
+    custom_good = data(CUSTOM_GOOD)
+    assert validate(custom, custom_good)
