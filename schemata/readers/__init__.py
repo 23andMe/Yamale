@@ -18,11 +18,11 @@ def parse_file(path, reader=None):
 
 
 def _guess_reader(path):
-    """
+    '''
     TOP SECRET.
     Super advanced file type detection algorithm.
     Default to yaml.
-    """
+    '''
     t = path.split('.')[-1]
     if t not in readers:
         t = 'yaml'

@@ -60,4 +60,7 @@ class Schema(dict):
                 self._validate(validator, data[key], position + [key])
             else:
                 if not validator.is_valid(data[key]):
-                    raise ValueError("Validation failed at " + str(position + [key]))
+                    raise ValueError(
+                        'Failed validating at %s, %s should be a %s.' %
+                        (position + [key], data[key], validator.__class__.__name__)
+                    )
