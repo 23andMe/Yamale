@@ -1,0 +1,10 @@
+customerA:
+    name: bob
+    age: 900
+    custom:
+        integer: 1
+customerB:
+    name: jill
+    age: 1
+    custom:
+        integer: NOT AN INT

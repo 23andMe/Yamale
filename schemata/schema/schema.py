@@ -30,7 +30,10 @@ class Schema(dict):
         Go through a schema and construct validators.
         '''
         for key, expression in schema.items():
-            schema[key] = syntax.parse(expression)
+            try:
+                schema[key] = syntax.parse(expression)
+            except SyntaxError, e:
+                raise SyntaxError(e.message + ' at \'%s\'' % key)
 
     def validate(self, data):
         try:
@@ -49,7 +52,7 @@ class Schema(dict):
         for pos, validator in self.items():
             try:
                 pos = prefix + pos
-                if isinstance(validator, val.Include):
+                if isinstance(validator, val.Include) and data[pos]:
                     t = validator.type
                     custom_types[t]._validate(data, custom_types=custom_types, prefix=pos + '.')
 

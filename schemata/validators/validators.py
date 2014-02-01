@@ -65,5 +65,4 @@ class Include(Validator):
         self.type = args[0]
 
     def is_valid(self, value):
-        print value, 'Hello'
-        return isinstance(value, dict)
+        raise NotImplemented
