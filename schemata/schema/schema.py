@@ -1,3 +1,5 @@
+import sys
+
 from .. import syntax
 from . import util
 from schemata import validators as val
@@ -34,7 +36,8 @@ class Schema(dict):
         try:
             self._validate(data, custom_types=self.custom_types)
         except ValueError, e:
-            raise ValueError('\nError validating data %s with schema %s\n %s' % (data.name, self.name, e.message))
+            raise ValueError('\nError validating data %s with schema %s\n %s'
+                             % (data.name, self.name, e.message)), None, sys.exc_info()[2]
 
     def _validate(self, data, custom_types=None, prefix=''):
         '''
@@ -45,19 +48,19 @@ class Schema(dict):
         '''
         for pos, validator in self.items():
             try:
-
+                pos = prefix + pos
                 if isinstance(validator, val.Include):
                     t = validator.type
-                    self.custom_types[t]._validate(data, custom_types=custom_types, prefix=pos + '.')
+                    custom_types[t]._validate(data, custom_types=custom_types, prefix=pos + '.')
 
-                elif not validator.is_valid(data[prefix + pos]):
+                elif not validator.is_valid(data[pos]):
                     raise ValueError(
-                        '\nFailed validation at %s:\n\t\t%s should be a %s.' %
-                        (pos, data[pos], validator.__class__.__name__))
+                        '\nFailed validation at %s:\n\t\t\'%s\' is not a %s.' %
+                        (pos, data[pos], validator.__tag__)), None, sys.exc_info()[2]
 
             except KeyError:
                 if validator.is_optional:
                     continue
                 raise ValueError(
-                    '\nFailed validation at %s:\n\t\t%s not found.' %
-                    (pos, validator.__class__.__name__))
+                    '\nFailed validation at %s:\n\t\tRequired field missing.' %
+                    pos), None, sys.exc_info()[2]

@@ -1,9 +1,10 @@
-bob:
+customerA:
     name: bob
-    age: 9000
-jill:
+    age: 900
+    custom:
+        integer: 1
+customerB:
     name: jill
-    age: 2
-bo:
-    is:
-        awesome: True
+    age: 1
+    custom:
+        integer: 3

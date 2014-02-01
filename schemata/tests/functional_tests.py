@@ -16,6 +16,7 @@ KEYWORDS = get_fixture('keywords.yaml')
 
 CUSTOM = get_fixture('custom_types.yaml')
 CUSTOM_GOOD = get_fixture('custom_types_good.yaml')
+CUSTOM_BAD = get_fixture('custom_types_bad.yaml')
 
 
 def test_tests():
@@ -65,3 +66,10 @@ def test_custom():
     custom = sch.make_schema(CUSTOM)
     custom_good = sch.make_data(CUSTOM_GOOD)
     assert sch.validate(custom, custom_good)
+
+
+# @raises(ValueError)
+def test_bad_custom():
+    custom = sch.make_schema(CUSTOM)
+    custom_bad = sch.make_data(CUSTOM_BAD)
+    assert sch.validate(custom, custom_bad)

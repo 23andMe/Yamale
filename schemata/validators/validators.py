@@ -65,4 +65,5 @@ class Include(Validator):
         self.type = args[0]
 
     def is_valid(self, value):
-        self.schema.custom_type[self.custom].validate(value)
+        print value, 'Hello'
+        return isinstance(value, dict)
