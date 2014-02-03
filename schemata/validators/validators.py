@@ -1,12 +1,10 @@
+from collections import Set, Sequence
 from .base import Validator, MinMixin, MaxMixin
 
 
 class String(MinMixin, MaxMixin, Validator):
     """String validator"""
     __tag__ = 'str'
-
-    def __init__(self, *args, **kwargs):
-        super(String, self).__init__(*args, **kwargs)
 
     def is_valid(self, value):
         return isinstance(value, basestring)
@@ -16,9 +14,6 @@ class Number(MinMixin, MaxMixin, Validator):
     """Number/float validator"""
     __tag__ = 'num'
 
-    def __init__(self, *args, **kwargs):
-        super(Number, self).__init__(*args, **kwargs)
-
     def is_valid(self, value):
         return isinstance(value, float) or isinstance(value, int)
 
@@ -27,9 +22,6 @@ class Integer(MinMixin, MaxMixin, Validator):
     """Integer validator"""
     __tag__ = 'int'
 
-    def __init__(self, *args, **kwargs):
-        super(Integer, self).__init__(*args, **kwargs)
-
     def is_valid(self, value):
         return isinstance(value, int)
 
@@ -37,9 +29,6 @@ class Integer(MinMixin, MaxMixin, Validator):
 class Boolean(Validator):
     """Boolean validator"""
     __tag__ = 'bool'
-
-    def __init__(self, *args, **kwargs):
-        super(Boolean, self).__init__(*args, **kwargs)
 
     def is_valid(self, value):
         return isinstance(value, bool)
@@ -51,9 +40,10 @@ class List(Validator):
 
     def __init__(self, *args, **kwargs):
         super(List, self).__init__(*args, **kwargs)
+        self.validators = args
 
     def is_valid(self, value):
-        return isinstance(value, list)
+        return isinstance(value, (Set, Sequence)) and not isinstance(value, basestring)
 
 
 class Include(Validator):
@@ -62,7 +52,7 @@ class Include(Validator):
 
     def __init__(self, *args, **kwargs):
         super(Include, self).__init__(*args, **kwargs)
-        self.type = args[0]
+        self.include_name = args[0]
 
     def is_valid(self, value):
         raise NotImplemented

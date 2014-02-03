@@ -8,7 +8,7 @@ def make_schema(path):
     raw_schemas = readers.parse_file(path)
     s = Schema(raw_schemas[0], path)
     for raw_schema in raw_schemas[1:]:
-        s.add_type(raw_schema)
+        s.add_include(raw_schema)
     return s
 
 
