@@ -48,9 +48,10 @@ setup(
     license='MIT',
     packages=find_packages(),
     include_package_data=True,
-    scripts=['bin/schemata'],
     zip_safe=False,
+    test_requires=['nose'],
     test_suite='nose.collector',
+    install_requires=['pyyaml'],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',

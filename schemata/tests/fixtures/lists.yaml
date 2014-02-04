@@ -1,1 +1,1 @@
-simple: list(str())
+simple: list(str(), int())

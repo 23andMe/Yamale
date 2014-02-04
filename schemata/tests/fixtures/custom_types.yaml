@@ -1,4 +1,4 @@
-customerA: include('customer', required=False)
+customerA: include('customer')
 customerB: include('customer')
 recursion: include('recurse')
 ---
