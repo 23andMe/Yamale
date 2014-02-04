@@ -1,5 +1,7 @@
-from collections import Set, Sequence
+from collections import Set, Sequence, Mapping
 from .base import Validator, MinMixin, MaxMixin
+
+# Always include mixins first, then the Validator base class.
 
 
 class String(MinMixin, MaxMixin, Validator):
@@ -40,7 +42,7 @@ class List(Validator):
 
     def __init__(self, *args, **kwargs):
         super(List, self).__init__(*args, **kwargs)
-        self.validators = args
+        self.validators = [val for val in args if isinstance(val, Validator)]
 
     def is_valid(self, value):
         return isinstance(value, (Set, Sequence)) and not isinstance(value, basestring)
@@ -55,4 +57,4 @@ class Include(Validator):
         self.include_name = args[0]
 
     def is_valid(self, value):
-        raise NotImplemented
+        return isinstance(value, Mapping)

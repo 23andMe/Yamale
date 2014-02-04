@@ -33,14 +33,14 @@ class Schema(dict):
             try:
                 schema[key] = syntax.parse(expression)
             except SyntaxError, e:
-                # Tack some more context on.
+                # Tack on some more context and rethrow.
                 raise SyntaxError(e.message + ' at \'%s\'' % key)
 
     def validate(self, data):
         try:
             self._validate(data, includes=self.includes)
         except ValueError, e:
-            # Tack some more context on.
+            # Tack on some more context and rethrow.
             raise ValueError('\nError validating data %s with schema %s\n %s'
                              % (data.name, self.name, e.message)), None, sys.exc_info()[2]
 
@@ -54,25 +54,37 @@ class Schema(dict):
         for pos, validator in self.items():
             pos = prefix + pos
 
-            try:  # Pull value out of our data. Data can be a map or a list/sequence
+            try:  # Pull value out of data. Data can be a map or a list/sequence
                 data_item = data[pos]
             except KeyError:  # Oops, that field didn't exist.
                 if validator.is_optional:  # Optional? Who cares.
                     continue
                 # SHUT DOWN EVERTYHING
-                self._validate_fail(pos, 'Required field missing.')
+                self._validate_fail(pos, 'Required field missing: %s' % pos)
+
+            self._validate_primitive(validator, data_item, pos)
 
             if isinstance(validator, val.Include):
                 self._validate_include(validator, data, includes, pos)
 
             elif isinstance(validator, val.List):
-                self._validate_list(validator, data, includes, pos)
-
-            else:
-                self._validate_primitive(validator, data_item, pos)
+                self._validate_list(validator, data_item, includes, pos)
 
     def _validate_list(self, validator, data, includes, position):
-        pass
+        if not validator.validators:
+            return  # No validators, user just wanted a list.
+
+        passed = [False] * len(data)
+
+        for i, d in enumerate(data):
+            for val in validator.validators:
+                if val.is_valid(d):
+                    passed[i] = True
+                    break
+
+        if not all(passed):
+            bad_val = '.' + str(data[passed.index(False)])
+            self._validate_fail(position + bad_val, 'list fail')
 
     def _validate_include(self, validator, data, includes, position):
         include_schema = includes.get(validator.include_name)
