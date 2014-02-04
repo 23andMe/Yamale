@@ -40,15 +40,15 @@ class Schema(dict):
     def validate(self, data):
         errors = []
 
-        for pos, validator in self.items():
-            errors += self._validate(validator, data, position=pos, includes=self.includes)
+        for key, validator in self.items():
+            errors += self._validate(validator, data, key=key, includes=self.includes)
 
         if errors:
             header = '\nError validating data %s with schema %s' % (data.name, self.name)
             error_str = '\n\t' + '\n\t'.join(errors)
             raise ValueError(header + error_str)
 
-    def _validate(self, validator, data, position='', includes=None):
+    def _validate(self, validator, data, key, pos=None, includes=None):
         '''
         Run through a schema and a data structure,
         validating along the way.
@@ -59,45 +59,48 @@ class Schema(dict):
         '''
         errors = []
 
+        pos = pos or key
+
         try:  # Pull value out of data. Data can be a map or a list/sequence
-            data_item = data[position]
+            data_item = data[key]
         except KeyError:  # Oops, that field didn't exist.
             if validator.is_optional:  # Optional? Who cares.
                 return errors
             # SHUT DOWN EVERTYHING
-            errors.append('%s: Required field missing' % position)
+            errors.append('%s: Required field missing' % pos)
             return errors
 
-        errors += self._validate_primitive(validator, data_item, position)
+        errors += self._validate_primitive(validator, data_item, pos)
 
         if errors:
             return errors
 
         if isinstance(validator, val.Include):
-            return self._validate_include(validator, data_item, includes, position)
+            return self._validate_include(validator, data_item, includes, pos)
 
         elif isinstance(validator, val.List):
-            return self._validate_list(validator, data_item, includes, position)
+            return self._validate_list(validator, data_item, includes, pos)
 
         return errors
 
-    def _validate_list(self, validator, data, includes, position):
+    def _validate_list(self, validator, data, includes, pos):
         errors = []
 
         if not validator.validators:
             return errors  # No validators, user just wanted a list.
 
-        for i, d in enumerate(data):
+        for k, d in enumerate(data):
             derrors = []
+            pos = '%s.%s' % (pos, k)
             for v in validator.validators:
-                derrors += self._validate(v, data, i, includes)
+                derrors += self._validate(v, data, k, pos, includes)
             if len(derrors) == len(validator.validators):
                 # All failed, add to errors
                 errors += derrors
 
         return errors
 
-    def _validate_include(self, validator, data, includes, position):
+    def _validate_include(self, validator, data, includes, pos):
         errors = []
 
         include_schema = includes.get(validator.include_name)
@@ -105,16 +108,17 @@ class Schema(dict):
             errors.append('Include \'%s\' has not been defined.' % validator.include_name)
             return errors
 
-        for pos, validator in include_schema.items():
-            errors += include_schema._validate(validator, data, includes=includes, position=pos)
+        for key, validator in include_schema.items():
+            new_pos = '%s.%s' % (pos, key)
+            errors += include_schema._validate(validator, data, includes=includes, key=key, pos=new_pos)
 
         return errors
 
-    def _validate_primitive(self, validator, data, position):
+    def _validate_primitive(self, validator, data, pos):
         errors = []
 
         if not validator.is_valid(data):
-            errors.append('%s: \'%s\' is not a %s.' % (position, data, validator.__tag__))
+            errors.append('%s: \'%s\' is not a %s.' % (pos, data, validator.__tag__))
         return errors
 
 
