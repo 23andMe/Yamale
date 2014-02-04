@@ -57,7 +57,6 @@ class Schema(dict):
 
         Returns an array of errors.
         '''
-
         errors = []
 
         try:  # Pull value out of data. Data can be a map or a list/sequence
@@ -113,6 +112,7 @@ class Schema(dict):
 
     def _validate_primitive(self, validator, data, position):
         errors = []
+
         if not validator.is_valid(data):
             errors.append('%s: \'%s\' is not a %s.' % (position, data, validator.__tag__))
         return errors
