@@ -38,13 +38,15 @@ class Schema(dict):
                 raise SyntaxError(e.message + ' at \'%s\'' % key)
 
     def validate(self, data):
-        try:
-            for pos, validator in self.items():
-                self._validate(validator, data, position=pos, includes=self.includes)
-        except ValueError, e:
-            # Tack on some more context and rethrow.
-            raise ValueError('\nError validating data %s with schema %s\n %s'
-                             % (data.name, self.name, e.message)), None, sys.exc_info()[2]
+        errors = []
+
+        for pos, validator in self.items():
+            errors += self._validate(validator, data, position=pos, includes=self.includes)
+
+        if errors:
+            header = '\nError validating data %s with schema %s' % (data.name, self.name)
+            error_str = '\n\t' + '\n\t'.join(errors)
+            raise ValueError(header + error_str)
 
     def _validate(self, validator, data, position='', includes=None):
         '''
@@ -52,56 +54,67 @@ class Schema(dict):
         validating along the way.
 
         Ignores fields that are in the data structure, but not in the schema.
+
+        Returns an array of errors.
         '''
+
+        errors = []
+
         try:  # Pull value out of data. Data can be a map or a list/sequence
             data_item = data[position]
         except KeyError:  # Oops, that field didn't exist.
             if validator.is_optional:  # Optional? Who cares.
-                return
+                return errors
             # SHUT DOWN EVERTYHING
-            self._validate_fail(position, 'Required field missing: %s' % position)
+            errors.append('%s: Required field missing' % position)
+            return errors
 
-        self._validate_primitive(validator, data_item, position)
+        errors += self._validate_primitive(validator, data_item, position)
+
+        if errors:
+            return errors
 
         if isinstance(validator, val.Include):
-            self._validate_include(validator, data_item, includes, position)
+            return self._validate_include(validator, data_item, includes, position)
 
         elif isinstance(validator, val.List):
-            self._validate_list(validator, data_item, includes, position)
+            return self._validate_list(validator, data_item, includes, position)
+
+        return errors
 
     def _validate_list(self, validator, data, includes, position):
-        if not validator.validators:
-            return  # No validators, user just wanted a list.
+        errors = []
 
-        passed = [False] * len(data)
+        if not validator.validators:
+            return errors  # No validators, user just wanted a list.
 
         for i, d in enumerate(data):
+            derrors = []
             for v in validator.validators:
-                try:
-                    self._validate(v, data, i, includes)
-                except ValueError:
-                    # Validation failed, try the next one
-                    continue
-                passed[i] = True
-                break
+                derrors += self._validate(v, data, i, includes)
+            if len(derrors) == len(validator.validators):
+                # All failed, add to errors
+                errors += derrors
 
-        if not all(passed):
-            bad_val = str(data[passed.index(False)])
-            vals = ' or '.join([v.__tag__ for v in validator.validators])
-            self._validate_fail(position, '%s not valid for %s' % (bad_val, vals))
+        return errors
 
     def _validate_include(self, validator, data, includes, position):
+        errors = []
+
         include_schema = includes.get(validator.include_name)
         if not include_schema:
-            self._validate_fail(position, 'Include \'%s\' has not been defined.' % validator.include_name)
+            errors.append('Include \'%s\' has not been defined.' % validator.include_name)
+            return errors
 
         for pos, validator in include_schema.items():
-            include_schema._validate(validator, data, includes=includes, position=pos)
+            errors += include_schema._validate(validator, data, includes=includes, position=pos)
+
+        return errors
 
     def _validate_primitive(self, validator, data, position):
+        errors = []
         if not validator.is_valid(data):
-            self._validate_fail(position, '%s\' is not a %s.' % (data, validator.__tag__))
+            errors.append('%s: \'%s\' is not a %s.' % (position, data, validator.__tag__))
+        return errors
 
-    def _validate_fail(self, position, msg):
-        raise ValueError('\nFailed validation at %s:\n\t\t%s' % (position, msg)), None, sys.exc_info()[2]
 

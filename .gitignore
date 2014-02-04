@@ -49,3 +49,5 @@ docs/_build/
 # Virtual env
 env/
 
+# pyenv
+.python-*
