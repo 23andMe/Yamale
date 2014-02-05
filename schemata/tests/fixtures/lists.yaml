@@ -1,1 +1,10 @@
 simple: list(str(), int())
+questions: list(include('question'))
+
+---
+question:
+  choices: list(include('choices'))
+  questions: list(include('question'), required=False)
+
+choices:
+  id: str()

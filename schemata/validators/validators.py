@@ -58,3 +58,6 @@ class Include(Validator):
 
     def is_valid(self, value):
         return isinstance(value, Mapping)
+
+    def get_name(self):
+        return self.include_name

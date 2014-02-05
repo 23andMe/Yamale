@@ -1,6 +1,14 @@
 simple:
-    - 'this'
-    - 'is'
-    - 1
-    - 'simple'
-    - 'list'
+  - 'this'
+  - 'is'
+  - 'a'
+  - 100
+  - 10
+questions:
+  - choices:
+      - id: 'id_str'
+      - id: 'id_str1'
+    questions:
+      - choices:
+        - id: 'id_str'
+        - id: 'id_str1'

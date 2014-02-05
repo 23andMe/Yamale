@@ -11,6 +11,7 @@ class Validator(object):
         self.schema = kwargs.get('schema') or {}
         self.is_required = bool(kwargs.get('required', True))
         self.is_optional = not self.is_required
+        self.__tag__ = self.__tag__ or self.__class__
 
     def is_valid(self, value):
         """Check if ``value`` is valid.
@@ -27,6 +28,9 @@ class Validator(object):
               self.args == other.args,
               self.kwargs == other.kwargs]
         return all(eq)
+
+    def get_name(self):
+        return self.__tag__
 
 
 def get_kwarg(kwargs, key, type, default=None):

@@ -80,7 +80,7 @@ def test_custom():
     assert sch.validate(custom['schema'], custom['good'])
 
 
-# @raises(ValueError)
+@raises(ValueError)
 def test_bad_custom():
     assert sch.validate(custom['schema'], custom['bad'])
 
