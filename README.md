@@ -109,7 +109,7 @@ person:
 ### Validating
 There are several ways to feed Schemata schema and data files. The simplest way is to let Schemata take care of reading and parsing your YAML files.
 
-All you need to do is supply the file's path:
+All you need to do is supply the files' path:
 ```python
 # Import Schemata and make a schema object:
 import schemata
@@ -121,6 +121,8 @@ data = schemata.make_data('./data.yaml')
 # Validate data against the schema
 schemata.validate(schema, data)
 ```
+
+If `data` is valid, nothing will happen. However, if `data` is not valid, Schemata will throw a `ValueError` with a message containing all the invalid nodes.
 
 Validators
 ----------
