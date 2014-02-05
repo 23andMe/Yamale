@@ -130,13 +130,46 @@ Here are all the validators Schemata knows about. Every validator takes a `requi
 
 Some validators take additional keywords and some take arguments. For instance the `enum()` validator takes one or more constants as arguments: `enum('a string', 1, False, required=False)`
 
-### String - `str()`
-### Integer - `int()`
-### Number - `num()`
+### String - `str(min=int, max=int)`
+Validates strings.
+- kwargs
+    - `min`: len(string) >= min
+    - `max`: len(string) <= max
+
+### Integer - `int(min=int, max=int)`
+Validates integers.
+- kwargs
+    - `min`: int >= min
+    - `max`: int <= max
+
+### Number - `num(min=float, max=float)`
+Validates integers and floats.
+- kwargs
+    - `min`: num >= min
+    - `max`: num <= max
+
 ### Boolean - `bool()`
+Validates booleans.
+
 ### Enum - `enum([primitives])`
+Validates from a list of constants.
+- args: constants to test equality with
+
+Examples:
+    - `enum('a string', 1, False)`
+
 ### List - `list([validators])`
+Validates lists. If validators are passed to `list()` only nodes that pass at least one of those validators will be accepted.
+
+Examples:
+    - `list()`: Validates any list
+    - `list(str(), int())`: Only validates lists that contain strings or integers.
+
 ### Include - `include(include_name)`
+Validates included structures. Must supply the name of a valid include.
+
+Examples:
+    - `include('person')`
 
 Examples
 --------
