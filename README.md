@@ -156,20 +156,20 @@ Validates from a list of constants.
 - args: constants to test equality with
 
 Examples:
-    - `enum('a string', 1, False)`
+- `enum('a string', 1, False)`
 
 ### List - `list([validators])`
 Validates lists. If validators are passed to `list()` only nodes that pass at least one of those validators will be accepted.
 
 Examples:
-    - `list()`: Validates any list
-    - `list(str(), int())`: Only validates lists that contain strings or integers.
+- `list()`: Validates any list
+- `list(str(), int())`: Only validates lists that contain strings or integers.
 
 ### Include - `include(include_name)`
 Validates included structures. Must supply the name of a valid include.
 
 Examples:
-    - `include('person')`
+- `include('person')`
 
 Examples
 --------
