@@ -118,14 +118,18 @@ schema = schemata.make_schema('./schema.yaml')
 # Create a Data object
 data = schemata.make_data('./data.yaml')
 
-# Validate data against the schema
+# Validate data against the schema. Throws a ValueError if data is invalid.
 schemata.validate(schema, data)
 ```
 
-If `data` is valid, nothing will happen. However, if `data` is not valid, Schemata will throw a `ValueError` with a message containing all the invalid nodes.
+If `data` is valid, nothing will happen. However, if `data` is invalid Schemata will throw a `ValueError` with a message containing all the invalid nodes.
 
 Validators
 ----------
+Here are all the validators Schemata knows about. Every validator takes a `required` keyword telling Schemata whether or not that node must exist. By default every node is required. Example: `str(required=False)`
+
+Some validators take additional keywords and some take arguments. For instance the `enum()` validator takes one or more constants as arguments: `enum('a string', 1, False, required=False)`
+
 ### String - `str()`
 ### Integer - `int()`
 ### Number - `num()`
