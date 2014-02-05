@@ -25,6 +25,7 @@ Validators
 ### Integer - `int()`
 ### Number - `num()`
 ### Boolean - `bool()`
+### Enum - `enum()`
 ### List - `list()`
 ### Include - `include()`
 

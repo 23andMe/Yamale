@@ -36,6 +36,18 @@ class Boolean(Validator):
         return isinstance(value, bool)
 
 
+class Enum(Validator):
+    """Enum validator"""
+    __tag__ = 'enum'
+
+    def __init__(self, *args, **kwargs):
+        super(List, self).__init__(*args, **kwargs)
+        self.enums = args
+
+    def is_valid(self, value):
+        return value in self.enums
+
+
 class List(Validator):
     """List validator"""
     __tag__ = 'list'
