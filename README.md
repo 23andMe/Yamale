@@ -31,7 +31,31 @@ And some YAML that validates:
 name: Bill
 ```
 
+Take a look at the Examples section for more complex schema ideas.
+
 #### Includes
+Schema files may contain more than one YAML document (nodes separated by `---`). The first document found will be the base schema. Any additional documents will be treated as Includes. Includes allow you to define a valid structure once and use it several times. They also allow you to do recursion.
+
+A schema with an Include validator:
+```yaml
+person1: include('person')
+person2: include('person')
+---
+person:
+    name: str()
+    age: int()
+```
+
+Some valid YAML:
+```yaml
+person1:
+    name: Bill
+    age: 70
+
+person2:
+    name: Jill
+    age: 20
+```
 ##### Recursion
 ### Validating
 
