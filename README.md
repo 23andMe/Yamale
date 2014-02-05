@@ -81,6 +81,31 @@ family:
 ```
 
 ##### Recursion
+You can get recursion using the Include validator.
+
+This schema:
+```yaml
+person: include('human')
+---
+human:
+    name: str()
+    age: int()
+    friend: include('human', required=False)
+```
+
+Will validate this data:
+```yaml
+person:
+    name: Bill
+    age: 50
+    friend:
+        name: Jill
+        age: 20
+        friend:
+            name: Will
+            age: 10
+```
+
 ### Validating
 
 Validators
