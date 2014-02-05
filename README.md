@@ -18,6 +18,22 @@ Install
 
 Usage
 -----
+### Schema
+You must first make a schema to use Schemata. A schema is a valid YAML file with one or more documents inside. Each node terminates in a string which contains valid Schemata syntax. For example, `str()` represents a String validator.
+
+A basic schema:
+```yaml
+name: str()
+```
+
+And some YAML that validates:
+```yaml
+name: Bill
+```
+
+#### Includes
+##### Recursion
+### Validating
 
 Validators
 ----------
@@ -25,9 +41,9 @@ Validators
 ### Integer - `int()`
 ### Number - `num()`
 ### Boolean - `bool()`
-### Enum - `enum()`
-### List - `list()`
-### Include - `include()`
+### Enum - `enum([primitives])`
+### List - `list([validators])`
+### Include - `include(include_name)`
 
 Examples
 --------
