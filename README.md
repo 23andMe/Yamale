@@ -56,6 +56,30 @@ person2:
     name: Jill
     age: 20
 ```
+
+Every root node not in the first YAML document will be treated like an include:
+```yaml
+person: include('friend')
+group: include('family')
+---
+friend:
+    name: str()
+family:
+    name: str()
+```
+
+Is equivalent to:
+```yaml
+person: include('friend')
+group: include('family')
+---
+friend:
+    name: str()
+---
+family:
+    name: str()
+```
+
 ##### Recursion
 ### Validating
 
