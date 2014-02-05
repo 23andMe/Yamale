@@ -107,6 +107,20 @@ person:
 ```
 
 ### Validating
+There are several ways to feed Schemata schema and data files. The simplest way is to let Schemata take care of reading and parsing your YAML files.
+
+All you need to do is supply the file's path:
+```python
+# Import Schemata and make a schema object:
+import schemata
+schema = schemata.make_schema('./schema.yaml')
+
+# Create a Data object
+data = schemata.make_data('./data.yaml')
+
+# Validate data against the schema
+schemata.validate(schema, data)
+```
 
 Validators
 ----------
