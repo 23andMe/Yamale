@@ -6,9 +6,14 @@ from schema import Data
 
 def make_schema(path):
     raw_schemas = readers.parse_file(path)
+
+    # First document is the base schema
     s = Schema(raw_schemas[0], path)
+
+    # Additional documents contain Includes.
     for raw_schema in raw_schemas[1:]:
         s.add_include(raw_schema)
+
     return s
 
 

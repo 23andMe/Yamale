@@ -169,4 +169,42 @@ Examples:
 
 Examples
 --------
-Complex includes and recursion:
+### Complex includes and recursion
+#### Schema:
+```yaml
+customerA: include('customer')
+customerB: include('customer')
+recursion: include('recurse')
+---
+customer:
+    name: str()
+    age: int()
+    custom: include('custom_type')
+---
+custom_type:
+    integer: int()
+recurse:
+    level: int()
+    again: include('recurse', required=False)
+```
+#### Valid Data:
+```yaml
+customerA:
+    name: bob
+    age: 900
+    custom:
+        integer: 1
+customerB:
+    name: jill
+    age: 1
+    custom:
+        integer: 3
+recursion:
+    level: 1
+    again:
+        level: 2
+        again:
+            level: 3
+            again:
+                level: 4
+```
