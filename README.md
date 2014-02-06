@@ -14,6 +14,24 @@ Install
 
 Usage
 -----
+### Validating
+There are several ways to feed Schemata schema and data files. The simplest way is to let Schemata take care of reading and parsing your YAML files.
+
+All you need to do is supply the files' path:
+```python
+# Import Schemata and make a schema object:
+import schemata
+schema = schemata.make_schema('./schema.yaml')
+
+# Create a Data object
+data = schemata.make_data('./data.yaml')
+
+# Validate data against the schema. Throws a ValueError if data is invalid.
+schemata.validate(schema, data)
+```
+
+If `data` is valid, nothing will happen. However, if `data` is invalid Schemata will throw a `ValueError` with a message containing all the invalid nodes.
+
 ### Schema
 You must first make a schema to use Schemata. A schema is a valid YAML file with one or more documents inside. Each node terminates in a string which contains valid Schemata syntax. For example, `str()` represents a String validator.
 
@@ -101,24 +119,6 @@ person:
             name: Will
             age: 10
 ```
-
-### Validating
-There are several ways to feed Schemata schema and data files. The simplest way is to let Schemata take care of reading and parsing your YAML files.
-
-All you need to do is supply the files' path:
-```python
-# Import Schemata and make a schema object:
-import schemata
-schema = schemata.make_schema('./schema.yaml')
-
-# Create a Data object
-data = schemata.make_data('./data.yaml')
-
-# Validate data against the schema. Throws a ValueError if data is invalid.
-schemata.validate(schema, data)
-```
-
-If `data` is valid, nothing will happen. However, if `data` is invalid Schemata will throw a `ValueError` with a message containing all the invalid nodes.
 
 Validators
 ----------
