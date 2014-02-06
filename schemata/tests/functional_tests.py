@@ -23,7 +23,9 @@ custom = {
 }
 
 keywords = {
-    'schema': 'keywords.yaml'
+    'schema': 'keywords.yaml',
+    'bad': 'keywords_bad.yaml',
+    'good': 'keywords_good.yaml'
 }
 
 lists = {
@@ -92,3 +94,12 @@ def test_lists():
 @raises(ValueError)
 def test_bad_lists():
     assert sch.validate(lists['schema'], lists['bad'])
+
+
+def test_keywords():
+    assert sch.validate(keywords['schema'], keywords['good'])
+
+
+@raises(ValueError)
+def test_bad_keywords():
+    assert sch.validate(keywords['schema'], keywords['bad'])

@@ -13,9 +13,13 @@ class Validator(object):
         fail = '\'%s\' ' + 'is not a %s.' % self.get_name()
         self.__fail__ = getattr(self, '__fail__', fail)
 
-        self.constraints = []
-        for constraint in self.__constraints__:
-            self.constraints.append(constraint(kwargs))
+        self.constraints = self._create_constraints(self.__constraints__, kwargs)
+
+    def _create_constraints(self, constraint_classes, kwargs):
+        constraints = []
+        for constraint in constraint_classes:
+            constraints.append(constraint(kwargs))
+        return constraints
 
     @property
     def is_optional(self):
@@ -24,7 +28,7 @@ class Validator(object):
     def get_name(self):
         return self.__tag__
 
-    def is_valid(self, value):
+    def validate(self, value):
         """
         Check if ``value`` is valid.
 
@@ -42,6 +46,9 @@ class Validator(object):
             errors.append(self._fail(value))
 
         return errors
+
+    def is_valid(self, value):
+        return self.validate(value) == []
 
     def _is_valid(self, value):
         raise NotImplemented

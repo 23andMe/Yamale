@@ -2,8 +2,6 @@ from collections import Set, Sequence, Mapping
 from .base import Validator
 from . import constraints as con
 
-# Always include mixins first, then the Validator base class.
-
 
 class String(Validator):
     """String validator"""

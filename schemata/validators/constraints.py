@@ -1,6 +1,7 @@
 class Constraint(object):
     """docstring for Constraint"""
     __kwargs__ = {}
+    is_active = True
 
     def __init__(self, kwargs):
         print kwargs
@@ -12,12 +13,22 @@ class Constraint(object):
             setattr(self, kwarg, value)
 
     def get_kwarg(self, kwargs, key, ktype, default=None):
+        value = kwargs.get(key)
+
+        # Deactivate if no value for this constraint was found.
+        if value is None:
+            self.is_active = False
+            return value
+
         try:
             return ktype(kwargs.get(key))
         except TypeError:
-            return default
+            raise SyntaxError('%s is not a %s' % (key, ktype))
 
     def is_valid(self, value):
+        if not self.is_active:
+            return None
+
         try:
             if not self._is_valid(value):
                 return self._fail(value)

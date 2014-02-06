@@ -117,7 +117,7 @@ class Schema(dict):
         return errors
 
     def _validate_primitive(self, validator, data, pos):
-        errors = validator.is_valid(data)
+        errors = validator.validate(data)
 
         for i, error in enumerate(errors):
             errors[i] = '%s: ' % pos + error

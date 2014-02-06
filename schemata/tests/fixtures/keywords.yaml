@@ -1,5 +1,5 @@
 optional: str(required=False)
 optional_min: int(min=1, required=False)
-min: num(min=1)
+min: num(min=1.5)
 max: int(max=100)
-default: bool(default=True)
+boolean: bool()
