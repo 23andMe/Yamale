@@ -33,7 +33,7 @@ schemata.validate(schema, data)
 If `data` is valid, nothing will happen. However, if `data` is invalid Schemata will throw a `ValueError` with a message containing all the invalid nodes.
 
 ### Schema
-You must first make a schema to use Schemata. A schema is a valid YAML file with one or more documents inside. Each node terminates in a string which contains valid Schemata syntax. For example, `str()` represents a String validator.
+To use Schemata you must make a schema. A schema is a valid YAML file with one or more documents inside. Each node terminates in a string which contains valid Schemata syntax. For example, `str()` represents a [String validator](#validators).
 
 A basic schema:
 ```yaml
