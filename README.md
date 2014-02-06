@@ -27,7 +27,7 @@ And some YAML that validates:
 name: Bill
 ```
 
-Take a look at the Examples section for more complex schema ideas.
+Take a look at the [Examples](#examples) section for more complex schema ideas.
 
 #### Includes
 Schema files may contain more than one YAML document (nodes separated by `---`). The first document found will be the base schema. Any additional documents will be treated as Includes. Includes allow you to define a valid structure once and use it several times. They also allow you to do recursion.
@@ -152,7 +152,7 @@ Validates from a list of constants.
 - arguments: constants to test equality with
 
 Examples:
-- `enum('a string', 1, False)`
+- `enum('a string', 1, False)`: a value can be either `'a string'`, `1` or `False`
 
 ### List - `list([validators])`
 Validates lists. If validators are passed to `list()` only nodes that pass at least one of those validators will be accepted.
