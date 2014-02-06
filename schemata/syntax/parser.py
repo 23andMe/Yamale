@@ -20,8 +20,11 @@ def parse(validator_string):
         validator = eval(compile(tree, '<ast>', 'eval'))
 
         return validator
-    except (KeyError, SyntaxError):
-        raise SyntaxError('Invalid validation syntax in \'%s\'' % validator_string)
+    except (KeyError, SyntaxError), e:
+        raise SyntaxError(
+            'Invalid validation syntax in \'%s\', ' % validator_string +
+            e.message
+        )
 
 
 def _process_node(tags, node):

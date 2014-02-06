@@ -32,7 +32,7 @@ class Schema(dict):
                 schema[key] = syntax.parse(expression)
             except SyntaxError, e:
                 # Tack on some more context and rethrow.
-                raise SyntaxError(e.message + ' at \'%s\'' % key)
+                raise SyntaxError(e.message + ' at node \'%s\'' % key)
 
     def validate(self, data):
         errors = []

@@ -4,7 +4,6 @@ class Constraint(object):
     is_active = True
 
     def __init__(self, kwargs):
-        print kwargs
         self._parseKwargs(kwargs)
 
     def _parseKwargs(self, kwargs):
@@ -15,14 +14,14 @@ class Constraint(object):
     def get_kwarg(self, kwargs, key, ktype, default=None):
         value = kwargs.get(key)
 
-        # Deactivate if no value for this constraint was found.
+        # Deactivate this constraint if no value was found.
         if value is None:
             self.is_active = False
             return value
 
         try:
             return ktype(kwargs.get(key))
-        except TypeError:
+        except ValueError:
             raise SyntaxError('%s is not a %s' % (key, ktype))
 
     def is_valid(self, value):

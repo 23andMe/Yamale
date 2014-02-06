@@ -6,10 +6,13 @@ class Validator(object):
         self.args = args
         self.kwargs = kwargs
 
+        # Default required to True
         self.is_required = bool(kwargs.get('required', True))
 
+        # Set default tag
         self.__tag__ = getattr(self, '__tag__', self.__class__)
 
+        # Set default error message.
         fail = '\'%s\' ' + 'is not a %s.' % self.get_name()
         self.__fail__ = getattr(self, '__fail__', fail)
 
@@ -36,14 +39,17 @@ class Validator(object):
         """
         errors = []
 
+        # Make sure the type validates first.
+        valid = self._is_valid(value)
+        if not valid:
+            errors.append(self._fail(value))
+            return errors
+
+        # Then validate all the constraints second.
         for constraint in self.constraints:
             error = constraint.is_valid(value)
             if error:
                 errors.append(error)
-
-        valid = self._is_valid(value)
-        if not valid:
-            errors.append(self._fail(value))
 
         return errors
 
@@ -60,6 +66,7 @@ class Validator(object):
         return '%s(%s, %s)' % (self.__class__.__name__, self.args, self.kwargs)
 
     def __eq__(self, other):
+        # Validators are equal if they have the same args and kwargs.
         eq = [isinstance(other, self.__class__),
               self.args == other.args,
               self.kwargs == other.kwargs]
