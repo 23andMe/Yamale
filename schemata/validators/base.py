@@ -1,24 +1,53 @@
-class ValidationError(ValueError):
-    """A value is invalid for a given validator"""
-
-
 class Validator(object):
     """Base class for all Validators"""
+    __constraints__ = []
+
     def __init__(self, *args, **kwargs):
-        super(Validator, self).__init__()
         self.args = args
         self.kwargs = kwargs
-        self.schema = kwargs.get('schema') or {}
+
         self.is_required = bool(kwargs.get('required', True))
-        self.is_optional = not self.is_required
-        self.__tag__ = self.__tag__ or self.__class__
+
+        self.__tag__ = getattr(self, '__tag__', self.__class__)
+
+        fail = '\'%s\' ' + 'is not a %s.' % self.get_name()
+        self.__fail__ = getattr(self, '__fail__', fail)
+
+        self.constraints = []
+        for constraint in self.__constraints__:
+            self.constraints.append(constraint(kwargs))
+
+    @property
+    def is_optional(self):
+        return not self.is_required
+
+    def get_name(self):
+        return self.__tag__
 
     def is_valid(self, value):
-        """Check if ``value`` is valid.
-
-        :returns: False If ``value`` is invalid, otherwise True.
         """
-        raise NotImplementedError
+        Check if ``value`` is valid.
+
+        :returns: [errors] If ``value`` is invalid, otherwise [].
+        """
+        errors = []
+
+        for constraint in self.constraints:
+            error = constraint.is_valid(value)
+            if error:
+                errors.append(error)
+
+        valid = self._is_valid(value)
+        if not valid:
+            errors.append(self._fail(value))
+
+        return errors
+
+    def _is_valid(self, value):
+        raise NotImplemented
+
+    def _fail(self, value):
+        return self.__fail__ % value
 
     def __repr__(self):
         return '%s(%s, %s)' % (self.__class__.__name__, self.args, self.kwargs)
@@ -28,28 +57,3 @@ class Validator(object):
               self.args == other.args,
               self.kwargs == other.kwargs]
         return all(eq)
-
-    def get_name(self):
-        return self.__tag__
-
-
-def get_kwarg(kwargs, key, type, default=None):
-    try:
-        return type(kwargs.get(key))
-    except TypeError:
-        return default
-
-
-class MinMixin(object):
-    """docstring for MinMixin"""
-    def __init__(self, *arg, **kwargs):
-        super(MinMixin, self).__init__(*arg, **kwargs)
-        self.min = get_kwarg(kwargs, 'min', int)
-
-
-class MaxMixin(object):
-    """docstring for MinMixin"""
-    def __init__(self, *arg, **kwargs):
-        super(MaxMixin, self).__init__(*arg, **kwargs)
-        self.max = get_kwarg(kwargs, 'max', int)
-

@@ -2,10 +2,6 @@ Schemata
 ========
 A schema validator for YAML.
 
-About
------
-Schemata allows you to validate YAML files against a YAML schema.
-
 Requirements
 ------------
 Python 2.7
@@ -173,3 +169,4 @@ Examples:
 
 Examples
 --------
+Complex includes and recursion:
