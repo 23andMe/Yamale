@@ -49,6 +49,9 @@ class Enum(Validator):
     def _is_valid(self, value):
         return value in self.enums
 
+    def _fail(self, value):
+        return '\'%s\' not in %s' % (value, self.enums)
+
 
 class List(Validator):
     """List validator"""

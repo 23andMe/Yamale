@@ -124,23 +124,23 @@ Validators
 ----------
 Here are all the validators Schemata knows about. Every validator takes a `required` keyword telling Schemata whether or not that node must exist. By default every node is required. Example: `str(required=False)`
 
-Some validators take additional keywords and some take arguments. For instance the `enum()` validator takes one or more constants as arguments: `enum('a string', 1, False, required=False)`
+Some validators take keywords and some take arguments. For instance the `enum()` validator takes one or more constants as arguments: `enum('a string', 1, False, required=False)`
 
 ### String - `str(min=int, max=int)`
 Validates strings.
-- kwargs
+- keywords
     - `min`: len(string) >= min
     - `max`: len(string) <= max
 
 ### Integer - `int(min=int, max=int)`
 Validates integers.
-- kwargs
+- keywords
     - `min`: int >= min
     - `max`: int <= max
 
 ### Number - `num(min=float, max=float)`
 Validates integers and floats.
-- kwargs
+- keywords
     - `min`: num >= min
     - `max`: num <= max
 
@@ -149,13 +149,14 @@ Validates booleans.
 
 ### Enum - `enum([primitives])`
 Validates from a list of constants.
-- args: constants to test equality with
+- arguments: constants to test equality with
 
 Examples:
 - `enum('a string', 1, False)`
 
 ### List - `list([validators])`
 Validates lists. If validators are passed to `list()` only nodes that pass at least one of those validators will be accepted.
+- arguments: validators to test values with
 
 Examples:
 - `list()`: Validates any list
@@ -163,12 +164,27 @@ Examples:
 
 ### Include - `include(include_name)`
 Validates included structures. Must supply the name of a valid include.
+- arguments: single name of a defined include, surrounded by quotes.
 
 Examples:
 - `include('person')`
 
 Examples
 --------
+### Using keywords
+#### Schema:
+```yaml
+optional: str(required=False)
+optional_min: int(min=1, required=False)
+min: num(min=1.5)
+max: int(max=100)
+```
+#### Valid Data:
+```yaml
+optional_min: 10
+min: 1.6
+max: 100
+```
 ### Complex includes and recursion
 #### Schema:
 ```yaml
