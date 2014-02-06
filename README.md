@@ -180,9 +180,10 @@ customer:
     name: str()
     age: int()
     custom: include('custom_type')
----
+
 custom_type:
     integer: int()
+
 recurse:
     level: int()
     again: include('recurse', required=False)
