@@ -1,7 +1,8 @@
 #!/usr/bin/env python
-from setuptools import setup, find_packages
+from setuptools import setup, find_packages, Command
+from subprocess import call
 
-VERSION = (1, 0, 0, 'beta', 0)
+VERSION = (1, 0, 0, 'beta', 1)
 
 
 # Dynamically calculate the version based on schemata.VERSION.
@@ -26,6 +27,22 @@ def get_version():
         sub = mapping[version[3]] + str(version[4])
 
     return str(main + sub)
+
+
+class Tag(Command):
+    """Commits a tag with the current version."""
+
+    description = "commit a tag with the current version"
+
+    user_options = []
+
+    def initialize_options(self): pass
+
+    def finalize_options(self): pass
+
+    def run(self):
+        cmd = ['git', 'tag', get_version()]
+        call(cmd)
 
 
 version = get_version()
@@ -59,4 +76,7 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
     ],
+    cmdclass={
+        'tag': Tag,
+    },
 )
