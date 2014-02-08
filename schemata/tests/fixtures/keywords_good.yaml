@@ -1,4 +1,4 @@
 optional_min: 10
-min: 1.6
-max: 100
+min_example: 1.6
+max_example: 100
 boolean: True

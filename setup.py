@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from setuptools import setup, find_packages
 
-VERSION = (0, 1, 0, 'alpha', 1)
+VERSION = (1, 0, 0, 'beta', 0)
 
 
 # Dynamically calculate the version based on schemata.VERSION.
@@ -49,7 +49,6 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
-    test_requires=['nose'],
     test_suite='nose.collector',
     install_requires=['pyyaml'],
     classifiers=[

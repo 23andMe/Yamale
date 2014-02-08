@@ -89,6 +89,6 @@ def test_bad_lists():
     assert sch.validate(lists['schema'], lists['bad'])
 
 
-@raises(ValueError)
+# @raises(ValueError)
 def test_bad_keywords():
     assert sch.validate(keywords['schema'], keywords['bad'])
