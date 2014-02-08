@@ -1,4 +1,4 @@
-optional: str(required=False)
+optional: str(exclude='!?', required=False)
 optional_min: int(min=1, required=False)
 min_example: num(min=1.5)
 max_example: int(max=100)

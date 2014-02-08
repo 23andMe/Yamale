@@ -88,7 +88,11 @@ class CharacterExclude(Constraint):
     fail = '\'%s\' contains excluded character \'%s\''
 
     def _is_valid(self, value):
-        for char in value:
-            if char in self.exclude:
+        for char in self.exclude:
+            if char in value:
+                self._failed_char = char
                 return False
         return True
+
+    def _fail(self, value):
+        return self.fail % (value, self._failed_char)

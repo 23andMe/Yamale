@@ -38,11 +38,13 @@ To use Schemata you must make a schema. A schema is a valid YAML file with one o
 A basic schema:
 ```yaml
 name: str()
+age: int()
 ```
 
 And some YAML that validates:
 ```yaml
 name: Bill
+age: 26
 ```
 
 Take a look at the [Examples](#examples) section for more complex schema ideas.
