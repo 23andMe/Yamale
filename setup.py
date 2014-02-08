@@ -45,8 +45,6 @@ class Tag(Command):
         call(cmd)
 
 
-version = get_version()
-
 with open('README.md') as f:
     readme = f.read()
 with open('HISTORY.md') as f:
@@ -56,10 +54,10 @@ with open('LICENSE') as f:
 
 setup(
     name='Schemata',
-    version=version,
-    url='',
+    version=get_version(),
+    url='https://github.com/23andMe/Schemata',
     author='Bo Lopker',
-    author_email='bo@kbl.io',
+    author_email='bo@k23andme.com',
     description='A schema validator for YAML, JSON and other static data.',
     long_description=readme + '\n\n' + history,
     license='MIT',

@@ -5,8 +5,8 @@ from . import constraints as con
 
 class String(Validator):
     """String validator"""
-    __tag__ = 'str'
-    __constraints__ = [con.LengthMin, con.LengthMax]
+    tag = 'str'
+    constraints = [con.LengthMin, con.LengthMax, con.CharacterExclude]
 
     def _is_valid(self, value):
         return isinstance(value, basestring)
@@ -14,8 +14,8 @@ class String(Validator):
 
 class Number(Validator):
     """Number/float validator"""
-    __tag__ = 'num'
-    __constraints__ = [con.Min, con.Max]
+    tag = 'num'
+    constraints = [con.Min, con.Max]
 
     def _is_valid(self, value):
         return isinstance(value, (int, float))
@@ -23,8 +23,8 @@ class Number(Validator):
 
 class Integer(Validator):
     """Integer validator"""
-    __tag__ = 'int'
-    __constraints__ = [con.Min, con.Max]
+    tag = 'int'
+    constraints = [con.Min, con.Max]
 
     def _is_valid(self, value):
         return isinstance(value, int)
@@ -32,7 +32,7 @@ class Integer(Validator):
 
 class Boolean(Validator):
     """Boolean validator"""
-    __tag__ = 'bool'
+    tag = 'bool'
 
     def _is_valid(self, value):
         return isinstance(value, bool)
@@ -40,7 +40,7 @@ class Boolean(Validator):
 
 class Enum(Validator):
     """Enum validator"""
-    __tag__ = 'enum'
+    tag = 'enum'
 
     def __init__(self, *args, **kwargs):
         super(List, self).__init__(*args, **kwargs)
@@ -49,13 +49,21 @@ class Enum(Validator):
     def _is_valid(self, value):
         return value in self.enums
 
-    def _fail(self, value):
+    def fail(self, value):
         return '\'%s\' not in %s' % (value, self.enums)
+
+
+class Map(Validator):
+    """Map and dict validator"""
+    tag = 'map'
+
+    def _is_valid(self, value):
+        return isinstance(value, Mapping)
 
 
 class List(Validator):
     """List validator"""
-    __tag__ = 'list'
+    tag = 'list'
 
     def __init__(self, *args, **kwargs):
         super(List, self).__init__(*args, **kwargs)
@@ -67,7 +75,7 @@ class List(Validator):
 
 class Include(Validator):
     """Include validator"""
-    __tag__ = 'include'
+    tag = 'include'
 
     def __init__(self, *args, **kwargs):
         self.include_name = args[0]

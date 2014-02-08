@@ -1,6 +1,6 @@
 class Validator(object):
     """Base class for all Validators"""
-    __constraints__ = []
+    constraints = []
 
     def __init__(self, *args, **kwargs):
         self.args = args
@@ -9,14 +9,8 @@ class Validator(object):
         # Default required to True
         self.is_required = bool(kwargs.get('required', True))
 
-        # Set default tag
-        self.__tag__ = getattr(self, '__tag__', self.__class__)
-
-        # Set default error message.
-        fail = '\'%s\' ' + 'is not a %s.' % self.get_name()
-        self.__fail__ = getattr(self, '__fail__', fail)
-
-        self.constraints = self._create_constraints(self.__constraints__, kwargs)
+        # Construct all constraints
+        self._constraints_inst = self._create_constraints(self.constraints, kwargs)
 
     def _create_constraints(self, constraint_classes, kwargs):
         constraints = []
@@ -25,11 +19,19 @@ class Validator(object):
         return constraints
 
     @property
+    def tag(self):
+        return self.__class__
+
+    @property
     def is_optional(self):
         return not self.is_required
 
+    def _is_valid(self, value):
+        '''Validators must implement this. Return True if value is valid.'''
+        raise NotImplemented
+
     def get_name(self):
-        return self.__tag__
+        return self.tag
 
     def validate(self, value):
         """
@@ -42,11 +44,11 @@ class Validator(object):
         # Make sure the type validates first.
         valid = self._is_valid(value)
         if not valid:
-            errors.append(self._fail(value))
+            errors.append(self.fail(value))
             return errors
 
         # Then validate all the constraints second.
-        for constraint in self.constraints:
+        for constraint in self._constraints_inst:
             error = constraint.is_valid(value)
             if error:
                 errors.append(error)
@@ -56,11 +58,9 @@ class Validator(object):
     def is_valid(self, value):
         return self.validate(value) == []
 
-    def _is_valid(self, value):
-        raise NotImplemented
-
-    def _fail(self, value):
-        return self.__fail__ % value
+    def fail(self, value):
+        '''Override to define a custom fail message'''
+        return '\'%s\' is not a %s.' % (value, self.get_name())
 
     def __repr__(self):
         return '%s(%s, %s)' % (self.__class__.__name__, self.args, self.kwargs)

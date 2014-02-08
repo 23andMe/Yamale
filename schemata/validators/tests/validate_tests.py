@@ -42,20 +42,3 @@ def test_list():
     assert v.is_valid(())
     assert not v.is_valid('')
     assert not v.is_valid(0)
-
-
-def test_keywords():
-    v = val.String(min=2)
-    assert v.is_valid('abcd')
-    assert v.is_valid('ab')
-    assert not v.is_valid('a')
-
-    v = val.Integer(max=10)
-    assert v.is_valid(4)
-    assert v.is_valid(10)
-    assert not v.is_valid(11)
-
-    v = val.Number(min=.5)
-    assert v.is_valid(4)
-    assert v.is_valid(.5)
-    assert not v.is_valid(.1)

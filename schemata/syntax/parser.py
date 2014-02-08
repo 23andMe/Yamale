@@ -6,7 +6,7 @@ from schemata import validators as val
 from schemata.validators.validators import *
 
 # Allow validator strings to contain either tags or actual name
-tags = {v.__tag__: v.__name__ for v in val.TYPES}
+tags = {v.tag: v.__name__ for v in val.TYPES}
 tags.update({v.__name__: v.__name__ for v in val.TYPES})
 
 

@@ -126,11 +126,15 @@ Here are all the validators Schemata knows about. Every validator takes a `requi
 
 Some validators take keywords and some take arguments. For instance the `enum()` validator takes one or more constants as arguments: `enum('a string', 1, False, required=False)`
 
-### String - `str(min=int, max=int)`
+### String - `str(min=int, max=int, exclude=string)`
 Validates strings.
 - keywords
     - `min`: len(string) >= min
     - `max`: len(string) <= max
+    - `exclude`: Rejects strings that contains any character in the excluded value.
+
+Examples:
+- `str(max=10, exclude='?!')`: Allows only strings less than 10 characters that don't contain `?` or `!`.
 
 ### Integer - `int(min=int, max=int)`
 Validates integers.
@@ -146,6 +150,9 @@ Validates integers and floats.
 
 ### Boolean - `bool()`
 Validates booleans.
+
+### Map - `map()`
+Validates maps. Use when you want a node to contain freeform data.
 
 ### Enum - `enum([primitives])`
 Validates from a list of constants.
@@ -185,7 +192,8 @@ optional_min: 10
 min: 1.6
 max: 100
 ```
-### Complex includes and recursion
+
+### Includes and recursion
 #### Schema:
 ```yaml
 customerA: include('customer')
@@ -224,4 +232,36 @@ recursion:
             level: 3
             again:
                 level: 4
+```
+
+### Lists
+#### Schema:
+```yaml
+simple: list(str(), int())
+questions: list(include('question'))
+
+---
+question:
+  choices: list(include('choices'))
+  questions: list(include('question'), required=False)
+
+choices:
+  id: str()
+```
+#### Valid Data:
+```yaml
+simple:
+  - 'this'
+  - 'is'
+  - 'a'
+  - 100
+  - 10
+questions:
+  - choices:
+      - id: 'id_str'
+      - id: 'id_str1'
+    questions:
+      - choices:
+        - id: 'id_str'
+        - id: 'id_str1'
 ```

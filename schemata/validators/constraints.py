@@ -1,13 +1,13 @@
 class Constraint(object):
     """docstring for Constraint"""
-    __kwargs__ = {}
+    keywords = {}
     is_active = True
 
     def __init__(self, kwargs):
         self._parseKwargs(kwargs)
 
     def _parseKwargs(self, kwargs):
-        for kwarg, ktype in self.__kwarg__.items():
+        for kwarg, ktype in self.keywords.items():
             value = self.get_kwarg(kwargs, kwarg, ktype)
             setattr(self, kwarg, value)
 
@@ -40,7 +40,7 @@ class Constraint(object):
 
 
 class Min(Constraint):
-    __kwarg__ = {'min': float}
+    keywords = {'min': float}
     fail = '%s is less than than %s'
 
     def _is_valid(self, value):
@@ -51,7 +51,7 @@ class Min(Constraint):
 
 
 class Max(Constraint):
-    __kwarg__ = {'max': float}
+    keywords = {'max': float}
     fail = '%s is greater than %s'
 
     def _is_valid(self, value):
@@ -62,7 +62,7 @@ class Max(Constraint):
 
 
 class LengthMin(Constraint):
-    __kwarg__ = {'min': int}
+    keywords = {'min': int}
     fail = 'Length of %s is less than than %s'
 
     def _is_valid(self, value):
@@ -73,7 +73,7 @@ class LengthMin(Constraint):
 
 
 class LengthMax(Constraint):
-    __kwarg__ = {'max': int}
+    keywords = {'max': int}
     fail = 'Length of %s is greater than %s'
 
     def _is_valid(self, value):
@@ -81,3 +81,14 @@ class LengthMax(Constraint):
 
     def _fail(self, value):
         return self.fail % (value, self.max)
+
+
+class CharacterExclude(Constraint):
+    keywords = {'exclude': str}
+    fail = '\'%s\' contains excluded character \'%s\''
+
+    def _is_valid(self, value):
+        for char in value:
+            if char in self.exclude:
+                return False
+        return True
