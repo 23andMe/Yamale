@@ -2,7 +2,7 @@
 from setuptools import setup, find_packages, Command
 from subprocess import call
 
-VERSION = (1, 0, 0, 'beta', 1)
+VERSION = (1, 0, 0, 'beta', 2)
 
 
 # Dynamically calculate the version based on schemata.VERSION.
