@@ -241,7 +241,6 @@ recursion:
 ```yaml
 simple: list(str(), int())
 questions: list(include('question'))
-
 ---
 question:
   choices: list(include('choices'))
