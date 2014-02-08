@@ -39,12 +39,16 @@ A basic schema:
 ```yaml
 name: str()
 age: int()
+height: num()
+awesome: bool()
 ```
 
 And some YAML that validates:
 ```yaml
 name: Bill
 age: 26
+height: 6.2
+awesome: True
 ```
 
 Take a look at the [Examples](#examples) section for more complex schema ideas.
