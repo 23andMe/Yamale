@@ -1,4 +1,4 @@
-Yamale (ya·ma·le)
+Yamale (ya·ma·lē)
 =================
 ![Hot Yamale](https://raw2.github.com/23andMe/Yamale/master/yamale.png)
 
