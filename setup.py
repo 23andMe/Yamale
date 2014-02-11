@@ -58,7 +58,7 @@ setup(
     url='https://github.com/23andMe/Yamale',
     author='Bo Lopker',
     author_email='bo@k23andme.com',
-    description='A schema validator for YAML.',
+    description='A schema and validator for YAML.',
     long_description=readme + '\n\n' + history,
     license='MIT',
     packages=find_packages(),
