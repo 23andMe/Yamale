@@ -1,6 +1,6 @@
 Yamale (ya·ma·le)
 =================
-![Hot Yamale](http://i.imgur.com/4JGAtEA.png)
+![Hot Yamale](https://raw2.github.com/23andMe/Yamale/master/yamale.png)
 
 A schema and validator for YAML.
 
