@@ -1,5 +1,5 @@
-Yamale
-========
+Yamale (ya·ma·le)
+=================
 ![Hot Yamale](http://i.imgur.com/4JGAtEA.png)
 
 A schema validator for YAML.
