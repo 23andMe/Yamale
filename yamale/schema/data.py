@@ -4,7 +4,7 @@ from . import util
 class Data(dict):
     """
     Makes a Data object from a data dict.
-    Still acts like a dict. #NeverGrowUp
+    Still acts like a dict.
 
     Takes a name so it can be identified, like in exceptions.
     """

@@ -6,7 +6,7 @@ from .. import validators as val
 class Schema(dict):
     """
     Makes a Schema object from a schema dict.
-    Still acts like a dict. #NeverGrowUp
+    Still acts like a dict.
     """
     def __init__(self, schema_dict, name=''):
         schema = util.flatten(schema_dict)
