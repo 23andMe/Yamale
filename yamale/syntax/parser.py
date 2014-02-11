@@ -1,9 +1,9 @@
 import ast
 
-from schemata import validators as val
+from ..import validators as val
 
 # Get all validators in here for eval()
-from schemata.validators.validators import *
+from ..validators.validators import *
 
 # Allow validator strings to contain either tags or actual name
 tags = {v.tag: v.__name__ for v in val.TYPES}

@@ -5,7 +5,7 @@ from subprocess import call
 VERSION = (1, 0, 0, 'beta', 2)
 
 
-# Dynamically calculate the version based on schemata.VERSION.
+# Dynamically calculate the version based on VERSION.
 def get_version():
     "Returns a PEP 386-compliant version number from VERSION."
     version = VERSION
@@ -53,12 +53,12 @@ with open('LICENSE') as f:
     license = f.read()
 
 setup(
-    name='Schemata',
+    name='Yamale',
     version=get_version(),
-    url='https://github.com/23andMe/Schemata',
+    url='https://github.com/23andMe/Yamale',
     author='Bo Lopker',
     author_email='bo@k23andme.com',
-    description='A schema validator for YAML, JSON and other static data.',
+    description='A schema validator for YAML.',
     long_description=readme + '\n\n' + history,
     license='MIT',
     packages=find_packages(),

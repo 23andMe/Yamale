@@ -1,6 +1,6 @@
 from .. import syntax
 from . import util
-from schemata import validators as val
+from .. import validators as val
 
 
 class Schema(dict):

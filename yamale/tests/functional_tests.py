@@ -1,7 +1,7 @@
 from nose.tools import raises
 
 from . import get_fixture
-import schemata as sch
+import yamale as sch
 from .. import validators as val
 
 types = {

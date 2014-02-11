@@ -1,5 +1,5 @@
 from .. import yaml
-from schemata.tests import get_fixture
+from yamale.tests import get_fixture
 
 
 TYPES = get_fixture('types.yaml')

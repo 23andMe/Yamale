@@ -1,7 +1,7 @@
 from nose.tools import raises
 
 from .. import parser as par
-from schemata.validators.validators import *
+from ...validators.validators import *
 
 
 def test_eval():
