@@ -1,5 +1,7 @@
 Yamale
 ========
+![Hot Yamale](https://raw2.github.com/23andMe/Yamale/master/yamale.png)
+
 A schema validator for YAML.
 
 Requirements
