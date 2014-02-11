@@ -1,6 +1,6 @@
 Yamale
 ========
-![Hot Yamale](https://raw2.github.com/23andMe/Yamale/master/yamale.png)
+![Hot Yamale](http://i.imgur.com/4JGAtEA.png)
 
 A schema validator for YAML.
 
