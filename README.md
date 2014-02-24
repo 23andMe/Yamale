@@ -40,7 +40,7 @@ To use Yamale you must make a schema. A schema is a valid YAML file with one or 
 A basic schema:
 ```yaml
 name: str()
-age: int()
+age: int(max=200)
 height: num()
 awesome: bool()
 ```
