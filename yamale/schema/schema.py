@@ -70,6 +70,10 @@ class Schema(dict):
             errors.append('%s: Required field missing' % position)
             return errors
 
+        # If we don't need it, we don't care if it's not there.
+        if data_item is None and validator.is_optional:
+            return errors
+
         errors += self._validate_primitive(validator, data_item, position)
 
         if errors:
