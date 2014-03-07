@@ -41,6 +41,10 @@ class Validator(object):
         """
         errors = []
 
+        # If we don't need it, we don't care if it's not there.
+        if value is None and self.is_optional:
+            return errors
+
         # Make sure the type validates first.
         valid = self._is_valid(value)
         if not valid:
