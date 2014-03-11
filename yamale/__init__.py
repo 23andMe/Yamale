@@ -1,7 +1,7 @@
 from .yamale import make_schema, make_data, validate
 
 
-VERSION = (1, 0, 0, 'beta', 5)
+VERSION = (1, 0, 0, 'final', 0)
 
 
 # Dynamically calculate the version based on VERSION.
