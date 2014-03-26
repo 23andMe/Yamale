@@ -43,7 +43,7 @@ class Enum(Validator):
     tag = 'enum'
 
     def __init__(self, *args, **kwargs):
-        super(List, self).__init__(*args, **kwargs)
+        super(Enum, self).__init__(*args, **kwargs)
         self.enums = args
 
     def _is_valid(self, value):

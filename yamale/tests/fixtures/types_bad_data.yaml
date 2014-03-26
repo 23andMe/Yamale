@@ -3,3 +3,4 @@ number: 12.1
 integer: "NOT AN INT"
 boolean: True
 list: []
+enum: 2
