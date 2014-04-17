@@ -53,7 +53,7 @@ with open('LICENSE') as f:
     license = f.read()
 
 setup(
-    name='Yamale',
+    name='yamale',
     version=get_version(),
     url='https://github.com/23andMe/Yamale',
     author='Bo Lopker',
