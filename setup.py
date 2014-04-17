@@ -28,7 +28,7 @@ with open('LICENSE') as f:
     license = f.read()
 
 setup(
-    name='Yamale',
+    name='yamale',
     version=yamale.__version__,
     url='https://github.com/23andMe/Yamale',
     author='Bo Lopker',
