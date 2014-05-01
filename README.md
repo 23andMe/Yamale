@@ -128,6 +128,9 @@ person:
             age: 10
 ```
 
+##### Adding external includes
+After you construct a schema you can add extra, external include definitions by calling `schema.add_include(dict)`. This method takes a dictionary and adds each key as another include.
+
 Validators
 ----------
 Here are all the validators Yamale knows about. Every validator takes a `required` keyword telling Yamale whether or not that node must exist. By default every node is required. Example: `str(required=False)`
