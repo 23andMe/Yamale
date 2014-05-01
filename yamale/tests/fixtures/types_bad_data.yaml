@@ -1,6 +1,7 @@
-string: "hello"
-number: 12.1
-integer: "NOT AN INT"
-boolean: True
-list: []
-enum: 2
+string: 1
+number: "nan"
+integer: 1.4
+boolean: 0
+list: "list?"
+enum: False
+map: 'hello'

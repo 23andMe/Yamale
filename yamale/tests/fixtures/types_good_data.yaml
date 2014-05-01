@@ -4,3 +4,6 @@ integer: 2
 boolean: True
 list: ['hi']
 enum: 1
+map:
+    hello: 1
+    another: "hi"

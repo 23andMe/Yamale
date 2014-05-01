@@ -57,6 +57,10 @@ class Map(Validator):
     """Map and dict validator"""
     tag = 'map'
 
+    def __init__(self, *args, **kwargs):
+        super(Map, self).__init__(*args, **kwargs)
+        self.validators = [val for val in args if isinstance(val, Validator)]
+
     def _is_valid(self, value):
         return isinstance(value, Mapping)
 

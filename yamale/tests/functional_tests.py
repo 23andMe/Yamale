@@ -1,5 +1,3 @@
-from nose.tools import raises
-
 from . import get_fixture
 import yamale as sch
 from .. import validators as val
@@ -34,7 +32,13 @@ lists = {
     'good': 'lists_good.yaml'
 }
 
-test_data = [types, nested, custom, keywords, lists]
+maps = {
+    'schema': 'map.yaml',
+    'bad': 'map_bad.yaml',
+    'good': 'map_good.yaml'
+}
+
+test_data = [types, nested, custom, keywords, lists, maps]
 
 for d in test_data:
     for key in d.keys():
@@ -69,26 +73,36 @@ def good_gen(data_map):
     sch.validate(data_map['schema'], data_map['good'])
 
 
-@raises(ValueError)
 def test_bad_validate():
-    sch.validate(types['schema'], types['bad'])
+    assert count_exception_lines(types['schema'], types['bad']) == 9
 
 
-@raises(ValueError)
 def test_bad_nested():
-    sch.validate(nested['schema'], nested['bad'])
+   assert count_exception_lines(nested['schema'], nested['bad']) == 3
 
 
-@raises(ValueError)
 def test_bad_custom():
-    assert sch.validate(custom['schema'], custom['bad'])
+    assert count_exception_lines(custom['schema'], custom['bad']) == 3
 
 
-@raises(ValueError)
 def test_bad_lists():
-    assert sch.validate(lists['schema'], lists['bad'])
+    assert count_exception_lines(lists['schema'], lists['bad']) == 4
 
 
-@raises(ValueError)
+def test_bad_maps():
+    assert count_exception_lines(maps['schema'], maps['bad']) == 6
+
+
 def test_bad_keywords():
-    assert sch.validate(keywords['schema'], keywords['bad'])
+    assert count_exception_lines(keywords['schema'], keywords['bad']) == 6
+
+
+def count_exception_lines(schema, data):
+    try:
+        sch.validate(schema, data)
+    except ValueError as exp:
+        count = len(exp.message.split('\n'))
+        print(exp.message)
+        print(count)
+        return count
+    raise Exception("Data valid")

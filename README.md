@@ -159,9 +159,6 @@ Validates integers and floats.
 ### Boolean - `bool()`
 Validates booleans.
 
-### Map - `map()`
-Validates maps. Use when you want a node to contain freeform data.
-
 ### Enum - `enum([primitives])`
 Validates from a list of constants.
 - arguments: constants to test equality with
@@ -176,6 +173,14 @@ Validates lists. If validators are passed to `list()` only nodes that pass at le
 Examples:
 - `list()`: Validates any list
 - `list(str(), int())`: Only validates lists that contain strings or integers.
+
+### Map - `map([validators])`
+Validates maps. Use when you want a node to contain freeform data. Similar to `List`, `Map` also takes a number of validators to
+run against it's children nodes. A child validates if at least one validator passes.
+
+Examples:
+- `map()`: Validates any map
+- `map(str(), int())`: Only validates maps whose children are strings or integers.
 
 ### Include - `include(include_name)`
 Validates included structures. Must supply the name of a valid include.

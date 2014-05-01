@@ -82,18 +82,24 @@ class Schema(dict):
         if isinstance(validator, val.Include):
             errors += self._validate_include(validator, data_item, includes, position)
 
-        elif isinstance(validator, val.List):
-            errors += self._validate_list(validator, data_item, includes, position)
+        elif isinstance(validator, (val.Map, val.List)):
+            errors += self._validate_map_list(validator, data_item, includes, position)
 
         return errors
 
-    def _validate_list(self, validator, data, includes, pos):
+
+    def _validate_map_list(self, validator, data, includes, pos):
         errors = []
 
         if not validator.validators:
-            return errors  # No validators, user just wanted a list.
+            return errors  # No validators, user just wanted a map.
 
-        for key in range(len(data)):
+        if isinstance(validator, val.List):
+            keys = range(len(data))
+        else:
+            keys = data.keys()
+
+        for key in keys:
             sub_errors = []
             for v in validator.validators:
                 err = self._validate(v, data, key, pos, includes)
@@ -106,6 +112,7 @@ class Schema(dict):
                     errors += err
 
         return errors
+
 
     def _validate_include(self, validator, data, includes, pos):
         errors = []
