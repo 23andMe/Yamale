@@ -176,7 +176,7 @@ Examples:
 
 ### Map - `map([validators])`
 Validates maps. Use when you want a node to contain freeform data. Similar to `List`, `Map` also takes a number of validators to
-run against it's children nodes. A child validates if at least one validator passes.
+run against its children nodes. A child validates if at least one validator passes.
 
 Examples:
 - `map()`: Validates any map
