@@ -5,6 +5,7 @@ Yamale (ya·ma·lē)
 A schema and validator for YAML.
 
 [![Build Status](https://travis-ci.org/23andMe/Yamale.svg?branch=master)](https://travis-ci.org/23andMe/Yamale)
+[![Coverage Status](https://coveralls.io/repos/23andMe/Yamale/badge.png)](https://coveralls.io/r/23andMe/Yamale)
 
 Requirements
 ------------
