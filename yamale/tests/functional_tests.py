@@ -101,8 +101,9 @@ def count_exception_lines(schema, data):
     try:
         sch.validate(schema, data)
     except ValueError as exp:
-        count = len(exp.message.split('\n'))
-        print(exp.message)
+        message = str(exp)
+        count = len(message.split('\n'))
+        print(message)
         print(count)
         return count
     raise Exception("Data valid")

@@ -1,6 +1,6 @@
 import ast
 
-from ..import validators as val
+from .. import validators as val
 
 # Get all validators in here for eval()
 from ..validators.validators import *
@@ -20,10 +20,10 @@ def parse(validator_string):
         validator = eval(compile(tree, '<ast>', 'eval'))
 
         return validator
-    except (KeyError, SyntaxError), e:
+    except (KeyError, SyntaxError) as e:
         raise SyntaxError(
             'Invalid validation syntax in \'%s\', ' % validator_string +
-            e.message
+            str(e)
         )
 
 

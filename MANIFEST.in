@@ -1,0 +1,2 @@
+include *.md LICENSE
+include yamale/tests/fixtures/*.yaml

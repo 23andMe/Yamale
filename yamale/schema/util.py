@@ -26,7 +26,7 @@ def flatten(dic, keep_iter=False, position=None):
 
 def is_iter(obj):
     # Strings are not iterables for our use case.
-    if isinstance(obj, basestring):
+    if isstr(obj):
         return False
     # Is it list like?
     if isinstance(obj, (Sequence, Set)):
@@ -43,3 +43,12 @@ def get_iter(iterable):
         return iterable.items()
     else:
         return enumerate(iterable)
+
+# Python 3 has no basestring, lets test it.
+try:
+    basestring  # attempt to evaluate basestring
+    def isstr(s):
+        return isinstance(s, basestring)
+except NameError:
+    def isstr(s):
+        return isinstance(s, str)

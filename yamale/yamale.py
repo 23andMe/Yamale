@@ -1,10 +1,10 @@
 #!/usr/bin/env python
-from schema import Schema
-from schema import Data
+from .schema import Schema
+from .schema import Data
 
 
 def make_schema(path):
-    import readers  # Import readers here in case you don't want to use the dependencies.
+    from . import readers  # Import readers here in case you don't want to use the dependencies.
     raw_schemas = readers.parse_file(path)
 
     # First document is the base schema
@@ -18,7 +18,7 @@ def make_schema(path):
 
 
 def make_data(path):
-    import readers
+    from . import readers
     raw_data = readers.parse_file(path)
     return [Data(d, path) for d in raw_data]
 

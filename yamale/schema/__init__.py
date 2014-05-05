@@ -1,2 +1,2 @@
-from schema import Schema
-from data import Data
+from .schema import Schema
+from .data import Data

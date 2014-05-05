@@ -31,8 +31,8 @@ class Constraint(object):
         try:
             if not self._is_valid(value):
                 return self._fail(value)
-        except TypeError, e:
-            return e.message
+        except TypeError as e:
+            return str(e)
         return None
 
     def _fail(self, value):

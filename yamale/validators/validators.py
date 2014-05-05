@@ -3,13 +3,23 @@ from .base import Validator
 from . import constraints as con
 
 
+# Python 3 has no basestring, lets test it.
+try:
+    basestring  # attempt to evaluate basestring
+    def isstr(s):
+        return isinstance(s, basestring)
+except NameError:
+    def isstr(s):
+        return isinstance(s, str)
+
+
 class String(Validator):
     """String validator"""
     tag = 'str'
     constraints = [con.LengthMin, con.LengthMax, con.CharacterExclude]
 
     def _is_valid(self, value):
-        return isinstance(value, basestring)
+        return isstr(value)
 
 
 class Number(Validator):
@@ -74,7 +84,7 @@ class List(Validator):
         self.validators = [val for val in args if isinstance(val, Validator)]
 
     def _is_valid(self, value):
-        return isinstance(value, (Set, Sequence)) and not isinstance(value, basestring)
+        return isinstance(value, (Set, Sequence)) and not isstr(value)
 
 
 class Include(Validator):
