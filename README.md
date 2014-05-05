@@ -6,7 +6,8 @@ A schema and validator for YAML.
 
 Requirements
 ------------
-Python 2.7
+Python 2.7+
+Python 3.4+ (Only tested on 3.4, may work on older versions)
 
 Install
 -------
