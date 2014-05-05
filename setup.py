@@ -22,8 +22,6 @@ class Tag(Command):
 
 with open('README.md') as f:
     readme = f.read()
-with open('HISTORY.md') as f:
-    history = f.read()
 with open('LICENSE') as f:
     license = f.read()
 
@@ -32,22 +30,24 @@ setup(
     version=yamale.__version__,
     url='https://github.com/23andMe/Yamale',
     author='Bo Lopker',
-    author_email='bo@k23andme.com',
+    author_email='blopker@23andme.com',
     description='A schema and validator for YAML.',
-    long_description=readme + '\n\n' + history,
+    long_description=readme,
     license='MIT',
     packages=find_packages(),
     include_package_data=True,
-    zip_safe=False,
     test_suite='nose.collector',
     install_requires=['pyyaml'],
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
         'Operating System :: OS Independent',
+        'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.4'
     ],
     cmdclass={
         'tag': Tag,
