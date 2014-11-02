@@ -1,4 +1,4 @@
-from .. import yaml
+from .. import yaml_reader
 from yamale.tests import get_fixture
 
 
@@ -8,12 +8,12 @@ KEYWORDS = get_fixture('keywords.yaml')
 
 
 def test_parse():
-    a = yaml.parse_file(TYPES)[0]
+    a = yaml_reader.parse_file(TYPES)[0]
     assert a['string'] == 'str()'
 
 
 def test_types():
-    t = yaml.parse_file(TYPES)[0]
+    t = yaml_reader.parse_file(TYPES)[0]
     assert t['string'] == 'str()'
     assert t['number'] == 'num()'
     assert t['boolean'] == 'bool()'
@@ -21,10 +21,10 @@ def test_types():
 
 
 def test_keywords():
-    t = yaml.parse_file(KEYWORDS)[0]
+    t = yaml_reader.parse_file(KEYWORDS)[0]
     assert t['optional_min'] == 'int(min=1, required=False)'
 
 
 def test_nested():
-    t = yaml.parse_file(NESTED)[0]
+    t = yaml_reader.parse_file(NESTED)[0]
     assert t['list'][-1]['string'] == 'str()'

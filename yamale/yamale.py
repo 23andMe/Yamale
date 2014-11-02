@@ -4,7 +4,8 @@ from .schema import Data
 
 
 def make_schema(path):
-    from . import readers  # Import readers here in case you don't want to use the dependencies.
+    # Import readers here so we can get version information in setup.py.
+    from . import readers
     raw_schemas = readers.parse_file(path)
 
     # First document is the base schema

@@ -2,7 +2,7 @@ import ast
 
 from .. import validators as val
 
-# Get all validators in here for eval()
+# Get all validators in here for eval() (OK to use *, I swear.)
 from ..validators.validators import *
 
 # Allow validator strings to contain either tags or actual name

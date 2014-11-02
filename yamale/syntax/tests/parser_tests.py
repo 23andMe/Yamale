@@ -1,7 +1,7 @@
 from nose.tools import raises
 
 from .. import parser as par
-from ...validators.validators import *
+from ...validators.validators import (String, Number, Integer, Boolean, List)
 
 
 def test_eval():

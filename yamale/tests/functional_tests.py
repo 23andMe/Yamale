@@ -1,5 +1,5 @@
 from . import get_fixture
-import yamale as sch
+import yamale
 from .. import validators as val
 
 types = {
@@ -43,9 +43,9 @@ test_data = [types, nested, custom, keywords, lists, maps]
 for d in test_data:
     for key in d.keys():
         if key == 'schema':
-            d[key] = sch.make_schema(get_fixture(d[key]))
+            d[key] = yamale.make_schema(get_fixture(d[key]))
         else:
-            d[key] = sch.make_data(get_fixture(d[key]))
+            d[key] = yamale.make_data(get_fixture(d[key]))
 
 
 def test_tests():
@@ -70,7 +70,7 @@ def test_good():
 
 
 def good_gen(data_map):
-    sch.validate(data_map['schema'], data_map['good'])
+    yamale.validate(data_map['schema'], data_map['good'])
 
 
 def test_bad_validate():
@@ -78,7 +78,7 @@ def test_bad_validate():
 
 
 def test_bad_nested():
-   assert count_exception_lines(nested['schema'], nested['bad']) == 3
+    assert count_exception_lines(nested['schema'], nested['bad']) == 3
 
 
 def test_bad_custom():
@@ -99,7 +99,7 @@ def test_bad_keywords():
 
 def count_exception_lines(schema, data):
     try:
-        sch.validate(schema, data)
+        yamale.validate(schema, data)
     except ValueError as exp:
         message = str(exp)
         count = len(message.split('\n'))

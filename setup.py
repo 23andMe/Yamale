@@ -7,13 +7,15 @@ import yamale
 class Tag(Command):
     """Commits a tag with the current version."""
 
-    description = "commit a tag with the current version"
+    description = 'commit a tag with the current version'
 
     user_options = []
 
-    def initialize_options(self): pass
+    def initialize_options(self):
+        pass
 
-    def finalize_options(self): pass
+    def finalize_options(self):
+        pass
 
     def run(self):
         cmd = ['git', 'tag', yamale.__version__]
