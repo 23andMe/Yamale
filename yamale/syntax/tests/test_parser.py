@@ -1,4 +1,4 @@
-from nose.tools import raises
+from pytest import raises
 
 from .. import parser as par
 from ...validators.validators import (String, Number, Integer, Boolean, List)
@@ -22,6 +22,6 @@ def test_required():
     assert par.parse('str(required=False)').is_optional
 
 
-@raises(SyntaxError)
 def test_syntax_error():
-    par.parse('eval()')
+    with raises(SyntaxError):
+        par.parse('eval()')

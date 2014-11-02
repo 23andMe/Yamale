@@ -14,7 +14,6 @@ dist/
 eggs/
 lib/
 lib64/
-parts/
 sdist/
 var/
 *.egg-info/
@@ -27,27 +26,11 @@ pip-delete-this-directory.txt
 
 # Unit test / coverage reports
 .tox/
+xunit/
 .coverage
 .cache
 nosetests.xml
 coverage.xml
 
-# Translations
-*.mo
-
-# Mr Developer
-.mr.developer.cfg
-.project
-.pydevproject
-
-# Rope
-.ropeproject
-
-# Sphinx documentation
-docs/_build/
-
 # Virtual env
 env/
-
-# pyenv
-.python-*
