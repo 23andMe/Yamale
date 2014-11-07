@@ -14,4 +14,7 @@ bamboo:
 tag:
 	@./setup.py tag
 
-.PHONY: test tag bamboo coverage
+clean:
+	@rm -rf .tox *.egg-info dist .coverage
+
+.PHONY: test tag bamboo coverage clean
