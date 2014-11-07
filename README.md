@@ -290,6 +290,26 @@ questions:
         - id: 'id_str1'
 ```
 
+Writing Tests
+-------------
+To validate YAML files when you run your program's tests use Yamale's YamaleTestCase
+
+Example:
+
+```python
+class TestYaml(YamaleTestCase):
+    base_dir = os.path.dirname(os.path.realpath(__file__))
+    schema = 'fixtures/custom_types.yaml'
+    yaml = 'fixtures/custom_types_good.yaml'
+
+    def runTest(self):
+        self.validate()
+```
+
+`base_dir`: the path which is prefixed to other paths
+`schema`: the path to your schema YAML file
+`yaml`: the path or glob to the files you want to validate. Can also be an list of paths and/or globs.
+
 Developers
 ----------
 ### Testing
