@@ -307,7 +307,9 @@ class TestYaml(YamaleTestCase):
 ```
 
 `base_dir`: the path which is prefixed to other paths
+
 `schema`: the path to your schema YAML file
+
 `yaml`: the path or glob to the files you want to validate. Can also be an list of paths and/or globs.
 
 Developers
