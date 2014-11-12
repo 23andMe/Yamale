@@ -299,18 +299,20 @@ Example:
 ```python
 class TestYaml(YamaleTestCase):
     base_dir = os.path.dirname(os.path.realpath(__file__))
-    schema = 'fixtures/custom_types.yaml'
-    yaml = 'fixtures/custom_types_good.yaml'
+    schema = 'schema.yaml'
+    yaml = 'data.yaml'
+    # or yaml = ['data-*.yaml', 'some_data.yaml']
 
     def runTest(self):
-        self.validate()
+        self.assertTrue(self.validate())
 ```
 
-`base_dir`: the path which is prefixed to other paths
+`base_dir`: String path to prepend to all other paths. This is optional.
 
-`schema`: the path to your schema YAML file
+`schema`: String of path to the schema file to use. One schema file per test case.
 
-`yaml`: the path or glob to the files you want to validate. Can also be an list of paths and/or globs.
+`yaml`: String or list of yaml files to validate. Accepts globs.
+
 
 Developers
 ----------
