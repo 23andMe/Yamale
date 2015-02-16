@@ -8,10 +8,10 @@ class Schema(dict):
     Makes a Schema object from a schema dict.
     Still acts like a dict.
     """
-    def __init__(self, schema_dict, name=''):
+    def __init__(self, schema_dict, name='', validators=val.DefaultValidators):
         schema = util.flatten(schema_dict)
         dict.__init__(self, schema)
-        self._process_schema(self)
+        self._process_schema(self, validators)
         self.dict = schema_dict
         self.name = name
         self.includes = {}
@@ -21,7 +21,7 @@ class Schema(dict):
             t = Schema(custom_type, name=include_name)
             self.includes[include_name] = t
 
-    def _process_schema(self, schema):
+    def _process_schema(self, schema, validators):
         '''
         Warning: this method mutates input.
 
@@ -29,7 +29,7 @@ class Schema(dict):
         '''
         for key, expression in schema.items():
             try:
-                schema[key] = syntax.parse(expression)
+                schema[key] = syntax.parse(expression, validators)
             except SyntaxError as e:
                 # Tack on some more context and rethrow.
                 raise SyntaxError(str(e) + ' at node \'%s\'' % key)

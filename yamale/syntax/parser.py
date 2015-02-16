@@ -1,33 +1,21 @@
 import ast
 
-from .. import validators as val
 
-# Get all validators in here for eval() (OK to use *, I swear.)
-from ..validators.validators import *
-
-# Allow validator strings to contain either tags or actual name
-tags = {v.tag: v.__name__ for v in val.TYPES}
-tags.update({v.__name__: v.__name__ for v in val.TYPES})
+safe_globals = ('True', 'False', 'None')
+safe_builtins = dict((f, __builtins__[f]) for f in safe_globals)
 
 
-def parse(validator_string):
+def parse(validator_string, validators):
     try:
         tree = ast.parse(validator_string, mode='eval')
-
-        for node in ast.walk(tree):
-            node = _process_node(tags, node)
-
-        validator = eval(compile(tree, '<ast>', 'eval'))
-
-        return validator
-    except (KeyError, SyntaxError) as e:
+        # evaluate with access to a limited global scope only
+        return eval(
+            compile(tree, '<ast>', 'eval'),
+            {'__builtins__': safe_builtins},
+            validators
+            )
+    except (SyntaxError, NameError, TypeError) as e:
         raise SyntaxError(
             'Invalid validation syntax in \'%s\', ' % validator_string +
             str(e)
         )
-
-
-def _process_node(tags, node):
-    if isinstance(node, ast.Call):
-        # Only allow functions we list in `tags`.
-        node.func.id = tags[node.func.id]
