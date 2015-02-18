@@ -1,7 +1,7 @@
 from pytest import raises
 
 from .. import parser as par
-from ...validators.validators import (String, Number, Integer, Boolean, List)
+from ...validators.validators import (Validator, String, Number, Integer, Boolean, List)
 
 
 def test_eval():
@@ -15,6 +15,14 @@ def test_types():
     assert par.parse('int()') == Integer()
     assert par.parse('bool()') == Boolean()
     assert par.parse('list(str())') == List(String())
+
+
+def test_custom_type():
+
+    class my_validator(Validator):
+        pass
+
+    assert par.parse('custom()', {'custom': my_validator}) == my_validator()
 
 
 def test_required():

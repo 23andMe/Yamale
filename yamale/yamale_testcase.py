@@ -18,7 +18,7 @@ class YamaleTestCase(TestCase):
     yaml = None
     base_dir = None
 
-    def validate(self):
+    def validate(self, validators=None):
         schema = self.schema
         yaml = self.yaml
         base_dir = self.base_dir
@@ -39,7 +39,7 @@ class YamaleTestCase(TestCase):
         # Remove schema from set of data files
         yaml = yaml - {schema}
 
-        yamale_schema = yamale.make_schema(schema)
+        yamale_schema = yamale.make_schema(schema, validators=validators)
         yamale_data = itertools.chain(*map(yamale.make_data, yaml))
 
         return yamale.validate(yamale_schema, yamale_data) is not None

@@ -100,3 +100,11 @@ class Include(Validator):
 
     def get_name(self):
         return self.include_name
+
+
+DefaultValidators = {}
+
+for v in Validator.__subclasses__():
+    # Allow validator nodes to contain either tags or actual name
+    DefaultValidators[v.tag] = v
+    DefaultValidators[v.__name__] = v

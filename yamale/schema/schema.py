@@ -3,16 +3,15 @@ from . import util
 from .. import validators as val
 
 
-class Schema(dict):
+class Schema(object):
     """
     Makes a Schema object from a schema dict.
     Still acts like a dict.
     """
-    def __init__(self, schema_dict, name=''):
-        schema = util.flatten(schema_dict)
-        dict.__init__(self, schema)
-        self._process_schema(self)
+    def __init__(self, schema_dict, name='', validators=None):
+        validators = validators or val.DefaultValidators
         self.dict = schema_dict
+        self._schema = self._process_schema(schema_dict, validators)
         self.name = name
         self.includes = {}
 
@@ -21,23 +20,26 @@ class Schema(dict):
             t = Schema(custom_type, name=include_name)
             self.includes[include_name] = t
 
-    def _process_schema(self, schema):
-        '''
-        Warning: this method mutates input.
+    def __getitem__(self, key):
+        return self._schema[key]
 
+    def _process_schema(self, schema_dict, validators):
+        """
         Go through a schema and construct validators.
-        '''
-        for key, expression in schema.items():
+        """
+        schema_flat = util.flatten(schema_dict)
+        for key, expression in schema_flat.items():
             try:
-                schema[key] = syntax.parse(expression)
+                schema_flat[key] = syntax.parse(expression, validators)
             except SyntaxError as e:
                 # Tack on some more context and rethrow.
                 raise SyntaxError(str(e) + ' at node \'%s\'' % key)
+        return schema_flat
 
     def validate(self, data):
         errors = []
 
-        for key, validator in self.items():
+        for key, validator in self._schema.items():
             errors += self._validate(validator, data, key=key, includes=self.includes)
 
         if errors:
@@ -46,14 +48,14 @@ class Schema(dict):
             raise ValueError(header + error_str)
 
     def _validate(self, validator, data, key, position=None, includes=None):
-        '''
+        """
         Run through a schema and a data structure,
         validating along the way.
 
         Ignores fields that are in the data structure, but not in the schema.
 
         Returns an array of errors.
-        '''
+        """
         errors = []
 
         if position:
@@ -87,7 +89,6 @@ class Schema(dict):
 
         return errors
 
-
     def _validate_map_list(self, validator, data, includes, pos):
         errors = []
 
@@ -113,7 +114,6 @@ class Schema(dict):
 
         return errors
 
-
     def _validate_include(self, validator, data, includes, pos):
         errors = []
 
@@ -122,7 +122,7 @@ class Schema(dict):
             errors.append('Include \'%s\' has not been defined.' % validator.include_name)
             return errors
 
-        for key, validator in include_schema.items():
+        for key, validator in include_schema._schema.items():
             errors += include_schema._validate(validator, data, includes=includes, key=key, position=pos)
 
         return errors
@@ -134,5 +134,3 @@ class Schema(dict):
             errors[i] = '%s: ' % pos + error
 
         return errors
-
-
