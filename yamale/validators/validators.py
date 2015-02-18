@@ -1,4 +1,5 @@
 from collections import Set, Sequence, Mapping
+from datetime import date, datetime
 from .base import Validator
 from . import constraints as con
 
@@ -61,6 +62,30 @@ class Enum(Validator):
 
     def fail(self, value):
         return '\'%s\' not in %s' % (value, self.enums)
+
+
+class Day(Validator):
+    """Day validator"""
+    tag = 'day'
+
+    def __init__(self, *args, **kwargs):
+        super(Day, self).__init__(*args, **kwargs)
+        self.enums = args
+
+    def _is_valid(self, value):
+        return isinstance(value, date)
+
+
+class Timestamp(Validator):
+    """Timestamp validator"""
+    tag = 'timestamp'
+
+    def __init__(self, *args, **kwargs):
+        super(Timestamp, self).__init__(*args, **kwargs)
+        self.enums = args
+
+    def _is_valid(self, value):
+        return isinstance(value, datetime)
 
 
 class Map(Validator):

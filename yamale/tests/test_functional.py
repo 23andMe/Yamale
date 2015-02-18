@@ -78,7 +78,7 @@ def test_bad_validate():
 
 
 def test_bad_nested():
-    assert count_exception_lines(nested['schema'], nested['bad']) == 3
+    assert count_exception_lines(nested['schema'], nested['bad']) == 4
 
 
 def test_bad_custom():
