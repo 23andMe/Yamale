@@ -1,7 +1,7 @@
 import datetime
 import os
 from yamale import YamaleTestCase
-from yamale.validators import add_default_validator, Validator
+from yamale.validators import DefaultValidators, Validator
 
 
 data_folder = os.path.dirname(os.path.realpath(__file__))
@@ -38,8 +38,7 @@ class TestListYaml(YamaleTestCase):
 
 
 class Date(Validator):
-    """Custom validator for testing purpose
-    """
+    """ Custom validator for testing purpose """
     tag = 'date'
 
     def _is_valid(self, value):
@@ -49,9 +48,9 @@ class Date(Validator):
 class TestCustomValidator(YamaleTestCase):
     base_dir = data_folder
     schema = 'meta_test_fixtures/schema_custom.yaml'
-    yaml = ['meta_test_fixtures/data*.yaml',
-            'meta_test_fixtures/data_custom.yaml']
+    yaml = 'meta_test_fixtures/data_custom.yaml'
 
     def runTest(self):
-        add_default_validator(Date)
-        self.assertTrue(self.validate())
+        validators = DefaultValidators.copy()
+        validators['date'] = Date
+        self.assertTrue(self.validate(validators))

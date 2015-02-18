@@ -2,10 +2,10 @@ from collections import Mapping, Set, Sequence
 
 
 def flatten(dic, keep_iter=False, position=None):
-    '''
+    """
     Returns a flattened dictionary from a dictionary of nested dictionaries and lists.
     `keep_iter` will treat iterables as valid values, while also flattening them.
-    '''
+    """
     child = {}
 
     for k, v in get_iter(dic):

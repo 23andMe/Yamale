@@ -3,13 +3,14 @@ from .schema import Schema
 from .schema import Data
 
 
-def make_schema(path):
+def make_schema(path, validators=None):
+    # validators = None means use default.
     # Import readers here so we can get version information in setup.py.
     from . import readers
     raw_schemas = readers.parse_file(path)
 
     # First document is the base schema
-    s = Schema(raw_schemas[0], path)
+    s = Schema(raw_schemas[0], path, validators=validators)
 
     # Additional documents contain Includes.
     for raw_schema in raw_schemas[1:]:
