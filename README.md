@@ -201,6 +201,26 @@ Validates included structures. Must supply the name of a valid include.
 Examples:
 - `include('person')`
 
+### Custom validators
+It is also possible to add your own custom validators. This is an advanced topic, but here is an example of adding a `Date` validator and using it in a schema as `date()`
+
+```python
+import yamale
+from yamale.validators import DefaultValidators, Validator
+
+class Date(Validator):
+    """ Custom Date validator """
+    tag = 'date'
+
+    def _is_valid(self, value):
+        return isinstance(value, datetime.date)
+
+validators = DefaultValidators.copy()  # This is a dictionary
+validators[Date.tag] = Date()
+schema = yamale.make_schema('./schema.yaml' validators=validators)
+# Then use `schema` as normal
+```
+
 Examples
 --------
 ### Using keywords
