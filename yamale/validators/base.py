@@ -1,6 +1,7 @@
 class Validator(object):
     """Base class for all Validators"""
     constraints = []
+    ktype = None
 
     def __init__(self, *args, **kwargs):
         self.args = args
@@ -15,7 +16,7 @@ class Validator(object):
     def _create_constraints(self, constraint_classes, kwargs):
         constraints = []
         for constraint in constraint_classes:
-            constraints.append(constraint(kwargs))
+            constraints.append(constraint(self.ktype, kwargs))
         return constraints
 
     @property

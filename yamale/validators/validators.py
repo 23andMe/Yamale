@@ -16,6 +16,7 @@ except NameError:
 
 class String(Validator):
     """String validator"""
+    ktype = str
     tag = 'str'
     constraints = [con.LengthMin, con.LengthMax, con.CharacterExclude]
 
@@ -25,6 +26,7 @@ class String(Validator):
 
 class Number(Validator):
     """Number/float validator"""
+    ktype = float
     tag = 'num'
     constraints = [con.Min, con.Max]
 
@@ -34,6 +36,7 @@ class Number(Validator):
 
 class Integer(Validator):
     """Integer validator"""
+    ktype = int
     tag = 'int'
     constraints = [con.Min, con.Max]
 
@@ -43,6 +46,7 @@ class Integer(Validator):
 
 class Boolean(Validator):
     """Boolean validator"""
+    ktype = bool
     tag = 'bool'
 
     def _is_valid(self, value):
@@ -66,7 +70,9 @@ class Enum(Validator):
 
 class Day(Validator):
     """Day validator"""
+    ktype = date
     tag = 'day'
+    constraints = [con.Min, con.Max]
 
     def __init__(self, *args, **kwargs):
         super(Day, self).__init__(*args, **kwargs)
@@ -78,7 +84,9 @@ class Day(Validator):
 
 class Timestamp(Validator):
     """Timestamp validator"""
+    ktype = datetime
     tag = 'timestamp'
+    constraints = [con.Min, con.Max]
 
     def __init__(self, *args, **kwargs):
         super(Timestamp, self).__init__(*args, **kwargs)

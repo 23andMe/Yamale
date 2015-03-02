@@ -1,14 +1,16 @@
 class Constraint(object):
     """docstring for Constraint"""
     keywords = {}
+    ktype = None
     is_active = True
 
-    def __init__(self, kwargs):
+    def __init__(self, ktype, kwargs):
+        self.ktype = ktype
         self._parseKwargs(kwargs)
 
     def _parseKwargs(self, kwargs):
         for kwarg, ktype in self.keywords.items():
-            value = self.get_kwarg(kwargs, kwarg, ktype)
+            value = self.get_kwarg(kwargs, kwarg, ktype or self.ktype)
             setattr(self, kwarg, value)
 
     def get_kwarg(self, kwargs, key, ktype, default=None):
@@ -19,9 +21,13 @@ class Constraint(object):
             self.is_active = False
             return value
 
+        assert ktype, "%s constraint can only be used on a Validator having a self.ktype" % self.__class__
+
+        if isinstance(value, ktype):
+            return value
         try:
-            return ktype(kwargs.get(key))
-        except ValueError:
+            return ktype(value)
+        except (TypeError, ValueError):
             raise SyntaxError('%s is not a %s' % (key, ktype))
 
     def is_valid(self, value):
@@ -40,8 +46,8 @@ class Constraint(object):
 
 
 class Min(Constraint):
-    keywords = {'min': float}
-    fail = '%s is less than than %s'
+    keywords = {'min': None}
+    fail = '%s is less than %s'
 
     def _is_valid(self, value):
         return self.min <= value
@@ -51,7 +57,7 @@ class Min(Constraint):
 
 
 class Max(Constraint):
-    keywords = {'max': float}
+    keywords = {'max': None}
     fail = '%s is greater than %s'
 
     def _is_valid(self, value):
