@@ -2,6 +2,13 @@ import datetime
 from ... import validators as val
 
 
+def test_default():
+    v = val.Number(default=0)
+    assert v.is_valid(1)
+    assert v.is_valid(1.3425235)
+    assert not v.is_valid('str')
+
+
 def test_length_min():
     v = val.String(min=2)
     assert v.is_valid('abcd')

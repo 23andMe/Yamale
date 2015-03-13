@@ -73,6 +73,13 @@ def good_gen(data_map):
     yamale.validate(data_map['schema'], data_map['good'])
 
 
+def test_default():
+    yamale.validate(keywords['schema'], keywords['good'])
+    assert 'defaulted' in keywords['good'][0]
+    assert keywords['good'][0]['defaulted'] == 0
+    assert keywords['good'][0]['defaulted_2'] == 4
+
+
 def test_bad_validate():
     assert count_exception_lines(types['schema'], types['bad']) == 9
 
