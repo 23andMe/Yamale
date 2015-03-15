@@ -1,0 +1,7 @@
+test_includes: list(include('test_include'))
+
+---
+test_include:
+  custom: date()
+  string: str()
+  number: num(required=False)

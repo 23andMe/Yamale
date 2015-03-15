@@ -10,7 +10,7 @@ data_folder = os.path.dirname(os.path.realpath(__file__))
 class TestAllYaml(YamaleTestCase):
     base_dir = data_folder
     schema = 'meta_test_fixtures/schema.yaml'
-    yaml = 'meta_test_fixtures/data*.yaml'
+    yaml = 'meta_test_fixtures/data_custom.yaml'
 
     def runTest(self):
         self.assertTrue(self.validate())
@@ -28,7 +28,7 @@ class TestBadYaml(YamaleTestCase):
 class TestListYaml(YamaleTestCase):
     base_dir = data_folder
     schema = 'meta_test_fixtures/schema.yaml'
-    yaml = ['meta_test_fixtures/data*.yaml',
+    yaml = ['meta_test_fixtures/data_custom.yaml',
             'meta_test_fixtures/some_data.yaml',
             # Make sure  schema doesn't validate itself
             'meta_test_fixtures/schema.yaml']
@@ -49,6 +49,17 @@ class TestCustomValidator(YamaleTestCase):
     base_dir = data_folder
     schema = 'meta_test_fixtures/schema_custom.yaml'
     yaml = 'meta_test_fixtures/data_custom.yaml'
+
+    def runTest(self):
+        validators = DefaultValidators.copy()
+        validators['date'] = Date
+        self.assertTrue(self.validate(validators))
+
+
+class TestCustomValidatorWithIncludes(YamaleTestCase):
+    base_dir = data_folder
+    schema = 'meta_test_fixtures/schema_custom_with_include.yaml'
+    yaml = 'meta_test_fixtures/data_custom_with_include.yaml'
 
     def runTest(self):
         validators = DefaultValidators.copy()
