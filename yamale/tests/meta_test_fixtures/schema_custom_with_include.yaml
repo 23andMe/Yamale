@@ -2,6 +2,6 @@ test_includes: list(include('test_include'))
 
 ---
 test_include:
-  custom: date()
+  custom: card()
   string: str()
   number: num(required=False)

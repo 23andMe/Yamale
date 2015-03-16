@@ -1,12 +1,10 @@
 simple:
-    - 'this'
-    - 'is'
-    - 'a'
-    - 100
-    - 10
+  - 'this'
+  - 'is'
 questions:
   - choices:
       - id: 'id_str'
       - id: 'id_str1'
+      - id: 'too_many'
   - questions:
       choices: str

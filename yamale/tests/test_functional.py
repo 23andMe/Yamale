@@ -78,7 +78,7 @@ def test_bad_validate():
 
 
 def test_bad_nested():
-    assert count_exception_lines(nested['schema'], nested['bad']) == 3
+    assert count_exception_lines(nested['schema'], nested['bad']) == 4
 
 
 def test_bad_custom():
@@ -86,7 +86,7 @@ def test_bad_custom():
 
 
 def test_bad_lists():
-    assert count_exception_lines(lists['schema'], lists['bad']) == 4
+    assert count_exception_lines(lists['schema'], lists['bad']) == 6
 
 
 def test_bad_maps():
@@ -94,7 +94,7 @@ def test_bad_maps():
 
 
 def test_bad_keywords():
-    assert count_exception_lines(keywords['schema'], keywords['bad']) == 6
+    assert count_exception_lines(keywords['schema'], keywords['bad']) == 10
 
 
 def count_exception_lines(schema, data):

@@ -1,5 +1,15 @@
 from collections import Mapping, Set, Sequence
 
+# Python 3 has no basestring, lets test it.
+try:
+    basestring  # attempt to evaluate basestring
+
+    def isstr(s):
+        return isinstance(s, basestring)
+except NameError:
+    def isstr(s):
+        return isinstance(s, str)
+
 
 def flatten(dic, keep_iter=False, position=None):
     """
@@ -9,6 +19,8 @@ def flatten(dic, keep_iter=False, position=None):
     child = {}
 
     for k, v in get_iter(dic):
+        if isstr(k):
+            k = k.replace('.', '_')
         if position:
             item_position = '%s.%s' % (position, k)
         else:
@@ -43,12 +55,3 @@ def get_iter(iterable):
         return iterable.items()
     else:
         return enumerate(iterable)
-
-# Python 3 has no basestring, lets test it.
-try:
-    basestring  # attempt to evaluate basestring
-    def isstr(s):
-        return isinstance(s, basestring)
-except NameError:
-    def isstr(s):
-        return isinstance(s, str)
