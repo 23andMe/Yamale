@@ -9,15 +9,16 @@ class Schema(object):
     Still acts like a dict.
     """
     def __init__(self, schema_dict, name='', validators=None):
-        validators = validators or val.DefaultValidators
+        self.validators = validators or val.DefaultValidators
         self.dict = schema_dict
-        self._schema = self._process_schema(schema_dict, validators)
+        self._schema = self._process_schema(schema_dict, self.validators)
         self.name = name
         self.includes = {}
 
     def add_include(self, type_dict):
         for include_name, custom_type in type_dict.items():
-            t = Schema(custom_type, name=include_name)
+            t = Schema(custom_type, name=include_name,
+                validators=self.validators)
             self.includes[include_name] = t
 
     def __getitem__(self, key):
