@@ -10,7 +10,7 @@ tag:
 	@./setup.py tag
 
 upload:
-	@./setup.py sdist bdist upload
+	@./setup.py sdist upload
 
 clean:
 	@rm -rf .tox *.egg-info dist .coverage
