@@ -1,4 +1,12 @@
+import datetime
 from ... import validators as val
+
+
+def test_default():
+    v = val.Number(default=0)
+    assert v.is_valid(1)
+    assert v.is_valid(1.3425235)
+    assert not v.is_valid('str')
 
 
 def test_length_min():
@@ -27,6 +35,34 @@ def test_number_min():
     assert v.is_valid(4)
     assert v.is_valid(10)
     assert not v.is_valid(11)
+
+
+def test_timestamp_min():
+    v = val.Timestamp(min=datetime.datetime(2010, 1, 1))
+    assert v.is_valid(datetime.datetime(2010, 1, 1))
+    assert v.is_valid(datetime.datetime(2011, 2, 2))
+    assert not v.is_valid(datetime.datetime(2009, 12, 31))
+
+
+def test_timestamp_max():
+    v = val.Timestamp(max=datetime.datetime(2010, 1, 1))
+    assert v.is_valid(datetime.datetime(2010, 1, 1))
+    assert v.is_valid(datetime.datetime(2009, 2, 2))
+    assert not v.is_valid(datetime.datetime(2010, 2, 2))
+
+
+def test_day_min():
+    v = val.Day(min=datetime.date(2010, 1, 1))
+    assert v.is_valid(datetime.date(2010, 1, 1))
+    assert v.is_valid(datetime.date(2011, 2, 2))
+    assert not v.is_valid(datetime.date(2009, 12, 31))
+
+
+def test_day_max():
+    v = val.Day(max=datetime.date(2010, 1, 1))
+    assert v.is_valid(datetime.date(2010, 1, 1))
+    assert v.is_valid(datetime.date(2009, 2, 2))
+    assert not v.is_valid(datetime.date(2010, 2, 2))
 
 
 def test_char_exclude():

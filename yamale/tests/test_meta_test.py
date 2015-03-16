@@ -1,4 +1,4 @@
-import datetime
+import re
 import os
 from yamale import YamaleTestCase
 from yamale.validators import DefaultValidators, Validator
@@ -37,12 +37,13 @@ class TestListYaml(YamaleTestCase):
         self.assertTrue(self.validate())
 
 
-class Date(Validator):
+class Card(Validator):
     """ Custom validator for testing purpose """
-    tag = 'date'
+    tag = 'card'
+    card_regex = re.compile(r'^(10|[2-9JQKA])[SHDC]$')
 
     def _is_valid(self, value):
-        return isinstance(value, datetime.date)
+        return re.match(self.card_regex, value)
 
 
 class TestCustomValidator(YamaleTestCase):
@@ -52,7 +53,7 @@ class TestCustomValidator(YamaleTestCase):
 
     def runTest(self):
         validators = DefaultValidators.copy()
-        validators['date'] = Date
+        validators['card'] = Card
         self.assertTrue(self.validate(validators))
 
 

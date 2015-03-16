@@ -1,5 +1,5 @@
 from . import util
-
+from operator import getitem
 
 class Data(dict):
     """
@@ -13,3 +13,13 @@ class Data(dict):
         dict.__init__(self, flat_data)
         self.name = name
         self.dict = data_dict
+
+    def __setitem__(self, key, value):
+        super(Data, self).__setitem__(key, value)
+        path, key = util.get_expanded_path(self.dict, key)
+        util.reduce(getitem, path, self.dict)[key] = value
+
+    def __delitem__(self, key, value):
+        super(Data, self).__setitem__(key, value)
+        path, key = util.get_expanded_path(self.dict, key)
+        del util.reduce(getitem, path, self.dict)[key]

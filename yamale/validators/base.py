@@ -1,8 +1,10 @@
 class Validator(object):
     """Base class for all Validators"""
     constraints = []
+    ktype = None
 
     def __init__(self, *args, **kwargs):
+        self.default = kwargs.pop('default', None)
         self.args = args
         self.kwargs = kwargs
 
@@ -15,7 +17,7 @@ class Validator(object):
     def _create_constraints(self, constraint_classes, kwargs):
         constraints = []
         for constraint in constraint_classes:
-            constraints.append(constraint(kwargs))
+            constraints.append(constraint(self.ktype, kwargs))
         return constraints
 
     @property
@@ -66,8 +68,9 @@ class Validator(object):
         return '%s(%s, %s)' % (self.__class__.__name__, self.args, self.kwargs)
 
     def __eq__(self, other):
-        # Validators are equal if they have the same args and kwargs.
+        # Validators are equal if they have the same default, args and kwargs.
         eq = [isinstance(other, self.__class__),
+              self.default == other.default,
               self.args == other.args,
               self.kwargs == other.kwargs]
         return all(eq)
