@@ -18,7 +18,7 @@ class Schema(object):
     def add_include(self, type_dict):
         for include_name, custom_type in type_dict.items():
             t = Schema(custom_type, name=include_name,
-                validators=self.validators)
+                       validators=self.validators)
             self.includes[include_name] = t
 
     def __getitem__(self, key):
@@ -67,14 +67,11 @@ class Schema(object):
         try:  # Pull value out of data. Data can be a map or a list/sequence
             data_item = data[key]
         except KeyError:  # Oops, that field didn't exist.
-            if validator.default is not None:
-                data_item = data[key] = validator.default
-            elif validator.is_optional:  # Optional? Who cares.
+            if validator.is_optional:  # Optional? Who cares.
                 return errors
-            else:
-                # SHUT DOWN EVERTYHING
-                errors.append('%s: Required field missing' % position)
-                return errors
+            # SHUT DOWN EVERTYHING
+            errors.append('%s: Required field missing' % position)
+            return errors
 
         if data_item is None and validator.is_optional:  # Optional? Who cares.
             return errors
@@ -85,10 +82,12 @@ class Schema(object):
             return errors
 
         if isinstance(validator, val.Include):
-            errors += self._validate_include(validator, data_item, includes, position)
+            errors += self._validate_include(validator, data_item,
+                                             includes, position)
 
         elif isinstance(validator, (val.Map, val.List)):
-            errors += self._validate_map_list(validator, data_item, includes, position)
+            errors += self._validate_map_list(validator, data_item,
+                                              includes, position)
 
         return errors
 

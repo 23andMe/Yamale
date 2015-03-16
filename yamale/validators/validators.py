@@ -7,6 +7,7 @@ from . import constraints as con
 # Python 3 has no basestring, lets test it.
 try:
     basestring  # attempt to evaluate basestring
+
     def isstr(s):
         return isinstance(s, basestring)
 except NameError:
@@ -16,7 +17,6 @@ except NameError:
 
 class String(Validator):
     """String validator"""
-    ktype = str
     tag = 'str'
     constraints = [con.LengthMin, con.LengthMax, con.CharacterExclude]
 
@@ -26,7 +26,7 @@ class String(Validator):
 
 class Number(Validator):
     """Number/float validator"""
-    ktype = float
+    value_type = float
     tag = 'num'
     constraints = [con.Min, con.Max]
 
@@ -36,7 +36,7 @@ class Number(Validator):
 
 class Integer(Validator):
     """Integer validator"""
-    ktype = int
+    value_type = int
     tag = 'int'
     constraints = [con.Min, con.Max]
 
@@ -46,7 +46,6 @@ class Integer(Validator):
 
 class Boolean(Validator):
     """Boolean validator"""
-    ktype = bool
     tag = 'bool'
 
     def _is_valid(self, value):
@@ -69,28 +68,20 @@ class Enum(Validator):
 
 
 class Day(Validator):
-    """Day validator"""
-    ktype = date
+    """Day validator. Format: YYYY-MM-DD"""
+    value_type = date
     tag = 'day'
     constraints = [con.Min, con.Max]
-
-    def __init__(self, *args, **kwargs):
-        super(Day, self).__init__(*args, **kwargs)
-        self.enums = args
 
     def _is_valid(self, value):
         return isinstance(value, date)
 
 
 class Timestamp(Validator):
-    """Timestamp validator"""
-    ktype = datetime
+    """Timestamp validator. Format: YYYY-MM-DD HH:MM:SS"""
+    value_type = datetime
     tag = 'timestamp'
     constraints = [con.Min, con.Max]
-
-    def __init__(self, *args, **kwargs):
-        super(Timestamp, self).__init__(*args, **kwargs)
-        self.enums = args
 
     def _is_valid(self, value):
         return isinstance(value, datetime)
@@ -111,6 +102,7 @@ class Map(Validator):
 class List(Validator):
     """List validator"""
     tag = 'list'
+    constraints = [con.LengthMin, con.LengthMax]
 
     def __init__(self, *args, **kwargs):
         super(List, self).__init__(*args, **kwargs)

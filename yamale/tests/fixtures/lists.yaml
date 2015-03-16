@@ -1,9 +1,9 @@
-simple: list(str(), int())
+simple: list(str(), int(), min=3)
 questions: list(include('question'))
 
 ---
 question:
-  choices: list(include('choices'))
+  choices: list(include('choices'), max=2)
   questions: list(include('question'), required=False)
 
 choices:

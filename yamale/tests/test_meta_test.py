@@ -64,5 +64,5 @@ class TestCustomValidatorWithIncludes(YamaleTestCase):
 
     def runTest(self):
         validators = DefaultValidators.copy()
-        validators['date'] = Date
+        validators['card'] = Card
         self.assertTrue(self.validate(validators))

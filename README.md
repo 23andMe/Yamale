@@ -144,7 +144,7 @@ Validators
 ----------
 Here are all the validators Yamale knows about. Every validator takes a `required` keyword telling Yamale whether or not that node must exist. By default every node is required. Example: `str(required=False)`
 
-Some validators take keywords and some take arguments. For instance the `enum()` validator takes one or more constants as arguments: `enum('a string', 1, False, required=False)`
+Some validators take keywords and some take arguments, some take both. For instance the `enum()` validator takes one or more constants as arguments and the `required` keyword: `enum('a string', 1, False, required=False)`
 
 ### String - `str(min=int, max=int, exclude=string)`
 Validates strings.
@@ -178,13 +178,35 @@ Validates from a list of constants.
 Examples:
 - `enum('a string', 1, False)`: a value can be either `'a string'`, `1` or `False`
 
+### Day - `day(min=date, max=date)`
+Validates a date in the form of YYYY-MM-DD.
+- keywords
+    - `min`: date >= min
+    - `max`: date <= max
+
+Examples:
+- `day(min='2001-01-01', max='2100-01-01')`: Only allows dates between 2001-01-01 and 2100-01-01.
+
+### Timestamp - `timestamp(min=time, max=time)`
+Validates a timestamp in the form of YYYY-MM-DD HH:MM:SS.
+- keywords
+    - `min`: time >= min
+    - `max`: time <= max
+
+Examples:
+- `timestamp(min='2001-01-01 01:00:00', max='2100-01-01 23:00:00')`: Only allows times between 2001-01-01 01:00:00 and 2100-01-01 23:00:00.
+
 ### List - `list([validators])`
 Validates lists. If validators are passed to `list()` only nodes that pass at least one of those validators will be accepted.
 - arguments: validators to test values with
 
+- keywords
+    - `min`: len(list) >= min
+    - `max`: len(list) <= max
+
 Examples:
 - `list()`: Validates any list
-- `list(str(), int())`: Only validates lists that contain strings or integers.
+- `list(str(), int(), min=4)`: Only validates lists that contain strings or integers and contains a minimum of 4 items.
 
 ### Map - `map([validators])`
 Validates maps. Use when you want a node to contain freeform data. Similar to `List`, `Map` also takes a number of validators to

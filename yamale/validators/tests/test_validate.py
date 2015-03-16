@@ -36,6 +36,7 @@ def test_boolean():
     assert not v.is_valid('')
     assert not v.is_valid(0)
 
+
 def test_date():
     v = val.Day()
     assert v.is_valid(date(2015, 1, 1))
@@ -43,12 +44,14 @@ def test_date():
     assert not v.is_valid('')
     assert not v.is_valid(0)
 
+
 def test_datetime():
     v = val.Timestamp()
     assert v.is_valid(datetime(2015, 1, 1, 1))
     assert not v.is_valid(date(2015, 1, 1))
     assert not v.is_valid('')
     assert not v.is_valid(0)
+
 
 def test_list():
     v = val.List()

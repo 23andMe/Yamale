@@ -1,13 +1,9 @@
 import ast
-import datetime as dt
-import types
 
 from .. import validators as val
 
 safe_globals = ('True', 'False', 'None')
 safe_builtins = dict((f, __builtins__[f]) for f in safe_globals)
-safe_builtins['datetime'] = dt.datetime
-safe_builtins['date'] = dt.date
 
 
 def parse(validator_string, validators=None):
