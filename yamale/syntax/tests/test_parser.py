@@ -1,7 +1,8 @@
 from pytest import raises
 
 from .. import parser as par
-from ...validators.validators import (Validator, String, Number, Integer, Boolean, List)
+from ...validators.validators import (Validator, String, Number,
+                                      Integer, Boolean, List, Day, Timestamp)
 
 
 def test_eval():
@@ -13,6 +14,8 @@ def test_types():
     assert par.parse('str()') == String()
     assert par.parse('num()') == Number()
     assert par.parse('int()') == Integer()
+    assert par.parse('day()') == Day()
+    assert par.parse('timestamp()') == Timestamp()
     assert par.parse('bool()') == Boolean()
     assert par.parse('list(str())') == List(String())
 

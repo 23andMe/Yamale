@@ -16,6 +16,6 @@ def parse(validator_string, validators=None):
                     validators)
     except (SyntaxError, NameError, TypeError) as e:
         raise SyntaxError(
-            'Invalid validation syntax in \'%s\', ' % validator_string +
+            'Invalid schema expression: \'%s\'. ' % validator_string +
             str(e)
         )

@@ -11,8 +11,8 @@ class Schema(object):
     def __init__(self, schema_dict, name='', validators=None):
         self.validators = validators or val.DefaultValidators
         self.dict = schema_dict
-        self._schema = self._process_schema(schema_dict, self.validators)
         self.name = name
+        self._schema = self._process_schema(schema_dict, self.validators)
         self.includes = {}
 
     def add_include(self, type_dict):
@@ -34,7 +34,7 @@ class Schema(object):
                 schema_flat[key] = syntax.parse(expression, validators)
             except SyntaxError as e:
                 # Tack on some more context and rethrow.
-                raise SyntaxError(str(e) + ' at node \'%s\'' % key)
+                raise SyntaxError(str(e) + ' at node \'%s\' in file %s' % (key, self.name))
         return schema_flat
 
     def validate(self, data):
