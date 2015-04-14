@@ -197,8 +197,8 @@ Examples:
 - `timestamp(min='2001-01-01 01:00:00', max='2100-01-01 23:00:00')`: Only allows times between 2001-01-01 01:00:00 and 2100-01-01 23:00:00.
 
 ### List - `list([validators])`
-Validates lists. If validators are passed to `list()` only nodes that pass at least one of those validators will be accepted.
-- arguments: validators to test values with
+Validates lists. If one or more validators are passed to `list()` only nodes that pass at least one of those validators will be accepted.
+- arguments: one or more validators to test values with
 
 - keywords
     - `min`: len(list) >= min
@@ -206,7 +206,7 @@ Validates lists. If validators are passed to `list()` only nodes that pass at le
 
 Examples:
 - `list()`: Validates any list
-- `list(str(), int(), min=4)`: Only validates lists that contain strings or integers and contains a minimum of 4 items.
+- `list(include('custom'), int(), min=4)`: Only validates lists that contain the `custom` include or integers and contains a minimum of 4 items.
 
 ### Map - `map([validators])`
 Validates maps. Use when you want a node to contain freeform data. Similar to `List`, `Map` also takes a number of validators to
@@ -304,9 +304,13 @@ recursion:
 ### Lists
 #### Schema:
 ```yaml
-simple: list(str(), int())
+list_with_two_types: list(str(), include('variant'))
 questions: list(include('question'))
 ---
+variant:
+  rsid: str()
+  name: str()
+  
 question:
   choices: list(include('choices'))
   questions: list(include('question'), required=False)
@@ -316,12 +320,13 @@ choices:
 ```
 #### Valid Data:
 ```yaml
-simple:
-  - 'this'
-  - 'is'
-  - 'a'
-  - 100
-  - 10
+list_with_two_types:
+  - 'some'
+  - rsid: 'rs123'
+    name: 'some SNP'
+  - 'thing'
+  - rsid: 'rs312'
+    name: 'another SNP'
 questions:
   - choices:
       - id: 'id_str'
