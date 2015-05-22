@@ -127,6 +127,27 @@ class Include(Validator):
         return self.include_name
 
 
+class Any(Validator):
+    """Any of several types validator"""
+    tag = 'any'
+
+    def __init__(self, *args, **kwargs):
+        self.validators = [val for val in args if isinstance(val, Validator)]
+        super(Any, self).__init__(*args, **kwargs)
+
+    def _is_valid(self, value):
+        return True
+
+
+class Null(Validator):
+    """Validates null"""
+    value_type = None
+    tag = 'null'
+
+    def _is_valid(self, value):
+        return value is None
+
+
 DefaultValidators = {}
 
 for v in Validator.__subclasses__():

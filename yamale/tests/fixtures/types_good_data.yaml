@@ -7,3 +7,4 @@ enum: 1
 map:
     hello: 1
     another: "hi"
+null: !!null
