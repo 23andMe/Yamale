@@ -5,4 +5,4 @@ boolean: 0
 list: "list?"
 enum: False
 map: 'hello'
-null: "None"
+null: "null"
