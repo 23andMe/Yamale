@@ -173,6 +173,9 @@ Validates integers and floats.
 ### Boolean - `bool()`
 Validates booleans.
 
+### Null - `null()`
+Validates null values.
+
 ### Enum - `enum([primitives])`
 Validates from a list of constants.
 - arguments: constants to test equality with
@@ -217,6 +220,14 @@ run against its children nodes. A child validates if at least one validator pass
 Examples:
 - `map()`: Validates any map
 - `map(str(), int())`: Only validates maps whose children are strings or integers.
+
+### Any - `any([validators])`
+Validates against a union of types. Use when a node can contain one of several types. It is valid if at least one of the listed validators is valid.
+- arguments: one or more validators to test values with
+
+Examples:
+- `any(int(), null())`: Validates an integer or a null value.
+- `any(num(), include('vector'))`: Validates a number or an included 'vector' type.
 
 ### Include - `include(include_name)`
 Validates included structures. Must supply the name of a valid include.
@@ -312,7 +323,7 @@ questions: list(include('question'))
 variant:
   rsid: str()
   name: str()
-  
+
 question:
   choices: list(include('choices'))
   questions: list(include('question'), required=False)

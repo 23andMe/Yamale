@@ -59,3 +59,12 @@ def test_list():
     assert v.is_valid(())
     assert not v.is_valid('')
     assert not v.is_valid(0)
+
+
+def test_null():
+    v = val.Null()
+    assert v.is_valid(None)
+    assert not v.is_valid('None')
+    assert not v.is_valid(0)
+    assert not v.is_valid(float('nan'))
+    assert not v.is_valid({})

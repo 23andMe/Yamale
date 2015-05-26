@@ -73,6 +73,16 @@ class Schema(object):
             errors.append('%s: Required field missing' % position)
             return errors
 
+        return self._validate_item(validator, data_item, position, includes)
+
+    def _validate_item(self, validator, data_item, position, includes):
+        """
+        Validates a single data item against validator.
+
+        Returns an array of errors.
+        """
+        errors = []
+
         if data_item is None and validator.is_optional:  # Optional? Who cares.
             return errors
 
@@ -88,6 +98,10 @@ class Schema(object):
         elif isinstance(validator, (val.Map, val.List)):
             errors += self._validate_map_list(validator, data_item,
                                               includes, position)
+
+        elif isinstance(validator, val.Any):
+            errors += self._validate_any(validator, data_item,
+                                         includes, position)
 
         return errors
 
@@ -126,6 +140,26 @@ class Schema(object):
 
         for key, validator in include_schema._schema.items():
             errors += include_schema._validate(validator, data, includes=includes, key=key, position=pos)
+
+        return errors
+
+    def _validate_any(self, validator, data, includes, pos):
+        errors = []
+
+        if not validator.validators:
+            errors.append('No validators specified for "any".')
+            return errors
+
+        sub_errors = []
+        for v in validator.validators:
+            err = self._validate_item(v, data, pos, includes)
+            if err:
+                sub_errors.append(err)
+
+        if len(sub_errors) == len(validator.validators):
+            # All validators failed, add to errors
+            for err in sub_errors:
+                errors += err
 
         return errors
 

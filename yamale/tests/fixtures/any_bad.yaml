@@ -1,0 +1,7 @@
+any_list:
+  - street: "Pennsylvania"
+    postal_code: 20500.0
+  - street: 100
+    postal_code: "SW1A 2AA"
+  - street: !!null
+    postal_code: 0

@@ -38,7 +38,13 @@ maps = {
     'good': 'map_good.yaml'
 }
 
-test_data = [types, nested, custom, keywords, lists, maps]
+anys = {
+    'schema': 'any.yaml',
+    'bad': 'any_bad.yaml',
+    'good': 'any_good.yaml'
+}
+
+test_data = [types, nested, custom, keywords, lists, maps, anys]
 
 for d in test_data:
     for key in d.keys():
@@ -74,7 +80,7 @@ def good_gen(data_map):
 
 
 def test_bad_validate():
-    assert count_exception_lines(types['schema'], types['bad']) == 9
+    assert count_exception_lines(types['schema'], types['bad']) == 10
 
 
 def test_bad_nested():
@@ -95,6 +101,10 @@ def test_bad_maps():
 
 def test_bad_keywords():
     assert count_exception_lines(keywords['schema'], keywords['bad']) == 10
+
+
+def test_bad_anys():
+    assert count_exception_lines(anys['schema'], anys['bad']) == 7
 
 
 def count_exception_lines(schema, data):
