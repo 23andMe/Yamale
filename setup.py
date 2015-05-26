@@ -1,7 +1,13 @@
 #!/usr/bin/env python
+import sys
+
 from setuptools import setup, find_packages, Command
 from subprocess import call
+
 import yamale
+
+PY2 = sys.version_info[0] == 2
+PY3 = sys.version_info[0] == 3
 
 
 class Tag(Command):
@@ -21,11 +27,12 @@ class Tag(Command):
         cmd = ['git', 'tag', yamale.__version__]
         call(cmd)
 
-
-with open('README.md') as f:
-    readme = f.read()
-with open('LICENSE') as f:
-    license = f.read()
+if PY2:
+    readme = open('README.md').read()
+    license = open('LICENSE').read()
+elif PY3:
+    readme = open('README.md', encoding='utf-8').read()
+    license = open('LICENSE', encoding='utf-8').read()
 
 setup(
     name='yamale',

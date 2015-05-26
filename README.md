@@ -323,7 +323,7 @@ questions: list(include('question'))
 variant:
   rsid: str()
   name: str()
-  
+
 question:
   choices: list(include('choices'))
   questions: list(include('question'), required=False)
