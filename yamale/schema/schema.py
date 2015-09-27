@@ -65,7 +65,7 @@ class Schema(object):
             position = key
 
         try:  # Pull value out of data. Data can be a map or a list/sequence
-            data_item = data[key]
+            data_item = util.get_value(data, key)
         except KeyError:  # Oops, that field didn't exist.
             if validator.is_optional:  # Optional? Who cares.
                 return errors

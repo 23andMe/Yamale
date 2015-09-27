@@ -1,4 +1,5 @@
 from collections import Mapping, Set, Sequence
+from operator import getitem
 
 # Python 3 has no basestring, lets test it.
 try:
@@ -9,6 +10,13 @@ try:
 except NameError:
     def isstr(s):
         return isinstance(s, str)
+
+# Python 3 has displaced reduce, lets test it.
+try:
+    reduce = reduce # attempt to evaluate reduce
+except NameError:
+    import functools
+    reduce = functools.reduce
 
 
 def flatten(dic, keep_iter=False, position=None):
@@ -34,6 +42,32 @@ def flatten(dic, keep_iter=False, position=None):
             child[item_position] = v
 
     return child
+
+
+def get_expanded_path(dic, key):
+    path = []
+    cur = dic
+    try:
+        keys = key.split('.')
+    except AttributeError:
+        keys = [key]
+    for k in keys[:-1]:
+        try:
+            cur = cur[k]
+            path.append(k)
+        except TypeError:
+            k = int(k)
+            cur = cur[k]
+            path.append(k)
+    return path, keys[-1]
+
+
+def get_value(dic, key):
+    path, last_key = get_expanded_path(dic, key)
+    try:
+        return reduce(getitem, path, dic)[last_key]
+    except TypeError:
+        return reduce(getitem, path, dic)[int(last_key)]
 
 
 def is_iter(obj):
