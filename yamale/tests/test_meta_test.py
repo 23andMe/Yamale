@@ -25,13 +25,22 @@ class TestBadYaml(YamaleTestCase):
         self.assertRaises(ValueError, self.validate)
 
 
-class TestListYaml(YamaleTestCase):
+class TestMapYaml(YamaleTestCase):
     base_dir = data_folder
     schema = 'meta_test_fixtures/schema.yaml'
     yaml = ['meta_test_fixtures/data_custom.yaml',
             'meta_test_fixtures/some_data.yaml',
             # Make sure  schema doesn't validate itself
             'meta_test_fixtures/schema.yaml']
+
+    def runTest(self):
+        self.assertTrue(self.validate())
+
+
+class TestListYaml(YamaleTestCase):
+    base_dir = data_folder
+    schema = 'meta_test_fixtures/schema_include_list.yaml'
+    yaml = ['meta_test_fixtures/data_include_list.yaml']
 
     def runTest(self):
         self.assertTrue(self.validate())

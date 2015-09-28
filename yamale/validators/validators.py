@@ -121,7 +121,7 @@ class Include(Validator):
         super(Include, self).__init__(*args, **kwargs)
 
     def _is_valid(self, value):
-        return isinstance(value, Mapping)
+        return isinstance(value, Mapping) or isinstance(value, Sequence)
 
     def get_name(self):
         return self.include_name
