@@ -37,13 +37,13 @@ class TestMapYaml(YamaleTestCase):
         self.assertTrue(self.validate())
 
 
-class TestListYaml(YamaleTestCase):
-    base_dir = data_folder
-    schema = 'meta_test_fixtures/schema_include_list.yaml'
-    yaml = ['meta_test_fixtures/data_include_list.yaml']
+# class TestListYaml(YamaleTestCase):
+#     base_dir = data_folder
+#     schema = 'meta_test_fixtures/schema_include_list.yaml'
+#     yaml = ['meta_test_fixtures/data_include_list.yaml']
 
-    def runTest(self):
-        self.assertTrue(self.validate())
+#     def runTest(self):
+#         self.assertTrue(self.validate())
 
 
 class Card(Validator):

@@ -1,31 +1,10 @@
 #!/usr/bin/env python
 import sys
 
-from setuptools import setup, find_packages, Command
-from subprocess import call
-
-import yamale
+from setuptools import setup, find_packages
 
 PY2 = sys.version_info[0] == 2
 PY3 = sys.version_info[0] == 3
-
-
-class Tag(Command):
-    """Commits a tag with the current version."""
-
-    description = 'commit a tag with the current version'
-
-    user_options = []
-
-    def initialize_options(self):
-        pass
-
-    def finalize_options(self):
-        pass
-
-    def run(self):
-        cmd = ['git', 'tag', yamale.__version__]
-        call(cmd)
 
 if PY2:
     readme = open('README.md').read()
@@ -36,7 +15,7 @@ elif PY3:
 
 setup(
     name='yamale',
-    version=yamale.__version__,
+    version='1.5.3',
     url='https://github.com/23andMe/Yamale',
     author='Bo Lopker',
     author_email='blopker@23andme.com',
@@ -56,8 +35,5 @@ setup(
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.4'
-    ],
-    cmdclass={
-        'tag': Tag,
-    },
+    ]
 )

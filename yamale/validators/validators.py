@@ -109,7 +109,7 @@ class List(Validator):
         self.validators = [val for val in args if isinstance(val, Validator)]
 
     def _is_valid(self, value):
-        return isinstance(value, (Set, Sequence)) and not isstr(value)
+        return isinstance(value, Sequence) and not isstr(value)
 
 
 class Include(Validator):
@@ -121,7 +121,7 @@ class Include(Validator):
         super(Include, self).__init__(*args, **kwargs)
 
     def _is_valid(self, value):
-        return isinstance(value, Mapping) or isinstance(value, Sequence)
+        return isinstance(value, (Mapping, Sequence)) and not isstr(value)
 
     def get_name(self):
         return self.include_name

@@ -44,7 +44,21 @@ anys = {
     'good': 'any_good.yaml'
 }
 
-test_data = [types, nested, custom, keywords, lists, maps, anys]
+list_include = {
+    'schema': 'list_include.yaml',
+    'good': 'list_include_good.yaml'
+}
+
+issue_22 = {
+    'schema': 'issue_22.yaml',
+    'good': 'issue_22_good.yaml'
+}
+
+test_data = [
+    types, nested, custom,
+    keywords, lists, maps,
+    anys, list_include, issue_22
+]
 
 for d in test_data:
     for key in d.keys():
