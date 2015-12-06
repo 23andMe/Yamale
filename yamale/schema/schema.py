@@ -1,5 +1,4 @@
-from .. import syntax
-from . import util
+from .. import syntax, util
 from .. import validators as val
 
 

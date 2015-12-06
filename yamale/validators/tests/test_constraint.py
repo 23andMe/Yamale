@@ -1,5 +1,5 @@
 import datetime
-from ... import validators as val
+from yamale import validators as val
 
 
 def test_length_min():
