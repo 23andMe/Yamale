@@ -1,18 +1,8 @@
-from collections import Set, Sequence, Mapping
+from collections import Sequence, Mapping
 from datetime import date, datetime
 from .base import Validator
 from . import constraints as con
-
-
-# Python 3 has no basestring, lets test it.
-try:
-    basestring  # attempt to evaluate basestring
-
-    def isstr(s):
-        return isinstance(s, basestring)
-except NameError:
-    def isstr(s):
-        return isinstance(s, str)
+from ..util import isstr
 
 
 class String(Validator):
