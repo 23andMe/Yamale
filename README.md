@@ -379,3 +379,12 @@ Developers
 ----------
 ### Testing
 Yamale uses [Tox](https://tox.readthedocs.org/en/latest/) to run its tests against multiple Python versions. To run tests, first checkout Yamale, install Tox, then run `make test` in the Yamale's root directory. You may also have to install the correct Python versions to test with as well.
+
+### Releasing
+Yamale uses Travis to upload new tags to PyPi.
+To release a new version:
+1. Make a commit with the new version in `setup.py`.
+2. Run `make test`.
+3. Push to `master`.
+4. Run `make release`.
+Travis will take care of the rest.
