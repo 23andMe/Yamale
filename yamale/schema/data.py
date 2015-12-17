@@ -1,4 +1,4 @@
-from . import util
+from .. import util
 
 
 class Data(dict):

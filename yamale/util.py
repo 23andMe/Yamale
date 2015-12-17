@@ -1,3 +1,4 @@
+import sys
 from collections import Mapping, Set, Sequence
 from operator import getitem
 from functools import reduce
@@ -86,3 +87,39 @@ def get_iter(iterable):
         return iterable.items()
     else:
         return enumerate(iterable)
+
+
+def get_subclasses(cls, _subclasses_yielded=None):
+    """
+    Generator recursively yielding all subclasses of the passed class (in
+    depth-first order).
+
+    Parameters
+    ----------
+    cls : type
+        Class to find all subclasses of.
+    _subclasses_yielded : set
+        Private parameter intended to be passed only by recursive invocations of
+        this function, containing all previously yielded classes.
+    """
+
+    if _subclasses_yielded is None:
+        _subclasses_yielded = set()
+
+    # If the passed class is old- rather than new-style, raise an exception.
+    if not hasattr(cls, '__subclasses__'):
+        raise TypeError('Old-style class "%s" unsupported.' % cls.__name__)
+
+    # For each direct subclass of this class
+    for subclass in cls.__subclasses__():
+        # If this subclass has already been yielded, skip to the next.
+        if subclass in _subclasses_yielded:
+            continue
+
+        # Yield this subclass and record having done so before recursing.
+        yield subclass
+        _subclasses_yielded.add(subclass)
+
+        # Yield all direct subclasses of this class as well.
+        for subclass_subclass in get_subclasses(subclass, _subclasses_yielded):
+            yield subclass_subclass

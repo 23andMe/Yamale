@@ -20,6 +20,10 @@ var/
 .installed.cfg
 *.egg
 
+# IDE dot directories
+.idea/
+.ropeproject/
+
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt

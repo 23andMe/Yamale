@@ -1,18 +1,8 @@
-from collections import Set, Sequence, Mapping
+from collections import Sequence, Mapping
 from datetime import date, datetime
 from .base import Validator
 from . import constraints as con
-
-
-# Python 3 has no basestring, lets test it.
-try:
-    basestring  # attempt to evaluate basestring
-
-    def isstr(s):
-        return isinstance(s, basestring)
-except NameError:
-    def isstr(s):
-        return isinstance(s, str)
+from .. import util
 
 
 class String(Validator):
@@ -21,7 +11,7 @@ class String(Validator):
     constraints = [con.LengthMin, con.LengthMax, con.CharacterExclude]
 
     def _is_valid(self, value):
-        return isstr(value)
+        return util.isstr(value)
 
 
 class Number(Validator):
@@ -109,7 +99,7 @@ class List(Validator):
         self.validators = [val for val in args if isinstance(val, Validator)]
 
     def _is_valid(self, value):
-        return isinstance(value, Sequence) and not isstr(value)
+        return isinstance(value, Sequence) and not util.isstr(value)
 
 
 class Include(Validator):
@@ -121,7 +111,7 @@ class Include(Validator):
         super(Include, self).__init__(*args, **kwargs)
 
     def _is_valid(self, value):
-        return isinstance(value, (Mapping, Sequence)) and not isstr(value)
+        return isinstance(value, (Mapping, Sequence)) and not util.isstr(value)
 
     def get_name(self):
         return self.include_name
@@ -150,7 +140,7 @@ class Null(Validator):
 
 DefaultValidators = {}
 
-for v in Validator.__subclasses__():
+for v in util.get_subclasses(Validator):
     # Allow validator nodes to contain either tags or actual name
     DefaultValidators[v.tag] = v
     DefaultValidators[v.__name__] = v

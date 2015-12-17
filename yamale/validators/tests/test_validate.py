@@ -1,5 +1,13 @@
 from datetime import date, datetime
-from ... import validators as val
+from yamale import validators as val
+
+
+def test_validator_defaults():
+    """
+    Unit test the dictionary of default validators.
+    """
+    assert val.DefaultValidators[val.String.tag] is val.String
+    assert val.DefaultValidators[val.Any.__name__] is val.Any
 
 
 def test_equality():

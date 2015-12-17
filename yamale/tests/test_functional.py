@@ -69,7 +69,7 @@ for d in test_data:
 
 
 def test_tests():
-    ''' Make sure the test runner is working.'''
+    """ Make sure the test runner is working."""
     assert 1 + 1 == 2
 
 

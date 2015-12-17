@@ -1,8 +1,8 @@
 from pytest import raises
 
 from .. import parser as par
-from ...validators.validators import (Validator, String, Number,
-                                      Integer, Boolean, List, Day, Timestamp)
+from yamale.validators.validators import (
+    Validator, String, Number, Integer, Boolean, List, Day, Timestamp)
 
 
 def test_eval():
