@@ -222,6 +222,32 @@ Examples:
 - `map()`: Validates any map
 - `map(str(), int())`: Only validates maps whose children are strings or integers.
 
+### Pathname - `pathname()`
+Validates pathnames. Valid pathnames are non-empty strings containing only valid
+pathname characters for the current OS (e.g., not `:` on Windows, not the null
+byte on UNIX-like OSes). Valid pathnames do _not_ need to actually exist.
+
+### Path - `path()`
+Validates existing paths. Valid existing paths are valid pathnames (see above)
+of either existing files or directories to which the current user has
+`os.stat()` permissions _before_ following symbolic links. Relative paths are
+relative to the current working directory (CWD) rather than the parent directory
+of the current YAML data or schema files. Existing **dangling symbolic links**
+(i.e., existing symbolic links whose targets do _not_ currently exist) are
+always valid existing paths on POSIX-compatible OSes.
+
+### File - `file()`
+Validates existing files. Valid existing files are valid pathnames (see above)
+of strictly **regular files** (i.e., files that are _not_ special, which
+includes directories, dangling symbolic links, device nodes, named pipes, and
+sockets) to which the current user has `os.stat()` permissions _after_ following
+symbolic links on the current filesystem.
+
+### Directory - `dir()`
+Validates existing directories. Valid existing directories are valid pathnames
+(see above) of existing directories to which the current user has `os.stat()`
+permissions _after_ following symbolic links on the current filesystem.
+
 ### Any - `any([validators])`
 Validates against a union of types. Use when a node can contain one of several types. It is valid if at least one of the listed validators is valid.
 - arguments: one or more validators to test values with

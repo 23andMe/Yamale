@@ -1,3 +1,4 @@
+import sys
 from collections import Mapping, Set, Sequence
 from operator import getitem
 from functools import reduce
@@ -67,6 +68,14 @@ def get_value(dic, key):
         return reduce(getitem, path, dic)[int(last_key)]
 
 
+def is_os_windows_vanilla():
+    '''
+    `True` if the current operating system is **vanilla Microsoft Windows**
+    (i.e., _not_ running the Cygwin POSIX-compatibility layer).
+    '''
+    return sys.platform == 'win32'
+
+
 def is_iter(obj):
     # Strings are not iterables for our use case.
     if isstr(obj):
@@ -86,3 +95,43 @@ def get_iter(iterable):
         return iterable.items()
     else:
         return enumerate(iterable)
+
+
+def get_subclasses(cls, _subclasses_yielded=None):
+    '''
+    Generator recursively yielding all subclasses of the passed class (in
+    depth-first order).
+
+    Parameters
+    ----------
+    cls : type
+        Class to find all subclasses of.
+    _subclasses_yielded : set
+        Private parameter intended to be passed only by recursive invocations of
+        this function, containing all previously yielded subclasses.
+    '''
+
+    # If the passed class is old- rather than new-style, raise an exception.
+    if not hasattr(cls, '__subclasses__'):
+        raise TypeError('Old-style class "%s" unsupported.' % cls.__name__)
+
+    # Default the passed set of all previously yielded subclasses if needed.
+    if _subclasses_yielded is None:
+        _subclasses_yielded = set()
+
+    # For each direct subclass of the passed class...
+    for subclass in cls.__subclasses__():
+        # If this subclass has already been yielded, skip to the next.
+        if subclass in _subclasses_yielded:
+            continue
+
+        # Yield this subclass and record having done so *BEFORE* recursing.
+        yield subclass
+        _subclasses_yielded.add(subclass)
+
+        # Yield all direct subclasses of this class as well. In Python >= 3.3,
+        # this would have reduced to the following one-liner:
+        #     yield from get_subclasses(subclass, _subclasses_yielded)
+        for subclass_subclass in get_subclasses(
+            subclass, _subclasses_yielded):
+            yield subclass_subclass
