@@ -4,7 +4,7 @@ Yamale (ya·ma·lē)
 
 A schema and validator for YAML.
 
-What's YAML? See the current spec [here](http://www.yaml.org/spec/1.2/spec.html).
+What's YAML? See the current spec [here](http://www.yaml.org/spec/1.2/spec.html) and an introduction to the syntax [here] (https://github.com/Animosity/CraftIRC/wiki/Complete-idiot's-introduction-to-yaml).
 
 [![Build Status](https://travis-ci.org/23andMe/Yamale.svg?branch=master)](https://travis-ci.org/23andMe/Yamale)
 [![PyPI](https://img.shields.io/pypi/v/yamale.svg)](https://pypi.python.org/pypi/yamale)
