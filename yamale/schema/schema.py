@@ -138,7 +138,6 @@ class Schema(object):
             return errors
 
         for key, validator in include_schema._schema.items():
-            print(key, validator)
             errors += include_schema._validate(validator, data, includes=includes, key=key, position=pos)
 
         return errors
