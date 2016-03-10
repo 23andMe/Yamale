@@ -25,7 +25,7 @@ def make_data(path):
     return [Data(d, path) for d in raw_data]
 
 
-def validate(schema, data):
+def validate(schema, data, silent=True):
     for d in data:
-        schema.validate(d)
+        schema.validate(d, silent=silent)
     return data

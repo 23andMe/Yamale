@@ -36,18 +36,18 @@ class Schema(object):
                 raise SyntaxError(str(e) + ' at node \'%s\' in file %s' % (key, self.name))
         return schema_flat
 
-    def validate(self, data):
+    def validate(self, data, silent=True):
         errors = []
 
         for key, validator in self._schema.items():
-            errors += self._validate(validator, data, key=key, includes=self.includes)
+            errors += self._validate(validator, data, key=key, includes=self.includes, silent=silent)
 
         if errors:
             header = '\nError validating data %s with schema %s' % (data.name, self.name)
             error_str = '\n\t' + '\n\t'.join(errors)
             raise ValueError(header + error_str)
 
-    def _validate(self, validator, data, key, position=None, includes=None):
+    def _validate(self, validator, data, key, position=None, includes=None, silent=True):
         """
         Run through a schema and a data structure,
         validating along the way.
@@ -72,9 +72,9 @@ class Schema(object):
             errors.append('%s: Required field missing' % position)
             return errors
 
-        return self._validate_item(validator, data_item, position, includes)
+        return self._validate_item(validator, data_item, position, includes, silent=silent)
 
-    def _validate_item(self, validator, data_item, position, includes):
+    def _validate_item(self, validator, data_item, position, includes, silent=True):
         """
         Validates a single data item against validator.
 
@@ -92,19 +92,19 @@ class Schema(object):
 
         if isinstance(validator, val.Include):
             errors += self._validate_include(validator, data_item,
-                                             includes, position)
+                                             includes, position, silent=silent)
 
         elif isinstance(validator, (val.Map, val.List)):
             errors += self._validate_map_list(validator, data_item,
-                                              includes, position)
+                                              includes, position, silent=silent)
 
         elif isinstance(validator, val.Any):
             errors += self._validate_any(validator, data_item,
-                                         includes, position)
+                                         includes, position, silent=silent)
 
         return errors
 
-    def _validate_map_list(self, validator, data, includes, pos):
+    def _validate_map_list(self, validator, data, includes, pos, silent=True):
         errors = []
 
         if not validator.validators:
@@ -118,7 +118,7 @@ class Schema(object):
         for key in keys:
             sub_errors = []
             for v in validator.validators:
-                err = self._validate(v, data, key, pos, includes)
+                err = self._validate(v, data, key, pos, includes, silent=silent)
                 if err:
                     sub_errors.append(err)
 
@@ -129,7 +129,7 @@ class Schema(object):
 
         return errors
 
-    def _validate_include(self, validator, data, includes, pos):
+    def _validate_include(self, validator, data, includes, pos, silent=True):
         errors = []
 
         include_schema = includes.get(validator.include_name)
@@ -138,12 +138,13 @@ class Schema(object):
             return errors
 
         for key, validator in include_schema._schema.items():
-            print(key, validator)
-            errors += include_schema._validate(validator, data, includes=includes, key=key, position=pos)
+            if not silent:
+                print(key, validator)
+            errors += include_schema._validate(validator, data, includes=includes, key=key, position=pos, silent=silent)
 
         return errors
 
-    def _validate_any(self, validator, data, includes, pos):
+    def _validate_any(self, validator, data, includes, pos, silent=True):
         errors = []
 
         if not validator.validators:
@@ -152,7 +153,7 @@ class Schema(object):
 
         sub_errors = []
         for v in validator.validators:
-            err = self._validate_item(v, data, pos, includes)
+            err = self._validate_item(v, data, pos, includes, silent=silent)
             if err:
                 sub_errors.append(err)
 
