@@ -1,5 +1,6 @@
-from . import get_fixture
+import pytest
 import yamale
+from . import get_fixture
 from .. import validators as val
 
 types = {
@@ -84,12 +85,8 @@ def test_nested_schema():
     assert isinstance(nested_schema['list.0'], val.String)
 
 
-def test_good():
-    for data_map in test_data:
-        yield good_gen, data_map
-
-
-def good_gen(data_map):
+@pytest.mark.parametrize('data_map', test_data)
+def test_good(data_map):
     yamale.validate(data_map['schema'], data_map['good'])
 
 
