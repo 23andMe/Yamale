@@ -28,7 +28,30 @@ $ pip install yamale
 
 Usage
 -----
-### Validating
+### Command line
+Yamale can be run from the command line to validate one or many YAML files. Yamale will search the directory you supply (current directory is default) for YAML files.
+Each YAML file it finds it will look in the same directory as that file for its schema, if there is no schema Yamale will keep looking up the directory tree until it finds one.
+If Yamale can not find a schema it will tell you.
+
+Usage:
+
+```bash
+usage: yamale [-h] [-s SCHEMA] [-n CPU_NUM] [PATH]
+
+Validate yaml files.
+
+positional arguments:
+  PATH                  folder to validate. Default is current directory.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -s SCHEMA, --schema SCHEMA
+                        filename of schema. Default is schema.yaml.
+  -n CPU_NUM, --cpu-num CPU_NUM
+                        number of CPUs to use. Default is 4.
+```
+
+### API
 There are several ways to feed Yamale schema and data files. The simplest way is to let Yamale take care of reading and parsing your YAML files.
 
 All you need to do is supply the files' path:

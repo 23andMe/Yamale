@@ -15,7 +15,7 @@ elif PY3:
 
 setup(
     name='yamale',
-    version='1.5.6',
+    version='1.6.0',
     url='https://github.com/23andMe/Yamale',
     author='Bo Lopker',
     author_email='blopker@23andme.com',
@@ -25,6 +25,9 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=['pyyaml'],
+    entry_points={
+        'console_scripts': ['yamale=yamale.command_line:main'],
+    },
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
