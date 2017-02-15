@@ -1,6 +1,13 @@
 from .. import syntax, util
 from .. import validators as val
 
+# Fix Python 2.x.
+try:
+    PY2 = True
+    bool(type(unicode))
+except NameError:
+    PY2 = False
+
 
 class Schema(object):
     """
@@ -44,8 +51,10 @@ class Schema(object):
 
         if errors:
             header = '\nError validating data %s with schema %s' % (data.name, self.name)
-            error_str = '\n\t' + '\n\t'.join(errors)
-            raise ValueError(header + error_str)
+            error_str = header + '\n\t' + '\n\t'.join(errors)
+            if PY2:
+                error_str = error_str.encode('utf-8')
+            raise ValueError(error_str)
 
     def _validate(self, validator, data, key, position=None, includes=None):
         """
