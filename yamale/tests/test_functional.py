@@ -123,6 +123,12 @@ def test_bad_anys():
     assert count_exception_lines(anys['schema'], anys['bad']) == 7
 
 
+def test_bad_schema():
+    with pytest.raises(SyntaxError) as excinfo:
+        yamale.make_schema(get_fixture('bad_schema.yaml'))
+    assert 'fixtures/bad_schema.yaml' in str(excinfo.value)
+
+
 def count_exception_lines(schema, data):
     try:
         yamale.validate(schema, data)

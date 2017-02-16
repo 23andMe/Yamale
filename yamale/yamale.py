@@ -2,6 +2,13 @@
 from .schema import Schema
 from .schema import Data
 
+# Fix Python 2.x.
+try:
+    PY2 = True
+    bool(type(unicode))
+except NameError:
+    PY2 = False
+
 
 def make_schema(path, validators=None):
     # validators = None means use default.
@@ -10,11 +17,17 @@ def make_schema(path, validators=None):
     raw_schemas = readers.parse_file(path)
 
     # First document is the base schema
-    s = Schema(raw_schemas[0], path, validators=validators)
-
-    # Additional documents contain Includes.
-    for raw_schema in raw_schemas[1:]:
-        s.add_include(raw_schema)
+    try:
+        s = Schema(raw_schemas[0], path, validators=validators)
+        # Additional documents contain Includes.
+        for raw_schema in raw_schemas[1:]:
+            s.add_include(raw_schema)
+    except (TypeError, SyntaxError) as e:
+        error = 'Schema error in file %s\n' % path
+        error += str(e)
+        if PY2:
+            error.encode('utf-8')
+        raise SyntaxError(error)
 
     return s
 

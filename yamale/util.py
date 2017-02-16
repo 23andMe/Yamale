@@ -20,6 +20,8 @@ def flatten(dic, keep_iter=False, position=None):
     `keep_iter` will treat iterables as valid values, while also flattening them.
     """
     child = {}
+    if not dic:
+        return {}
 
     for k, v in get_iter(dic):
         if isstr(k):

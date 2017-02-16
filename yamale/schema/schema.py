@@ -35,12 +35,14 @@ class Schema(object):
         Go through a schema and construct validators.
         """
         schema_flat = util.flatten(schema_dict)
+
         for key, expression in schema_flat.items():
             try:
                 schema_flat[key] = syntax.parse(expression, validators)
             except SyntaxError as e:
                 # Tack on some more context and rethrow.
-                raise SyntaxError(str(e) + ' at node \'%s\' in file %s' % (key, self.name))
+                error = str(e) + ' at node \'%s\'' % key
+                raise SyntaxError(error)
         return schema_flat
 
     def validate(self, data):
