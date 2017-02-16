@@ -1,12 +1,9 @@
+import sys
 from .. import syntax, util
 from .. import validators as val
 
 # Fix Python 2.x.
-try:
-    PY2 = True
-    bool(type(unicode))
-except NameError:
-    PY2 = False
+PY2 = sys.version_info[0] == 2
 
 
 class Schema(object):

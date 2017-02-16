@@ -1,13 +1,9 @@
 #!/usr/bin/env python
+import sys
 from .schema import Schema
 from .schema import Data
 
-# Fix Python 2.x.
-try:
-    PY2 = True
-    bool(type(unicode))
-except NameError:
-    PY2 = False
+PY2 = sys.version_info[0] == 2
 
 
 def make_schema(path, validators=None):

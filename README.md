@@ -408,8 +408,6 @@ Yamale uses Travis to upload new tags to PyPi.
 To release a new version:
 
 1. Make a commit with the new version in `setup.py`.
-2. Run `make test`.
-3. Push to `master`.
-4. Run `make release`.
+2. Run `make release`.
 
 Travis will take care of the rest.
