@@ -27,34 +27,35 @@ def _validate(schema_path, data_path):
     yamale.validate(schema, data)
 
 
+def _find_data_path_schema(data_path, schema_name):
+    """ Starts in the data file folder and recursively looks
+    in parents for `schema_name` """
+    if not data_path or data_path == '/' or data_path == '.':
+        return None
+    directory = os.path.dirname(data_path)
+    path = glob.glob(os.path.join(directory, schema_name))
+    if not path:
+        return _find_schema(directory, schema_name)
+    return path[0]
+
+
 def _find_schema(data_path, schema_name):
-    '''Find if the schema file exists. If not, look for all files
-    that match the expression of "schema_name" and if no file is
-    found try the same in data_path directory. Only the first file
-    is returned. 
-    
-    Return a valid path or raise error if no file is found.'''
+    """ Checks if `schema_name` is a valid file, if not
+    searches in `data_path` for it. """
 
-    if os.path.isfile(schema_name):
-        return schema_name
-    else:
-        path = glob.glob(schema_name)
-        if len(path) == 0:
-            if data_path and data_path != '/' and data_path != '.':
-                directory = os.path.dirname(data_path)
-                path = glob.glob(os.path.join(directory, schema_name))
-        
-        if len(path) > 0:
-            path = [ p for p in path if os.path.isfile(p)][0]
-        else:
-            raise ValueError("Invalid schema name for '{}' or schema not found.".format(schema_name))
+    path = glob.glob(schema_name)
+    for p in path:
+        if os.path.isfile(p):
+            return p
 
-    return path
+    return _find_data_path_schema(data_path, schema_name)
 
 
 def _validate_single(yaml_path, schema_name):
     print('Validating %s...' % yaml_path)
     s = _find_schema(yaml_path, schema_name)
+    if not s:
+        raise ValueError("Invalid schema name for '{}' or schema not found.".format(schema_name))
     _validate(s, yaml_path)
 
 
@@ -64,7 +65,7 @@ def _validate_dir(root, schema_name, cpus):
     print('Finding yaml files...')
     for root, dirs, files in os.walk(root):
         for f in files:
-            if f.endswith('.yaml') or f.endswith('.yml') and f != schema_name:
+            if (f.endswith('.yaml') or f.endswith('.yml')) and f != schema_name:
                 d = os.path.join(root, f)
                 s = _find_schema(d, schema_name)
                 if s:
@@ -82,7 +83,7 @@ def _validate_dir(root, schema_name, cpus):
 
 def _router(root, schema_name, cpus):
     root = os.path.abspath(root)
-    if root.endswith('.yaml') or root.endswith('.yml'):
+    if os.path.isfile(root):
         _validate_single(root, schema_name)
     else:
         _validate_dir(root, schema_name, cpus)
