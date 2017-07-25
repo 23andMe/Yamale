@@ -1,30 +1,35 @@
+import pytest
 from .. import yaml_reader
 from yamale.tests import get_fixture
 
-
+parsers = ['pyyaml', 'PyYAML', 'ruamel']
 TYPES = get_fixture('types.yaml')
 NESTED = get_fixture('nested.yaml')
 KEYWORDS = get_fixture('keywords.yaml')
 
 
-def test_parse():
-    a = yaml_reader.parse_file(TYPES, 'PyYAML')[0]
+@pytest.mark.parametrize('parser', parsers)
+def test_parse(parser):
+    a = yaml_reader.parse_file(TYPES, parser)[0]
     assert a['string'] == 'str()'
 
 
-def test_types():
-    t = yaml_reader.parse_file(TYPES, 'PyYAML')[0]
+@pytest.mark.parametrize('parser', parsers)
+def test_types(parser):
+    t = yaml_reader.parse_file(TYPES, parser)[0]
     assert t['string'] == 'str()'
     assert t['number'] == 'num()'
     assert t['boolean'] == 'bool()'
     assert t['integer'] == 'int()'
 
 
-def test_keywords():
-    t = yaml_reader.parse_file(KEYWORDS, 'PyYAML')[0]
+@pytest.mark.parametrize('parser', parsers)
+def test_keywords(parser):
+    t = yaml_reader.parse_file(KEYWORDS, parser)[0]
     assert t['optional_min'] == 'int(min=1, required=False)'
 
 
-def test_nested():
-    t = yaml_reader.parse_file(NESTED, 'PyYAML')[0]
+@pytest.mark.parametrize('parser', parsers)
+def test_nested(parser):
+    t = yaml_reader.parse_file(NESTED, parser)[0]
     assert t['list'][-1]['string'] == 'str()'
