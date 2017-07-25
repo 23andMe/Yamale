@@ -6,11 +6,11 @@ from .schema import Data
 PY2 = sys.version_info[0] == 2
 
 
-def make_schema(path, validators=None):
+def make_schema(path, parser='PyYAML', validators=None):
     # validators = None means use default.
     # Import readers here so we can get version information in setup.py.
     from . import readers
-    raw_schemas = readers.parse_file(path)
+    raw_schemas = readers.parse_file(path, parser)
 
     # First document is the base schema
     try:
@@ -28,9 +28,9 @@ def make_schema(path, validators=None):
     return s
 
 
-def make_data(path):
+def make_data(path, parser='PyYAML'):
     from . import readers
-    raw_data = readers.parse_file(path)
+    raw_data = readers.parse_file(path, parser)
     return [Data(d, path) for d in raw_data]
 
 
