@@ -8,7 +8,7 @@ def test_bad_yaml():
     try:
         command_line._router(
             'yamale/tests/command_line_fixtures/yamls/bad.yaml',
-            'schema.yaml', 1)
+            'schema.yaml', 1, 'PyYAML')
     except ValueError as e:
         assert 'map.bad: \'12.5\' is not a str.' in str(e)
         return
@@ -18,32 +18,32 @@ def test_bad_yaml():
 def test_good_yaml():
     command_line._router(
         'yamale/tests/command_line_fixtures/yamls/good.yaml',
-        'schema.yaml', 1)
+        'schema.yaml', 1, 'PyYAML')
 
 
 def test_good_relative_yaml():
     command_line._router(
         'yamale/tests/command_line_fixtures/yamls/good.yaml',
-        '../schema_dir/external.yaml', 1)
+        '../schema_dir/external.yaml', 1, 'PyYAML')
 
 
 def test_external_glob_schema():
     command_line._router(
         'yamale/tests/command_line_fixtures/yamls/good.yaml',
-        os.path.join(dir_path, 'command_line_fixtures/schema_dir/ex*.yaml'), 1)
+        os.path.join(dir_path, 'command_line_fixtures/schema_dir/ex*.yaml'), 1, 'PyYAML')
 
 
 def test_external_schema():
     command_line._router(
         'yamale/tests/command_line_fixtures/yamls/good.yaml',
-        os.path.join(dir_path, 'command_line_fixtures/schema_dir/external.yaml'), 1)
+        os.path.join(dir_path, 'command_line_fixtures/schema_dir/external.yaml'), 1, 'PyYAML')
 
 
 def test_bad_dir():
     try:
         command_line._router(
             'yamale/tests/command_line_fixtures/yamls',
-            'schema.yaml', 4)
+            'schema.yaml', 4, 'PyYAML')
     except ValueError as e:
         assert 'map.bad: \'12.5\' is not a str.' in str(e)
         return
