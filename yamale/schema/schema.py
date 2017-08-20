@@ -17,12 +17,25 @@ class Schema(object):
         self.name = name
         self._schema = self._process_schema(schema_dict, self.validators)
         self.includes = {}
+        self.custom_validators = {}
 
     def add_include(self, type_dict):
         for include_name, custom_type in type_dict.items():
-            t = Schema(custom_type, name=include_name,
-                       validators=self.validators)
-            self.includes[include_name] = t
+            # print(include_name, custom_type)
+            # t = Schema(custom_type, name=include_name,
+            #            validators=self.validators)
+            # self.includes[include_name] = t
+            if isinstance(custom_type, str): # The custom_type is a validator
+                try:
+                    self.custom_validators[include_name] = syntax.parse(custom_type, self.validators)
+                except SyntaxError as e:
+                    # Tack on some more context and rethrow.
+                    error = str(e) + ' at node \'%s\'' % key
+                    raise SyntaxError(error)
+            else:
+                t = Schema(custom_type, name=include_name,
+                           validators=self.validators)
+                self.includes[include_name] = t
 
     def __getitem__(self, key):
         return self._schema[key]
@@ -46,7 +59,7 @@ class Schema(object):
         errors = []
 
         for key, validator in self._schema.items():
-            errors += self._validate(validator, data, key=key, includes=self.includes)
+            errors += self._validate(validator, data, key=key, includes=self.includes, custom_validators=self.custom_validators)
 
         if errors:
             header = '\nError validating data %s with schema %s' % (data.name, self.name)
@@ -55,7 +68,7 @@ class Schema(object):
                 error_str = error_str.encode('utf-8')
             raise ValueError(error_str)
 
-    def _validate(self, validator, data, key, position=None, includes=None):
+    def _validate(self, validator, data, key, position=None, includes=None, custom_validators=None):
         """
         Run through a schema and a data structure,
         validating along the way.
@@ -80,9 +93,9 @@ class Schema(object):
             errors.append('%s: Required field missing' % position)
             return errors
 
-        return self._validate_item(validator, data_item, position, includes)
+        return self._validate_item(validator, data_item, position, includes, custom_validators)
 
-    def _validate_item(self, validator, data_item, position, includes):
+    def _validate_item(self, validator, data_item, position, includes, custom_validators):
         """
         Validates a single data item against validator.
 
@@ -95,24 +108,25 @@ class Schema(object):
 
         errors += self._validate_primitive(validator, data_item, position)
 
+
         if errors:
             return errors
 
         if isinstance(validator, val.Include):
             errors += self._validate_include(validator, data_item,
-                                             includes, position)
+                                             includes, custom_validators, position)
 
         elif isinstance(validator, (val.Map, val.List)):
             errors += self._validate_map_list(validator, data_item,
-                                              includes, position)
+                                              includes, custom_validators, position)
 
         elif isinstance(validator, val.Any):
             errors += self._validate_any(validator, data_item,
-                                         includes, position)
+                                         includes, custom_validators, position)
 
         return errors
 
-    def _validate_map_list(self, validator, data, includes, pos):
+    def _validate_map_list(self, validator, data, includes, custom_validators, pos):
         errors = []
 
         if not validator.validators:
@@ -126,7 +140,7 @@ class Schema(object):
         for key in keys:
             sub_errors = []
             for v in validator.validators:
-                err = self._validate(v, data, key, pos, includes)
+                err = self._validate(v, data, key, pos, includes, custom_validators)
                 if err:
                     sub_errors.append(err)
 
@@ -137,20 +151,24 @@ class Schema(object):
 
         return errors
 
-    def _validate_include(self, validator, data, includes, pos):
+    def _validate_include(self, validator, data, includes, custom_validators, pos):
         errors = []
 
         include_schema = includes.get(validator.include_name)
-        if not include_schema:
-            errors.append('Include \'%s\' has not been defined.' % validator.include_name)
-            return errors
-
-        for key, validator in include_schema._schema.items():
-            errors += include_schema._validate(validator, data, includes=includes, key=key, position=pos)
+        if include_schema:
+            for key, validator in include_schema._schema.items():
+                errors += include_schema._validate(validator, data, includes=includes, key=key, position=pos)
+        else:
+            # The included object may be a custom validator
+            include_validator = custom_validators.get(validator.include_name)
+            if not include_validator:
+                errors.append('Include \'%s\' has not been defined.' % validator.include_name)
+                return errors
+            errors += self._validate_primitive(include_validator, data, pos)
 
         return errors
 
-    def _validate_any(self, validator, data, includes, pos):
+    def _validate_any(self, validator, data, includes, custom_validators, pos):
         errors = []
 
         if not validator.validators:
@@ -159,7 +177,7 @@ class Schema(object):
 
         sub_errors = []
         for v in validator.validators:
-            err = self._validate_item(v, data, pos, includes)
+            err = self._validate_item(v, data, pos, includes, custom_validators)
             if err:
                 sub_errors.append(err)
 
