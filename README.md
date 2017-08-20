@@ -13,6 +13,8 @@ Requirements
 ------------
 * Python 2.7+
 * Python 3.4+ (Only tested on 3.4, may work on older versions)
+* PyYAML
+* ruamel.yaml (optional)
 
 Install
 -------
@@ -36,7 +38,7 @@ If Yamale can not find a schema it will tell you.
 Usage:
 
 ```bash
-usage: yamale [-h] [-s SCHEMA] [-n CPU_NUM] [PATH]
+usage: yamale [-h] [-s SCHEMA] [-n CPU_NUM] [-p PARSER] [PATH]
 
 Validate yaml files.
 
@@ -49,6 +51,9 @@ optional arguments:
                         filename of schema. Default is schema.yaml.
   -n CPU_NUM, --cpu-num CPU_NUM
                         number of CPUs to use. Default is 4.
+  -p PARSER, --parser PARSER
+                        YAML library to load files. Choices are "ruamel" or
+                        "pyyaml" (default).
 ```
 
 ### API
@@ -68,6 +73,19 @@ yamale.validate(schema, data)
 ```
 
 If `data` is valid, nothing will happen. However, if `data` is invalid Yamale will throw a `ValueError` with a message containing all the invalid nodes.
+
+You can also specifiy an optional `parser` if you'd like to use the `ruamel.yaml` (YAML 1.2 support) instead:
+```python
+# Import Yamale and make a schema object, make sure ruamel.yaml is installed already.
+import yamale
+schema = yamale.make_schema('./schema.yaml', parser='ruamel')
+
+# Create a Data object
+data = yamale.make_data('./data.yaml', parser='ruamel')
+
+# Validate data against the schema same as before.
+yamale.validate(schema, data)
+```
 
 ### Schema
 To use Yamale you must make a schema. A schema is a valid YAML file with one or more documents inside. Each node terminates in a string which contains valid Yamale syntax. For example, `str()` represents a [String validator](#validators).

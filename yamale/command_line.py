@@ -9,6 +9,7 @@
 """
 
 import argparse
+import traceback
 import glob
 import os
 from multiprocessing import Pool
@@ -20,11 +21,19 @@ schemas = {}
 
 def _validate(schema_path, data_path, parser):
     schema = schemas.get(schema_path)
-    if not schema:
-        schema = yamale.make_schema(schema_path, parser)
-        schemas[schema_path] = schema
-    data = yamale.make_data(data_path, parser)
-    yamale.validate(schema, data)
+    try:
+        if not schema:
+            schema = yamale.make_schema(schema_path, parser)
+            schemas[schema_path] = schema
+        data = yamale.make_data(data_path, parser)
+        yamale.validate(schema, data)
+    except Exception as e:
+        error = '\nError!\n'
+        error += 'Schema: %s\n' % schema_path
+        error += 'Data file: %s\n' % data_path
+        error += traceback.format_exc()
+        print(error)
+        raise ValueError('Validation failed!')
 
 
 def _find_data_path_schema(data_path, schema_name):
@@ -97,8 +106,8 @@ def main():
                         help='filename of schema. Default is schema.yaml.')
     parser.add_argument('-n', '--cpu-num', default=4, type=int,
                         help='number of CPUs to use. Default is 4.')
-    parser.add_argument('-p', '--parser', default='PyYAML',
-                        help='YAML library to load files. Choices are "ruamel" or "PyYAML" (default).')
+    parser.add_argument('-p', '--parser', default='pyyaml',
+                        help='YAML library to load files. Choices are "ruamel" or "pyyaml" (default).')
     args = parser.parse_args()
     _router(args.path, args.schema, args.cpu_num, args.parser)
     print('Validation success! 👍')
