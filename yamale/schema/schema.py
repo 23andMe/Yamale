@@ -21,11 +21,9 @@ class Schema(object):
 
     def add_include(self, type_dict):
         for include_name, custom_type in type_dict.items():
-            # print(include_name, custom_type)
-            # t = Schema(custom_type, name=include_name,
-            #            validators=self.validators)
-            # self.includes[include_name] = t
-            if isinstance(custom_type, str): # The custom_type is a validator
+            if custom_type==None:
+                raise SyntaxError('{}: no custom type or validator found\nThis error may be caused by the use of tabulations'.format(include_name))
+            if isinstance(custom_type, str): # custom_type is a validator
                 try:
                     self.custom_validators[include_name] = syntax.parse(custom_type, self.validators)
                 except SyntaxError as e:
@@ -107,8 +105,7 @@ class Schema(object):
             return errors
 
         errors += self._validate_primitive(validator, data_item, position)
-
-
+        
         if errors:
             return errors
 
@@ -155,16 +152,16 @@ class Schema(object):
         errors = []
 
         include_schema = includes.get(validator.include_name)
-        if include_schema:
-            for key, validator in include_schema._schema.items():
-                errors += include_schema._validate(validator, data, includes=includes, key=key, position=pos)
-        else:
+        if not include_schema:
             # The included object may be a custom validator
             include_validator = custom_validators.get(validator.include_name)
             if not include_validator:
                 errors.append('Include \'%s\' has not been defined.' % validator.include_name)
                 return errors
             errors += self._validate_primitive(include_validator, data, pos)
+        else:
+            for key, validator in include_schema._schema.items():
+                errors += include_schema._validate(validator, data, key, position=pos, includes=includes, custom_validators=custom_validators)
 
         return errors
 
@@ -189,6 +186,9 @@ class Schema(object):
         return errors
 
     def _validate_primitive(self, validator, data, pos):
+        if isinstance(validator, val.Include):
+            if validator.args[0] in self.custom_validators.keys(): # The included object is a validator
+                return []
         errors = validator.validate(data)
 
         for i, error in enumerate(errors):

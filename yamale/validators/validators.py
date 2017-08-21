@@ -111,9 +111,7 @@ class Include(Validator):
         super(Include, self).__init__(*args, **kwargs)
 
     def _is_valid(self, value):
-        # return isinstance(value, (Mapping, Sequence)) and not util.isstr(value)
-        return not util.isstr(value)
-        # return True # Since an include can be a custom validator, "value" is valid whatever its instance
+        return isinstance(value, (Mapping, Sequence)) and not util.isstr(value)
 
     def get_name(self):
         return self.include_name
