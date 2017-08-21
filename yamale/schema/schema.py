@@ -104,7 +104,12 @@ class Schema(object):
         if data_item is None and validator.is_optional:  # Optional? Who cares.
             return errors
 
-        errors += self._validate_primitive(validator, data_item, position)
+        if isinstance(validator, val.Include):
+            # If validator.args[0] is a customized validator we don't try to validate data_item as a primitive type
+            if not validator.args[0] in custom_validators.keys():
+                errors += self._validate_primitive(validator, data_item, position)
+        else:
+            errors += self._validate_primitive(validator, data_item, position) 
 
         if errors:
             return errors
@@ -137,14 +142,17 @@ class Schema(object):
         for key in keys:
             sub_errors = []
             for v in validator.validators:
-                if isinstance(v, val.Include): # Include validator
+                if isinstance(v, val.Include):
+                    # If the included object is a node then data[key] should be a dict
                     if not v.args[0] in custom_validators.keys() and isinstance(data[key], dict):
                         err = self._validate(v, data, key, includes=includes, custom_validators=custom_validators, position=pos)
+                    # We treat the case where the included object is a validator separately
                     elif v.args[0] in custom_validators.keys():
                         err = self._validate(custom_validators[v.args[0]], data, key, includes=includes, custom_validators=custom_validators, position=pos)
+                    # If the validator could not validate the data we create an error
                     else:
                         err = ["{}.{}: '{}' is not a {}".format(pos, key, data[key], v.args[0])]
-                    
+
                 else:
                     err = self._validate(v, data, key, includes=includes, custom_validators=custom_validators, position=pos)
                 if err:
@@ -162,7 +170,7 @@ class Schema(object):
 
         include_schema = includes.get(validator.include_name)
         if not include_schema:
-            # The included object may be a custom validator
+            # The included object may be a customized validator
             include_validator = custom_validators.get(validator.include_name)
             if not include_validator:
                 errors.append('Include \'%s\' has not been defined.' % validator.include_name)
@@ -183,14 +191,17 @@ class Schema(object):
 
         sub_errors = []
         for v in validator.validators:
-            if isinstance(v, val.Include): # Included validator or node
+            if isinstance(v, val.Include):
+                # If the included object is a node then data should be a dict
                 if not v.args[0] in custom_validators.keys() and isinstance(data, dict):
                     err = self._validate_item(v, data, includes, custom_validators, pos)
+                # We treat the case where the included object is a validator separately
                 elif v.args[0] in custom_validators.keys():
                     err = self._validate_item(custom_validators[v.args[0]], data, includes, custom_validators, pos)
+                # If the validator could not validate the data we create an error
                 else:
                     err = ["{}: '{}' is not a {}".format(pos, data, v.args[0])]
-                    
+
             else:
                 err = self._validate_item(v, data, includes, custom_validators, pos)
             if err:
@@ -204,10 +215,6 @@ class Schema(object):
         return errors
 
     def _validate_primitive(self, validator, data, pos):
-        # print(validator, data, pos)
-        if isinstance(validator, val.Include):
-            if validator.args[0] in self.custom_validators.keys():
-                return []
         errors = validator.validate(data)
 
         for i, error in enumerate(errors):
