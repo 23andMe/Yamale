@@ -125,7 +125,7 @@ def test_bad_anys():
 
 def test_bad_schema():
     with pytest.raises(SyntaxError) as excinfo:
-        s = yamale.make_schema(get_fixture('bad_schema.yaml'))
+        yamale.make_schema(get_fixture('bad_schema.yaml'))
     assert 'fixtures/bad_schema.yaml' in str(excinfo.value)
 
 

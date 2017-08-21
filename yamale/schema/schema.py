@@ -105,7 +105,7 @@ class Schema(object):
             return errors
 
         errors += self._validate_primitive(validator, data_item, position)
-        
+
         if errors:
             return errors
 
