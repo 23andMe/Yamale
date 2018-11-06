@@ -1,2 +1,2 @@
-tox==2.6.0
-tox-travis
+tox==2.8.2
+tox-travis==0.8
