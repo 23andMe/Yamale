@@ -7,8 +7,11 @@ class Validator(object):
         self.args = args
         self.kwargs = kwargs
 
-        # Default required to True
+        # Is field required? Default is True
         self.is_required = bool(kwargs.pop('required', True))
+
+        # Can value be None if field is optional? Default is True
+        self._value_can_be_none = bool(kwargs.pop('none', True))
 
         # Construct all constraints
         self._constraints_inst = self._create_constraints(self.constraints,
@@ -28,6 +31,11 @@ class Validator(object):
     @property
     def is_optional(self):
         return not self.is_required
+
+    @property
+    def can_be_none(self):
+        """Check if value for optional field can be None."""
+        return self._value_can_be_none
 
     def _is_valid(self, value):
         """Validators must implement this. Return True if value is valid."""
