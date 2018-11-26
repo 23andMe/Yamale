@@ -75,3 +75,21 @@ class TestCustomValidatorWithIncludes(YamaleTestCase):
         validators = DefaultValidators.copy()
         validators['card'] = Card
         self.assertTrue(self.validate(validators))
+
+
+class TestBadRequiredYaml(YamaleTestCase):
+    base_dir = data_folder
+    schema = 'meta_test_fixtures/schema_required_bad.yaml'
+    yaml = 'meta_test_fixtures/data_required_bad.yaml'
+
+    def runTest(self):
+        self.assertRaises(ValueError, self.validate)
+
+
+class TestGoodRequiredYaml(YamaleTestCase):
+    base_dir = data_folder
+    schema = 'meta_test_fixtures/schema_required_good.yaml'
+    yaml = 'meta_test_fixtures/data_required_good.yaml'
+
+    def runTest(self):
+        self.assertTrue(self.validate())

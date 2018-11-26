@@ -90,7 +90,8 @@ class Schema(object):
         """
         errors = []
 
-        if data_item is None and validator.is_optional:  # Optional? Who cares.
+        # Optional field with optional value? Who cares.
+        if data_item is None and validator.is_optional and validator.can_be_none:
             return errors
 
         errors += self._validate_primitive(validator, data_item, position)

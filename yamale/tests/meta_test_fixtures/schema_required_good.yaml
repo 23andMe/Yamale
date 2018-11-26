@@ -1,0 +1,3 @@
+optional_no_none_default: str(required=False)
+optional_no_none: str(required=False, none=False)
+optional_none_okay: str(required=False, none=True)

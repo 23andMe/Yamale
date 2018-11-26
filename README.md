@@ -188,6 +188,8 @@ Validators
 ----------
 Here are all the validators Yamale knows about. Every validator takes a `required` keyword telling Yamale whether or not that node must exist. By default every node is required. Example: `str(required=False)`
 
+You can also require that an optional value is not `None` by using the `none` keyword. By default Yamale will accept `None` as a valid value for a key that's not required. Reject `None` values with `none=False` in any validator. Example: `str(required=False, none=False)`.
+
 Some validators take keywords and some take arguments, some take both. For instance the `enum()` validator takes one or more constants as arguments and the `required` keyword: `enum('a string', 1, False, required=False)`
 
 ### String - `str(min=int, max=int, exclude=string)`
