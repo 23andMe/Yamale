@@ -1,7 +1,13 @@
 import sys
-from collections import Mapping, Set, Sequence
 from operator import getitem
 from functools import reduce
+
+# ABCs for containers were moved to their own module
+try:
+    from collections.abc import Mapping, Set, Sequence
+except ImportError:
+    from collections import Mapping, Set, Sequence
+
 
 # Python 3 has no basestring, lets test it.
 try:
