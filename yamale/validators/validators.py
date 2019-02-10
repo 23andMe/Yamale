@@ -1,8 +1,13 @@
-from collections import Sequence, Mapping
 from datetime import date, datetime
 from .base import Validator
 from . import constraints as con
 from .. import util
+
+# ABCs for containers were moved to their own module 
+try:
+    from collections.abc import Sequence, Mapping
+except ImportError:
+    from collections import Sequence, Mapping
 
 
 class String(Validator):
