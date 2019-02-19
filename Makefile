@@ -16,7 +16,6 @@ clean:
 	@find . -name '__pycache__' -exec rm -fr {} +
 
 release:
-	@$(MAKE) test
 	@git tag $(VERSION)
 	@git push --follow-tags
 	@git push --tags
