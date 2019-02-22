@@ -1,9 +1,10 @@
+import re
 from datetime import date, datetime
 from .base import Validator
 from . import constraints as con
 from .. import util
 
-# ABCs for containers were moved to their own module 
+# ABCs for containers were moved to their own module
 try:
     from collections.abc import Sequence, Mapping
 except ImportError:
@@ -141,6 +142,28 @@ class Null(Validator):
 
     def _is_valid(self, value):
         return value is None
+
+
+class Regex(Validator):
+    """Regular expression validator"""
+    tag = 'regex'
+    _regex_flags = {'ignore_case': re.I, 'multiline': re.M, 'dotall': re.S}
+
+    def __init__(self, *args, **kwargs):
+        self.regex_name = kwargs.pop('name', None)
+
+        flags = 0
+        for k, v in util.get_iter(self._regex_flags):
+            flags |= v if kwargs.pop(k, False) else 0
+
+        self.regexes = [re.compile(arg, flags) for arg in args if util.isstr(arg)]
+        super(Regex, self).__init__(*args, **kwargs)
+
+    def _is_valid(self, value):
+        return util.isstr(value) and any(r.match(value) for r in self.regexes)
+
+    def get_name(self):
+        return self.regex_name or self.tag + " match"
 
 
 DefaultValidators = {}
