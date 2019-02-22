@@ -1,4 +1,5 @@
 string: "hello"
+regex: 'abcde'
 number: 12.1
 integer: 2
 boolean: True

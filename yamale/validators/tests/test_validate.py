@@ -30,6 +30,15 @@ def test_string():
     assert not v.is_valid(1)
 
 
+def test_regex():
+    v = val.Regex(r'^(abc)\1?de$', name='test_regex')
+    assert v.is_valid('abcde')
+    assert v.is_valid('abcabcde')
+    assert v.get_name() == 'test_regex'
+    assert not v.is_valid('abcde ')
+    assert not v.is_valid('abcabcabcde')
+
+
 def test_number():
     v = val.Number()
     assert v.is_valid(1)
