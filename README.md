@@ -208,12 +208,13 @@ Validates strings against one or more regular expressions.
 - keywords:
     - `name`: A friendly description for the patterns.
     - `ignore_case`: Validates strings in a case-insensitive manner.
-    - `multiline`: `^` and `$` in a pattern match at the beginning and end of each line in a string in addition to matching at the beginning and end of the entire string.
+    - `multiline`: `^` and `$` in a pattern match at the beginning and end of each line in a string in addition to matching at the beginning and end of the entire string. (A pattern matches at [the beginning of a string](https://docs.python.org/3/library/re.html#re.match) even in multiline mode; see below for a workaround.)
     - `dotall`: `.` in a pattern matches newline characters in a validated string in addition to matching every character that *isn't* a newline.
 
 Examples:
 - `regex('^[^?!]{,10}$')`: Allows only strings less than 11 characters that don't contain `?` or `!`.
-- `regex(r'^(\d+)(\s\1)+$', name='repeated natural')`: Allows only strings that contain two or more identical digit sequences, each separated by a whitespace character. Non-matching strings like `'sugar'` are rejected with a message like `'sugar' is not a repeated natural.`
+- `regex(r'^(\d+)(\s\1)+$', name='repeated natural')`: Allows only strings that contain two or more identical digit sequences, each separated by a whitespace character. Non-matching strings like `sugar` are rejected with a message like `'sugar' is not a repeated natural.`
+- `regex('.*^apples$', multiline=True, dotall=True)`: Allows the string `apples` as well as multiline strings that contain the line `apples`.
 
 ### Integer - `int(min=int, max=int)`
 Validates integers.
