@@ -56,10 +56,17 @@ issue_22 = {
     'good': 'issue_22_good.yaml'
 }
 
+regexes = {
+    'schema': 'regex.yaml',
+    'bad': 'regex_bad.yaml',
+    'good': 'regex_good.yaml'
+}
+
 test_data = [
     types, nested, custom,
     keywords, lists, maps,
-    anys, list_include, issue_22
+    anys, list_include, issue_22,
+    regexes
 ]
 
 for d in test_data:
@@ -92,7 +99,7 @@ def test_good(data_map):
 
 
 def test_bad_validate():
-    assert count_exception_lines(types['schema'], types['bad']) == 10
+    assert count_exception_lines(types['schema'], types['bad']) == 11
 
 
 def test_bad_nested():
@@ -121,6 +128,10 @@ def test_bad_keywords():
 
 def test_bad_anys():
     assert count_exception_lines(anys['schema'], anys['bad']) == 7
+
+
+def test_bad_regexes():
+    assert count_exception_lines(regexes['schema'], regexes['bad']) == 9
 
 
 def test_bad_schema():
