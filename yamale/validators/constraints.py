@@ -1,3 +1,4 @@
+import ipaddress
 import datetime
 
 
@@ -115,3 +116,19 @@ class CharacterExclude(Constraint):
 
     def _fail(self, value):
         return self.fail % (value, self._failed_char)
+
+
+class IpVersion(Constraint):
+    keywords = {'version': int}
+    fail = 'IP version of %s is not %s'
+
+    def _is_valid(self, value):
+        ip = None
+        try:
+            ip = ipaddress.ip_interface(value)
+        except ValueError:
+            ip = ipaddress.ip_interface(unicode(value))
+        return self.version == ip.version
+
+    def _fail(self, value):
+        return self.fail % (value, self.version)
