@@ -279,6 +279,17 @@ Examples:
 - `map()`: Validates any map
 - `map(str(), int())`: Only validates maps whose children are strings or integers.
 
+### IP Address - `ip()`
+Validates IPv4 and IPv6 addresses.
+
+- keywords
+    - `version`: 4 or 6; explicitly force IPv4 or IPv6 validation
+
+Examples:
+- `ip()`: Allows any valid IPv4 or IPv6 address
+- `ip(version=4)`: Allows any valid IPv4 address
+- `ip(version=6)`: Allows any valid IPv6 address
+
 ### Any - `any([validators])`
 Validates against a union of types. Use when a node can contain one of several types. It is valid if at least one of the listed validators is valid.
 - arguments: one or more validators to test values with
