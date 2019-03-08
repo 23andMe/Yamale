@@ -101,3 +101,15 @@ def test_null():
     assert not v.is_valid(0)
     assert not v.is_valid(float('nan'))
     assert not v.is_valid({})
+
+def test_ip():
+    v = val.Ip()
+    assert v.is_valid('192.168.1.1')
+    assert v.is_valid('192.168.1.255')
+    assert v.is_valid('192.168.3.1/24')
+    assert v.is_valid('2001:db8::')
+    assert v.is_valid('2001:db8::/64')
+    assert not v.is_valid('257.192.168.1')
+    assert not v.is_valid('192.168.1.256')
+    assert not v.is_valid('2001:db8::/129')
+    assert not v.is_valid('2001:dg8::/127')
