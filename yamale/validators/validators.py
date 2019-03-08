@@ -1,3 +1,4 @@
+import ipaddress
 import re
 from datetime import date, datetime
 from .base import Validator
@@ -164,6 +165,31 @@ class Regex(Validator):
 
     def get_name(self):
         return self.regex_name or self.tag + " match"
+
+
+class Ip(Validator):
+    """String validator"""
+    tag = 'ip'
+    constraints = [con.IpVersion]
+
+    def _is_valid(self, value):
+        return self.ip_address(value)
+
+    def py2_ip_address(self, value):
+        try:
+            ipaddress.ip_interface(unicode(value))
+            return True
+        except Exception:
+            return False
+
+    def ip_address(self, value):
+        try:
+            ipaddress.ip_interface(value)
+            return True
+        except ValueError:
+            return self.py2_ip_address(value)
+        except ipaddress.AddressValueError:
+            return False
 
 
 DefaultValidators = {}
