@@ -6,9 +6,12 @@ from setuptools import setup, find_packages
 PY2 = sys.version_info[0] == 2
 PY3 = sys.version_info[0] == 3
 
+requirements = ['pyyaml']
+
 if PY2:
     readme = open('README.md').read()
     license = open('LICENSE').read()
+    requirements.append('ipaddress')
 elif PY3:
     readme = open('README.md', encoding='utf-8').read()
     license = open('LICENSE', encoding='utf-8').read()
@@ -25,7 +28,7 @@ setup(
     license='MIT',
     packages=find_packages(),
     include_package_data=True,
-    install_requires=['pyyaml'],
+    install_requires=requirements,
     entry_points={
         'console_scripts': ['yamale=yamale.command_line:main'],
     },
