@@ -68,11 +68,17 @@ ips = {
     'good': 'ip_good.yaml'
 }
 
+macs = {
+    'schema': 'mac.yaml',
+    'bad': 'mac_bad.yaml',
+    'good': 'mac_good.yaml'
+}
+
 test_data = [
     types, nested, custom,
     keywords, lists, maps,
     anys, list_include, issue_22,
-    regexes, ips
+    regexes, ips, macs
 ]
 
 for d in test_data:
