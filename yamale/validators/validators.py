@@ -168,7 +168,7 @@ class Regex(Validator):
 
 
 class Ip(Validator):
-    """String validator"""
+    """IP address validator"""
     tag = 'ip'
     constraints = [con.IpVersion]
 
@@ -190,6 +190,17 @@ class Ip(Validator):
             return self.py2_ip_address(value)
         except ipaddress.AddressValueError:
             return False
+
+class Mac(Regex):
+    """MAC address validator"""
+    tag = 'mac'
+
+    def __init__(self, *args, **kwargs):
+        super(Mac, self).__init__(*args, **kwargs)
+        self.regexes = [
+            re.compile("[0-9a-f]{2}([-:]?)[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$"),
+            re.compile("[0-9a-f]{4}([-:]?)[0-9a-f]{4}(\\1[0-9a-f]{4})$"),
+        ]
 
 
 DefaultValidators = {}
