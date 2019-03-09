@@ -178,18 +178,16 @@ class Ip(Validator):
     def py2_ip_address(self, value):
         try:
             ipaddress.ip_interface(unicode(value))
-            return True
         except Exception:
             return False
+        return True
 
     def ip_address(self, value):
         try:
             ipaddress.ip_interface(value)
-            return True
         except ValueError:
             return self.py2_ip_address(value)
-        except ipaddress.AddressValueError:
-            return False
+        return True
 
 class Mac(Regex):
     """MAC address validator"""
