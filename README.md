@@ -290,6 +290,13 @@ Examples:
 - `ip(version=4)`: Allows any valid IPv4 address
 - `ip(version=6)`: Allows any valid IPv6 address
 
+### MAC Address - `mac()`
+Validates MAC addresses.
+
+Examples:
+- `mac()`: Allows any valid MAC address
+
+
 ### Any - `any([validators])`
 Validates against a union of types. Use when a node can contain one of several types. It is valid if at least one of the listed validators is valid.
 - arguments: one or more validators to test values with
