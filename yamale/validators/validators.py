@@ -198,8 +198,8 @@ class Mac(Regex):
     def __init__(self, *args, **kwargs):
         super(Mac, self).__init__(*args, **kwargs)
         self.regexes = [
-            re.compile("[0-9a-f]{2}([-:]?)[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$"),
-            re.compile("[0-9a-f]{4}([-:]?)[0-9a-f]{4}(\\1[0-9a-f]{4})$"),
+            re.compile("[0-9a-fA-F]{2}([-:]?)[0-9a-fA-F]{2}(\\1[0-9a-fA-F]{2}){4}$"),
+            re.compile("[0-9a-fA-F]{4}([-:]?)[0-9a-fA-F]{4}(\\1[0-9a-fA-F]{4})$"),
         ]
 
 
