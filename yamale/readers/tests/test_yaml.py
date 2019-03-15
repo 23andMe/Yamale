@@ -33,3 +33,8 @@ def test_keywords(parser):
 def test_nested(parser):
     t = yaml_reader.parse_file(NESTED, parser)[0]
     assert t['list'][-1]['string'] == 'str()'
+
+def test_bad_parser():
+    with pytest.raises(NameError, match='Parser "yaml" is not supported\nAvailable parsers are listed below:\nPyYAML\nruamel'):
+        yaml_reader.parse_file(NESTED, 'yaml')
+
