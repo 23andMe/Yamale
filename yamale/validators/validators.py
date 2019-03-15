@@ -1,4 +1,3 @@
-import ipaddress
 import re
 from datetime import date, datetime
 from .base import Validator
@@ -177,12 +176,9 @@ class Ip(Validator):
 
     def py2_ip_address(self, value):
         try:
-            ipaddress.ip_interface(unicode(value))
-        except Exception:
-            return False
-        return True
-
-    def ip_address(self, value):
+            import ipaddress
+        except ImportError:
+            raise ImportError("You must install the ipaddress backport in Py2")
         try:
             ipaddress.ip_interface(value)
         except ValueError:
