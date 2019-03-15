@@ -174,15 +174,15 @@ class Ip(Validator):
     def _is_valid(self, value):
         return self.ip_address(value)
 
-    def py2_ip_address(self, value):
+    def ip_address(self, value):
         try:
             import ipaddress
         except ImportError:
             raise ImportError("You must install the ipaddress backport in Py2")
         try:
-            ipaddress.ip_interface(value)
+            ipaddress.ip_interface(util.to_unicode(value))
         except ValueError:
-            return self.py2_ip_address(value)
+            return False
         return True
 
 class Mac(Regex):
