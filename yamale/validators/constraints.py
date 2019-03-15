@@ -1,5 +1,7 @@
-import ipaddress
+from __future__ import absolute_import
 import datetime
+
+from yamale.util import to_unicode
 
 
 class Constraint(object):
@@ -123,11 +125,14 @@ class IpVersion(Constraint):
     fail = 'IP version of %s is not %s'
 
     def _is_valid(self, value):
-        ip = None
         try:
-            ip = ipaddress.ip_interface(value)
+            import ipaddress
+        except ImportError:
+            raise ImportError("You must install the ipaddress backport in Py2")
+        try:
+            ip = ipaddress.ip_interface(to_unicode(value))
         except ValueError:
-            ip = ipaddress.ip_interface(unicode(value))
+            ip = {'version': None}
         return self.version == ip.version
 
     def _fail(self, value):
