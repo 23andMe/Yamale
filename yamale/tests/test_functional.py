@@ -56,6 +56,11 @@ issue_22 = {
     'good': 'issue_22_good.yaml'
 }
 
+issue_50 = {
+    'schema': 'issue_50.yaml',
+    'good': 'issue_50_good.yaml'
+}
+
 regexes = {
     'schema': 'regex.yaml',
     'bad': 'regex_bad.yaml',
@@ -66,7 +71,7 @@ test_data = [
     types, nested, custom,
     keywords, lists, maps,
     anys, list_include, issue_22,
-    regexes
+    issue_50, regexes
 ]
 
 for d in test_data:
