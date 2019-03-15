@@ -30,8 +30,6 @@ def flatten(dic, keep_iter=False, position=None):
         return {}
 
     for k, v in get_iter(dic):
-        if isstr(k):
-            k = k.replace('.', '_')
         if position:
             item_position = '%s.%s' % (position, k)
         else:
