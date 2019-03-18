@@ -132,7 +132,7 @@ class IpVersion(Constraint):
         try:
             ip = ipaddress.ip_interface(to_unicode(value))
         except ValueError:
-            ip = {'version': None}
+            return False
         return self.version == ip.version
 
     def _fail(self, value):
