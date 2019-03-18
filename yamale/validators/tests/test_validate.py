@@ -113,6 +113,7 @@ def test_ip():
     assert not v.is_valid('192.168.1.256')
     assert not v.is_valid('2001:db8::/129')
     assert not v.is_valid('2001:dg8::/127')
+    assert not v.is_valid('asdf')
 
 def test_mac():
     v = val.Mac()
