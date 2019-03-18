@@ -15,9 +15,16 @@ try:
 
     def isstr(s):
         return isinstance(s, basestring)
+
+    def to_unicode(s):
+        return unicode(s)
+
 except NameError:
     def isstr(s):
         return isinstance(s, str)
+
+    def to_unicode(s):
+        return s
 
 
 def flatten(dic, keep_iter=False, position=None):

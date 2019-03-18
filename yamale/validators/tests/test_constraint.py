@@ -63,3 +63,20 @@ def test_char_exclude():
     assert v.is_valid('efg')
     assert not v.is_valid('abc')
     assert not v.is_valid('c')
+
+
+def test_ip4():
+    v = val.Ip(version=4)
+    assert v.is_valid('192.168.1.1')
+    assert v.is_valid('192.168.1.255')
+    assert v.is_valid('192.168.3.1/24')
+    assert not v.is_valid('2001:db8::')
+    assert not v.is_valid('2001:db8::/64')
+
+def test_ip6():
+    v = val.Ip(version=6)
+    assert not v.is_valid('192.168.1.1')
+    assert not v.is_valid('192.168.1.255')
+    assert not v.is_valid('192.168.3.1/24')
+    assert v.is_valid('2001:db8::')
+    assert v.is_valid('2001:db8::/64')

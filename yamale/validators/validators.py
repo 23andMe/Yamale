@@ -166,6 +166,37 @@ class Regex(Validator):
         return self.regex_name or self.tag + " match"
 
 
+class Ip(Validator):
+    """IP address validator"""
+    tag = 'ip'
+    constraints = [con.IpVersion]
+
+    def _is_valid(self, value):
+        return self.ip_address(value)
+
+    def ip_address(self, value):
+        try:
+            import ipaddress
+        except ImportError:
+            raise ImportError("You must install the ipaddress backport in Py2")
+        try:
+            ipaddress.ip_interface(util.to_unicode(value))
+        except ValueError:
+            return False
+        return True
+
+class Mac(Regex):
+    """MAC address validator"""
+    tag = 'mac'
+
+    def __init__(self, *args, **kwargs):
+        super(Mac, self).__init__(*args, **kwargs)
+        self.regexes = [
+            re.compile("[0-9a-fA-F]{2}([-:]?)[0-9a-fA-F]{2}(\\1[0-9a-fA-F]{2}){4}$"),
+            re.compile("[0-9a-fA-F]{4}([-:]?)[0-9a-fA-F]{4}(\\1[0-9a-fA-F]{4})$"),
+        ]
+
+
 DefaultValidators = {}
 
 for v in util.get_subclasses(Validator):
