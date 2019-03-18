@@ -18,6 +18,6 @@ clean:
 release:
 	@git tag $(VERSION)
 	@git push --follow-tags --all
-	@git push --tags --all
+	@git push --tags
 
 .PHONY: test tag coverage clean release
