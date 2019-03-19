@@ -2,7 +2,8 @@ from pytest import raises
 
 from .. import parser as par
 from yamale.validators.validators import (
-    Validator, String, Regex, Number, Integer, Boolean, List, Day, Timestamp)
+    Validator, String, Regex, Number, Integer, Boolean, List, Day, Timestamp,
+    Ip, Mac)
 
 
 def test_eval():
@@ -19,6 +20,8 @@ def test_types():
     assert par.parse('timestamp()') == Timestamp()
     assert par.parse('bool()') == Boolean()
     assert par.parse('list(str())') == List(String())
+    assert par.parse('ip()') == Ip()
+    assert par.parse('mac()') == Mac()
 
 
 def test_custom_type():

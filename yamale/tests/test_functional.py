@@ -67,11 +67,23 @@ regexes = {
     'good': 'regex_good.yaml'
 }
 
+ips = {
+    'schema': 'ip.yaml',
+    'bad': 'ip_bad.yaml',
+    'good': 'ip_good.yaml'
+}
+
+macs = {
+    'schema': 'mac.yaml',
+    'bad': 'mac_bad.yaml',
+    'good': 'mac_good.yaml'
+}
+
 test_data = [
     types, nested, custom,
     keywords, lists, maps,
     anys, list_include, issue_22,
-    issue_50, regexes
+    issue_50, regexes, ips, macs
 ]
 
 for d in test_data:

@@ -1,4 +1,7 @@
+from __future__ import absolute_import
 import datetime
+
+from yamale.util import to_unicode
 
 
 class Constraint(object):
@@ -115,3 +118,22 @@ class CharacterExclude(Constraint):
 
     def _fail(self, value):
         return self.fail % (value, self._failed_char)
+
+
+class IpVersion(Constraint):
+    keywords = {'version': int}
+    fail = 'IP version of %s is not %s'
+
+    def _is_valid(self, value):
+        try:
+            import ipaddress
+        except ImportError:
+            raise ImportError("You must install the ipaddress backport in Py2")
+        try:
+            ip = ipaddress.ip_interface(to_unicode(value))
+        except ValueError:
+            return False
+        return self.version == ip.version
+
+    def _fail(self, value):
+        return self.fail % (value, self.version)
