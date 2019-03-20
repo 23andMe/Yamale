@@ -74,7 +74,7 @@ yamale.validate(schema, data)
 
 If `data` is valid, nothing will happen. However, if `data` is invalid Yamale will throw a `ValueError` with a message containing all the invalid nodes.
 
-You can also specifiy an optional `parser` if you'd like to use the `ruamel.yaml` (YAML 1.2 support) instead:
+You can also specify an optional `parser` if you'd like to use the `ruamel.yaml` (YAML 1.2 support) instead:
 ```python
 # Import Yamale and make a schema object, make sure ruamel.yaml is installed already.
 import yamale
@@ -85,6 +85,22 @@ data = yamale.make_data('./data.yaml', parser='ruamel')
 
 # Validate data against the schema same as before.
 yamale.validate(schema, data)
+```
+
+You can include your own python constructors to support custom YAML tags.  
+**WARNING:** This enables the default yaml loader which allows arbitrary python to run through any loaded YAML files. Use at your own risk!
+```python
+import yamale
+schema = yamale.make_schema('./schema.yaml')
+
+# Create a Data object using dict of custom constructor tuple(s)
+data = yamale.make_data('./data.yaml', constructors={('!join', _joiner)})
+
+#allows join function to be called on arbitrary sequences in yaml, works with anchors and aliases
+#example: !join [root/path/, relative/path]
+def _joiner(loader, node):
+    seq = loader.construct_sequence(node)
+    return ''.join([str(i) for i in seq])
 ```
 
 ### Schema
