@@ -28,9 +28,9 @@ def make_schema(path, parser='PyYAML', validators=None):
     return s
 
 
-def make_data(path, parser='PyYAML'):
+def make_data(path, parser='PyYAML', constructors=None):
     from . import readers
-    raw_data = readers.parse_file(path, parser)
+    raw_data = readers.parse_file(path, parser, constructors)
     return [Data(d, path) for d in raw_data]
 
 

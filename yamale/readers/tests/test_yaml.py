@@ -6,6 +6,7 @@ parsers = ['pyyaml', 'PyYAML', 'ruamel']
 TYPES = get_fixture('types.yaml')
 NESTED = get_fixture('nested.yaml')
 KEYWORDS = get_fixture('keywords.yaml')
+TAGS = get_fixture('custom_tags.yaml')
 
 
 @pytest.mark.parametrize('parser', parsers)
@@ -33,3 +34,10 @@ def test_keywords(parser):
 def test_nested(parser):
     t = yaml_reader.parse_file(NESTED, parser)[0]
     assert t['list'][-1]['string'] == 'str()'
+
+def test_custom_tags():
+    def _joiner(loader, node):
+        seq = loader.construct_sequence(node)
+        return ''.join([str(i) for i in seq])
+    t = yaml_reader.parse_file(TAGS, 'pyyaml', {('!join', _joiner)})[0]
+    assert t['dest'] == '/a/b'

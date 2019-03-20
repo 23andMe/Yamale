@@ -1,0 +1,2 @@
+source: &ROOT /a
+dest: !join [*ROOT, /b]
