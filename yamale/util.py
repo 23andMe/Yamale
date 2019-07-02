@@ -9,6 +9,9 @@ except ImportError:
     from collections import Mapping, Set, Sequence
 
 
+YAMALE_SEP = '`/4M4|_E'
+
+
 # Python 3 has no basestring, lets test it.
 try:
     basestring  # attempt to evaluate basestring
@@ -37,10 +40,8 @@ def flatten(dic, keep_iter=False, position=None):
         return {}
 
     for k, v in get_iter(dic):
-        if isstr(k):
-            k = k.replace('.', '_')
         if position:
-            item_position = '%s.%s' % (position, k)
+            item_position = '%s%s%s' % (position, YAMALE_SEP, k)
         else:
             item_position = '%s' % k
 
@@ -58,7 +59,7 @@ def get_expanded_path(dic, key):
     path = []
     cur = dic
     try:
-        keys = key.split('.')
+        keys = key.split(YAMALE_SEP)
     except AttributeError:
         keys = [key]
     for k in keys[:-1]:

@@ -67,7 +67,7 @@ class Schema(object):
         errors = []
 
         if position:
-            position = '%s.%s' % (position, key)
+            position = '%s%s%s' % (position, util.YAMALE_SEP, key)
         else:
             position = key
 
