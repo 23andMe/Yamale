@@ -1,6 +1,8 @@
 import sys
+
 from .. import syntax, util
 from .. import validators as val
+from yamale.util import YAMALE_SEP
 
 # Fix Python 2.x.
 PY2 = sys.version_info[0] == 2
@@ -77,7 +79,7 @@ class Schema(object):
             if validator.is_optional:  # Optional? Who cares.
                 return errors
             # SHUT DOWN EVERTYHING
-            errors.append('%s: Required field missing' % position)
+            errors.append('%s: Required field missing' % position.replace(util.YAMALE_SEP, '.'))
             return errors
 
         return self._validate_item(validator, data_item, position, includes)
@@ -147,7 +149,8 @@ class Schema(object):
             return errors
 
         for key, validator in include_schema._schema.items():
-            errors += include_schema._validate(validator, data, includes=includes, key=key, position=pos)
+            errors += include_schema._validate(
+                validator, data, includes=includes, key=key, position=pos)
 
         return errors
 
@@ -175,6 +178,6 @@ class Schema(object):
         errors = validator.validate(data)
 
         for i, error in enumerate(errors):
-            errors[i] = '%s: ' % pos + error
+            errors[i] = '%s: ' % pos.replace(YAMALE_SEP, '.') + error
 
         return errors
