@@ -1,0 +1,18 @@
+---
+ntp_server_profile_generic: &ntp_profile_generic
+  port: 123
+  version: 3
+  prefer: true
+ntp:
+  config:
+    enabled: true
+    ntp-source-address: 1.2.3.4
+  servers:
+    192.168.1.1:
+      config:
+        <<: *ntp_profile_generic
+        address: 192.168.1.1
+    192.168.1.2:
+      config:
+        <<: *ntp_profile_generic
+        address: 192.168.1.2
