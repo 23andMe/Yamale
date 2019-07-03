@@ -3,7 +3,6 @@ import yamale
 
 from . import get_fixture
 from .. import validators as val
-from yamale.util import YAMALE_SEP
 
 
 types = {
@@ -82,11 +81,22 @@ macs = {
     'good': 'mac_good.yaml'
 }
 
+nested_map = {
+    'schema': 'nested_map.yaml',
+    'good': 'nested_map_good.yaml'
+}
+
+top_level_map = {
+    'schema': 'top_level_map.yaml',
+    'good': 'top_level_map_good.yaml'
+}
+
 test_data = [
     types, nested, custom,
     keywords, lists, maps,
     anys, list_include, issue_22,
-    issue_50, regexes, ips, macs
+    issue_50, regexes, ips, macs,
+    nested_map, top_level_map
 ]
 
 for d in test_data:
@@ -110,7 +120,7 @@ def test_nested_schema():
     nested_schema = nested['schema']
     assert isinstance(nested_schema['string'], val.String)
     assert isinstance(nested_schema.dict['list'], (list, tuple))
-    assert isinstance(nested_schema['list%s0' % YAMALE_SEP], val.String)
+    assert isinstance(nested_schema['list.0'], val.String)
 
 
 @pytest.mark.parametrize('data_map', test_data)

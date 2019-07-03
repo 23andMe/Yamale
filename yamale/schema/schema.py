@@ -1,8 +1,8 @@
 import sys
-
+from .datapath import DataPath
+from .datapath import paths
 from .. import syntax, util
 from .. import validators as val
-from yamale.util import YAMALE_SEP
 
 # Fix Python 2.x.
 PY2 = sys.version_info[0] == 2
@@ -27,37 +27,38 @@ class Schema(object):
             self.includes[include_name] = t
 
     def __getitem__(self, key):
-        return self._schema[key]
+        return dict((str(k), v) for k,v in self._schema)[key]
 
     def _process_schema(self, schema_dict, validators):
         """
         Go through a schema and construct validators.
         """
-        schema_flat = util.flatten(schema_dict)
+        return [self._parse_schema_item(path, schema_dict, validators)
+                for path in paths(schema_dict)]
 
-        for key, expression in schema_flat.items():
-            try:
-                schema_flat[key] = syntax.parse(expression, validators)
-            except SyntaxError as e:
-                # Tack on some more context and rethrow.
-                error = str(e) + ' at node \'%s\'' % key
-                raise SyntaxError(error)
-        return schema_flat
+    def _parse_schema_item(self, path, schema_dict, validators):
+        try:
+            expression = path.getitem(schema_dict)
+            return path, syntax.parse(expression, validators)
+        except SyntaxError as e:
+            # Tack on some more context and rethrow.
+            error = str(e) + ' at node \'%s\'' % str(path)
+            raise SyntaxError(error)
 
-    def validate(self, data):
+    def validate(self, data, data_name):
         errors = []
 
-        for key, validator in self._schema.items():
-            errors += self._validate(validator, data, key=key, includes=self.includes)
+        for path, validator in self._schema:
+            errors += self._validate(validator, data, path, includes=self.includes)
 
         if errors:
-            header = '\nError validating data %s with schema %s' % (data.name, self.name)
+            header = '\nError validating data %s with schema %s' % (data_name, self.name)
             error_str = header + '\n\t' + '\n\t'.join(errors)
             if PY2:
                 error_str = error_str.encode('utf-8')
             raise ValueError(error_str)
 
-    def _validate(self, validator, data, key, position=None, includes=None):
+    def _validate(self, validator, data, path, includes=None):
         """
         Run through a schema and a data structure,
         validating along the way.
@@ -68,23 +69,18 @@ class Schema(object):
         """
         errors = []
 
-        if position:
-            position = '%s%s%s' % (position, util.YAMALE_SEP, key)
-        else:
-            position = key
-
         try:  # Pull value out of data. Data can be a map or a list/sequence
-            data_item = util.get_value(data, key)
+            data_item = path.getitem(data)
         except KeyError:  # Oops, that field didn't exist.
             if validator.is_optional:  # Optional? Who cares.
                 return errors
             # SHUT DOWN EVERTYHING
-            errors.append('%s: Required field missing' % position.replace(util.YAMALE_SEP, '.'))
+            errors.append('%s: Required field missing' % path)
             return errors
 
-        return self._validate_item(validator, data_item, position, includes)
+        return self._validate_item(validator, data_item, data, path, includes)
 
-    def _validate_item(self, validator, data_item, position, includes):
+    def _validate_item(self, validator, data_item, data, path, includes):
         """
         Validates a single data item against validator.
 
@@ -96,40 +92,41 @@ class Schema(object):
         if data_item is None and validator.is_optional and validator.can_be_none:
             return errors
 
-        errors += self._validate_primitive(validator, data_item, position)
+        errors += self._validate_primitive(validator, data_item, path)
 
         if errors:
             return errors
 
         if isinstance(validator, val.Include):
-            errors += self._validate_include(validator, data_item,
-                                             includes, position)
+            errors += self._validate_include(validator, data,
+                                             includes, path)
 
         elif isinstance(validator, (val.Map, val.List)):
-            errors += self._validate_map_list(validator, data_item,
-                                              includes, position)
+            errors += self._validate_map_list(validator, data, data_item,
+                                              includes, path)
 
         elif isinstance(validator, val.Any):
-            errors += self._validate_any(validator, data_item,
-                                         includes, position)
+            errors += self._validate_any(validator, data,
+                                         includes, path)
 
         return errors
 
-    def _validate_map_list(self, validator, data, includes, pos):
+    def _validate_map_list(self, validator, data, data_item, includes, path):
         errors = []
 
         if not validator.validators:
             return errors  # No validators, user just wanted a map.
 
         if isinstance(validator, val.List):
-            keys = range(len(data))
+            keys = range(len(data_item))
         else:
-            keys = data.keys()
+            keys = data_item.keys()
 
         for key in keys:
             sub_errors = []
+            newpath = path + DataPath(key)
             for v in validator.validators:
-                err = self._validate(v, data, key, pos, includes)
+                err = self._validate(v, data, newpath, includes)
                 if err:
                     sub_errors.append(err)
 
@@ -140,7 +137,7 @@ class Schema(object):
 
         return errors
 
-    def _validate_include(self, validator, data, includes, pos):
+    def _validate_include(self, validator, data, includes, path):
         errors = []
 
         include_schema = includes.get(validator.include_name)
@@ -148,13 +145,13 @@ class Schema(object):
             errors.append('Include \'%s\' has not been defined.' % validator.include_name)
             return errors
 
-        for key, validator in include_schema._schema.items():
-            errors += include_schema._validate(
-                validator, data, includes=includes, key=key, position=pos)
+        for subpath, validator in include_schema._schema:
+            newpath = path + subpath
+            errors += include_schema._validate(validator, data, newpath, includes=includes)
 
         return errors
 
-    def _validate_any(self, validator, data, includes, pos):
+    def _validate_any(self, validator, data, includes, path):
         errors = []
 
         if not validator.validators:
@@ -163,7 +160,7 @@ class Schema(object):
 
         sub_errors = []
         for v in validator.validators:
-            err = self._validate_item(v, data, pos, includes)
+            err = self._validate(v, data, path, includes)
             if err:
                 sub_errors.append(err)
 
@@ -174,10 +171,10 @@ class Schema(object):
 
         return errors
 
-    def _validate_primitive(self, validator, data, pos):
-        errors = validator.validate(data)
+    def _validate_primitive(self, validator, data_item, path):
+        errors = validator.validate(data_item)
 
         for i, error in enumerate(errors):
-            errors[i] = '%s: ' % pos.replace(YAMALE_SEP, '.') + error
+            errors[i] = '%s: ' % str(path) + error
 
         return errors

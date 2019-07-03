@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import sys
 from .schema import Schema
-from .schema import Data
 
 PY2 = sys.version_info[0] == 2
 
@@ -31,10 +30,10 @@ def make_schema(path, parser='PyYAML', validators=None):
 def make_data(path, parser='PyYAML'):
     from . import readers
     raw_data = readers.parse_file(path, parser)
-    return [Data(d, path) for d in raw_data]
+    return [(d, path) for d in raw_data]
 
 
 def validate(schema, data):
-    for d in data:
-        schema.validate(d)
+    for d, path in data:
+        schema.validate(d, path)
     return data
