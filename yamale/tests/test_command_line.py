@@ -10,13 +10,29 @@ parsers = ['pyyaml', 'PyYAML', 'ruamel']
 
 
 @pytest.mark.parametrize('parser', parsers)
-def test_bad_yaml(parser):
+def test_bad_yaml(capsys, parser):
     try:
         command_line._router(
             'yamale/tests/command_line_fixtures/yamls/bad.yaml',
             'schema.yaml', 1, parser)
     except ValueError as e:
         assert 'Validation failed!' in str(e)
+        captured = capsys.readouterr()
+        assert "map.bad: '12.5' is not a str." in captured.out
+        return
+    assert False
+
+
+@pytest.mark.parametrize('parser', parsers)
+def test_required_keys_yaml(capsys, parser):
+    try:
+        command_line._router(
+            'yamale/tests/command_line_fixtures/yamls/required_keys_bad.yaml',
+            'required_keys_schema.yaml', 1, parser)
+    except ValueError as e:
+        assert 'Validation failed!' in str(e)
+        captured = capsys.readouterr()
+        assert "map.key: Required field missing" in captured.out
         return
     assert False
 
