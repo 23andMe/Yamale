@@ -91,12 +91,39 @@ top_level_map = {
     'good': 'top_level_map_good.yaml'
 }
 
+include_validator = {
+    'schema': 'include_validator.yaml',
+    'good': 'include_validator_good.yaml',
+    'bad': 'include_validator_bad.yaml'
+}
+
+strict_map = {
+    'schema': 'strict_map.yaml',
+    'good': 'strict_map_good.yaml',
+    'bad': 'strict_map_bad.yaml'
+}
+
+mixed_strict_map = {
+    'schema': 'mixed_strict_map.yaml',
+    'good': 'mixed_strict_map_good.yaml',
+    'bad': 'mixed_strict_map_bad.yaml'
+}
+
+strict_list = {
+    'schema': 'strict_list.yaml',
+    'good': 'strict_list_good.yaml',
+    'bad': 'strict_list_bad.yaml'
+}
+
+
 test_data = [
     types, nested, custom,
     keywords, lists, maps,
     anys, list_include, issue_22,
     issue_50, regexes, ips, macs,
-    nested_map, top_level_map
+    nested_map, top_level_map,
+    include_validator, strict_map,
+    mixed_strict_map, strict_list
 ]
 
 for d in test_data:
@@ -113,14 +140,14 @@ def test_tests():
 
 
 def test_flat_make_schema():
-    assert isinstance(types['schema']['string'], val.String)
+    assert isinstance(types['schema']._schema['string'], val.String)
 
 
 def test_nested_schema():
-    nested_schema = nested['schema']
+    nested_schema = nested['schema']._schema
     assert isinstance(nested_schema['string'], val.String)
-    assert isinstance(nested_schema.dict['list'], (list, tuple))
-    assert isinstance(nested_schema['list.0'], val.String)
+    assert isinstance(nested_schema['list'], (list, tuple))
+    assert isinstance(nested_schema['list'][0], val.String)
 
 
 @pytest.mark.parametrize('data_map', test_data)
@@ -164,15 +191,67 @@ def test_bad_regexes():
     assert count_exception_lines(regexes['schema'], regexes['bad']) == 9
 
 
+def test_bad_include_validator():
+    # TODO use match
+    exp = ["key1: 'a_string' is not a int."]
+    match_exception_lines(include_validator['schema'],
+                          include_validator['bad'],
+                          exp)
+    #assert count_exception_lines(include_validator['schema'], include_validator['bad']) == 3
+
+
 def test_bad_schema():
     with pytest.raises(SyntaxError) as excinfo:
         yamale.make_schema(get_fixture('bad_schema.yaml'))
     assert 'fixtures/bad_schema.yaml' in str(excinfo.value)
 
 
-def count_exception_lines(schema, data):
+def test_list_is_not_a_map():
+    exp = [": '[1, 2]' is not a map"]
+    match_exception_lines(strict_map['schema'],
+                          strict_list['good'],
+                          exp)
+
+
+def test_bad_strict_map():
+    exp = ['extra: Unexpected element']
+    match_exception_lines(strict_map['schema'],
+                          strict_map['bad'],
+                          exp,
+                          strict=True)
+
+
+def test_bad_strict_list():
+    exp = ['2: Unexpected element']
+    match_exception_lines(strict_list['schema'],
+                          strict_list['bad'],
+                          exp,
+                          strict=True)
+
+def test_bad_mixed_strict_map():
+    exp = ['field3.extra: Unexpected element']
+    match_exception_lines(mixed_strict_map['schema'],
+                          mixed_strict_map['bad'],
+                          exp,
+                          strict=False)
+
+
+def match_exception_lines(schema, data, expected, strict=False):
     try:
-        yamale.validate(schema, data)
+        yamale.validate(schema, data, strict)
+        raise Exception("Data valid")
+    except ValueError as exp:
+        message = str(exp)
+        # only match the actual error message and remove the leading \t
+        got = set(s.lstrip() for s in message.split('\n') if s.startswith('\t'))
+        expected = set(expected)
+        if not got == expected:
+            raise Exception('Got: {}, Expected: {}'.format(got, expected))
+
+
+def count_exception_lines(schema, data, strict=False):
+    try:
+        yamale.validate(schema, data, strict)
     except ValueError as exp:
         message = str(exp)
         count = len(message.split('\n'))

@@ -114,10 +114,11 @@ class Include(Validator):
 
     def __init__(self, *args, **kwargs):
         self.include_name = args[0]
+        self.strict = kwargs.pop('strict', None)
         super(Include, self).__init__(*args, **kwargs)
 
     def _is_valid(self, value):
-        return isinstance(value, (Mapping, Sequence)) and not util.isstr(value)
+        return True
 
     def get_name(self):
         return self.include_name

@@ -184,6 +184,11 @@ person:
 ##### Adding external includes
 After you construct a schema you can add extra, external include definitions by calling `schema.add_include(dict)`. This method takes a dictionary and adds each key as another include.
 
+### Strict mode
+By default Yamale will not give any error for extra elements present in lists and maps that are not covered by the schema. With strict mode any additional element will give an error. Strict mode is enabled by passing the strict=True flag to the validate function.
+
+It is possible to mix strict and non-strict mode by setting the strict=True/False flag in the include validator, setting the option only for the included validators.
+
 Validators
 ----------
 Here are all the validators Yamale knows about. Every validator takes a `required` keyword telling Yamale whether or not that node must exist. By default every node is required. Example: `str(required=False)`

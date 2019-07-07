@@ -23,6 +23,21 @@ except NameError:
         return s
 
 
+def is_list(obj):
+    return isinstance(obj, Sequence) and not isstr(obj)
+
+
+def is_map(obj):
+    return isinstance(obj, Mapping)
+
+
+def get_keys(obj):
+    if is_map(obj):
+        return obj.keys()
+    elif is_list(obj):
+        return range(len(obj))
+
+
 def get_iter(iterable):
     if isinstance(iterable, Mapping):
         return iterable.items()
