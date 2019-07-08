@@ -1,7 +1,3 @@
-import sys
-from operator import getitem
-from functools import reduce
-
 # ABCs for containers were moved to their own module
 try:
     from collections.abc import Mapping, Set, Sequence

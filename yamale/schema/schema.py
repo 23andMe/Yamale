@@ -1,7 +1,7 @@
 import sys
 from .datapath import DataPath
 from .datapath import paths
-from .. import syntax, util
+from .. import syntax
 from .. import validators as val
 
 # Fix Python 2.x.
@@ -27,7 +27,7 @@ class Schema(object):
             self.includes[include_name] = t
 
     def __getitem__(self, key):
-        return dict((str(k), v) for k,v in self._schema)[key]
+        return dict((str(k), v) for k, v in self._schema)[key]
 
     def _process_schema(self, schema_dict, validators):
         """
@@ -49,10 +49,12 @@ class Schema(object):
         errors = []
 
         for path, validator in self._schema:
-            errors += self._validate(validator, data, path, includes=self.includes)
+            errors += self._validate(validator, data,
+                                     path, includes=self.includes)
 
         if errors:
-            header = '\nError validating data %s with schema %s' % (data_name, self.name)
+            header = '\nError validating data %s with schema %s' % (data_name,
+                                                                    self.name)
             error_str = header + '\n\t' + '\n\t'.join(errors)
             if PY2:
                 error_str = error_str.encode('utf-8')
@@ -89,7 +91,9 @@ class Schema(object):
         errors = []
 
         # Optional field with optional value? Who cares.
-        if data_item is None and validator.is_optional and validator.can_be_none:
+        if (data_item is None and
+                validator.is_optional and
+                validator.can_be_none):
             return errors
 
         errors += self._validate_primitive(validator, data_item, path)
@@ -142,12 +146,14 @@ class Schema(object):
 
         include_schema = includes.get(validator.include_name)
         if not include_schema:
-            errors.append('Include \'%s\' has not been defined.' % validator.include_name)
+            errors.append('Include \'%s\' has not been defined.'
+                          % validator.include_name)
             return errors
 
         for subpath, validator in include_schema._schema:
             newpath = path + subpath
-            errors += include_schema._validate(validator, data, newpath, includes=includes)
+            errors += include_schema._validate(validator, data,
+                                               newpath, includes=includes)
 
         return errors
 
