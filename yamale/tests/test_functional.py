@@ -115,6 +115,11 @@ strict_list = {
     'bad': 'strict_list_bad.yaml'
 }
 
+nested_map2 = {
+    'schema': 'nested_map2.yaml',
+    'good': 'nested_map2_good.yaml',
+    'bad': 'nested_map2_bad.yaml'
+}
 
 test_data = [
     types, nested, custom,
@@ -123,7 +128,8 @@ test_data = [
     issue_50, regexes, ips, macs,
     nested_map, top_level_map,
     include_validator, strict_map,
-    mixed_strict_map, strict_list
+    mixed_strict_map, strict_list,
+    nested_map2
 ]
 
 for d in test_data:
@@ -192,12 +198,10 @@ def test_bad_regexes():
 
 
 def test_bad_include_validator():
-    # TODO use match
     exp = ["key1: 'a_string' is not a int."]
     match_exception_lines(include_validator['schema'],
                           include_validator['bad'],
                           exp)
-    #assert count_exception_lines(include_validator['schema'], include_validator['bad']) == 3
 
 
 def test_bad_schema():
@@ -228,25 +232,30 @@ def test_bad_strict_list():
                           exp,
                           strict=True)
 
+
 def test_bad_mixed_strict_map():
     exp = ['field3.extra: Unexpected element']
     match_exception_lines(mixed_strict_map['schema'],
                           mixed_strict_map['bad'],
-                          exp,
-                          strict=False)
+                          exp)
+
+
+def test_bad_nested_map2():
+    exp = ['field1.field1_1: Required field missing']
+    match_exception_lines(nested_map2['schema'],
+                          nested_map2['bad'],
+                          exp)
 
 
 def match_exception_lines(schema, data, expected, strict=False):
-    try:
-        yamale.validate(schema, data, strict)
-        raise Exception("Data valid")
-    except ValueError as exp:
-        message = str(exp)
-        # only match the actual error message and remove the leading \t
-        got = set(s.lstrip() for s in message.split('\n') if s.startswith('\t'))
-        expected = set(expected)
-        if not got == expected:
-            raise Exception('Got: {}, Expected: {}'.format(got, expected))
+    with pytest.raises(ValueError) as e:
+        assert yamale.validate(schema, data, strict)
+
+    message = str(e.value)
+    # only match the actual error message and remove the leading \t
+    got = set(s.lstrip() for s in message.split('\n') if s.startswith('\t'))
+    expected = set(expected)
+    assert got == expected
 
 
 def count_exception_lines(schema, data, strict=False):

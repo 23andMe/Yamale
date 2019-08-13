@@ -16,11 +16,12 @@ class Schema(object):
         self.validators = validators or val.DefaultValidators
         self.dict = schema_dict
         self.name = name
-        self._schema = self._process_schema(DataPath(), schema_dict, self.validators)
+        self._schema = self._process_schema(DataPath(),
+                                            schema_dict,
+                                            self.validators)
         # if this schema is included it shares the includes with the top level
         # schema
         self.includes = {} if includes is None else includes
-
 
     def add_include(self, type_dict):
         for include_name, custom_type in type_dict.items():
@@ -74,8 +75,8 @@ class Schema(object):
         try:  # Pull value out of data. Data can be a map or a list/sequence
             data_item = data[key]
         except KeyError:  # Oops, that field didn't exist.
-            # TODO add check if is validator
-            if validator.is_optional:  # Optional? Who cares.
+            # Optional? Who cares.
+            if isinstance(validator, val.Validator) and validator.is_optional:
                 return errors
             # SHUT DOWN EVERTYHING
             errors.append('%s: Required field missing' % path)
