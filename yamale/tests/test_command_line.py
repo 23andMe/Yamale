@@ -73,3 +73,17 @@ def test_bad_dir():
         assert 'Validation failed!' in str(e)
         return
     assert False
+
+
+def test_bad_strict(capsys):
+    try:
+        command_line._router(
+            'yamale/tests/command_line_fixtures/yamls/required_keys_extra_element.yaml',
+            'required_keys_schema.yaml',
+            4, 'PyYAML', strict=True)
+    except ValueError as e:
+        assert 'Validation failed!' in str(e)
+        captured = capsys.readouterr()
+        assert "map.key2: Unexpected element" in captured.out
+        return
+    assert False
