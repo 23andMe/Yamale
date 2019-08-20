@@ -38,7 +38,7 @@ If Yamale can not find a schema it will tell you.
 Usage:
 
 ```bash
-usage: yamale [-h] [-s SCHEMA] [-n CPU_NUM] [-p PARSER] [PATH]
+usage: yamale [-h] [-s SCHEMA] [-n CPU_NUM] [-p PARSER] [--strict] [PATH]
 
 Validate yaml files.
 
@@ -54,6 +54,8 @@ optional arguments:
   -p PARSER, --parser PARSER
                         YAML library to load files. Choices are "ruamel" or
                         "pyyaml" (default).
+  --strict              Enable strict mode, unexpected elements in the data
+                        will not be accepted.
 ```
 
 ### API
