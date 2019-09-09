@@ -121,6 +121,13 @@ nested_map2 = {
     'bad': 'nested_map2_bad.yaml'
 }
 
+static_list = {
+    'schema': 'static_list.yaml',
+    'good': 'static_list_good.yaml',
+    'bad': 'static_list_bad.yaml'
+}
+
+
 test_data = [
     types, nested, custom,
     keywords, lists, maps,
@@ -129,7 +136,7 @@ test_data = [
     nested_map, top_level_map,
     include_validator, strict_map,
     mixed_strict_map, strict_list,
-    nested_map2
+    nested_map2, static_list
 ]
 
 for d in test_data:
@@ -244,6 +251,13 @@ def test_bad_nested_map2():
     exp = ['field1.field1_1: Required field missing']
     match_exception_lines(nested_map2['schema'],
                           nested_map2['bad'],
+                          exp)
+
+
+def test_bad_static_list():
+    exp = ['0: Required field missing']
+    match_exception_lines(static_list['schema'],
+                          static_list['bad'],
                           exp)
 
 
