@@ -74,7 +74,7 @@ class Schema(object):
         path = path + DataPath(key)
         try:  # Pull value out of data. Data can be a map or a list/sequence
             data_item = data[key]
-        except KeyError:  # Oops, that field didn't exist.
+        except (KeyError, IndexError):  # Oops, that field didn't exist.
             # Optional? Who cares.
             if isinstance(validator, val.Validator) and validator.is_optional:
                 return errors
