@@ -142,3 +142,23 @@ def test_mac():
     assert not v.is_valid('ab:cd:ef:12:34:56:78')
     assert not v.is_valid('abcdefghijkl')
     assert not v.is_valid('1234567890ax')
+
+def test_html():
+    v = val.Html(tags=['strong', 'em'])
+    assert v.is_valid('<strong>Bold</strong>')
+    assert v.is_valid('<em>Daring</em>')
+    assert v.is_valid('<strong><em>Bold AND Daring</em></strong>')
+
+    assert not v.is_valid('<strong><em>Closes, wrong order</strong></em>')
+    assert not v.is_valid('<strong>Does not close')
+    assert not v.is_valid('<em>Does not close')
+
+    v = val.Html(tags=['br'])
+    assert not v.is_valid('hello<br>there')
+
+    v = val.Html(tags=['br'], self_closing=['br'])
+    assert v.is_valid('hello<br>there')
+
+    v = val.Html(tags=['ul', 'li', 'a'])
+    assert v.is_valid('<ul><li><a>Click me!</a></li></ul>')
+    assert not v.is_valid('<ul><li><a>Missing closing</li></ul>')

@@ -1,5 +1,9 @@
 import re
 from datetime import date, datetime
+try:
+    from HTMLParser import HTMLParser
+except ImportError:
+    from html.parser import HTMLParser
 from .base import Validator
 from . import constraints as con
 from .. import util
@@ -196,6 +200,80 @@ class Mac(Regex):
             re.compile("[0-9a-fA-F]{2}([-:]?)[0-9a-fA-F]{2}(\\1[0-9a-fA-F]{2}){4}$"),
             re.compile("[0-9a-fA-F]{4}([-:]?)[0-9a-fA-F]{4}(\\1[0-9a-fA-F]{4})$"),
         ]
+
+
+class LimitedHtmlParser(HTMLParser):
+
+    class InvalidTagError(Exception):
+        pass
+
+    class UnclosedTagError(Exception):
+        pass
+
+    def __init__(self, valid_tags, self_closing):
+        HTMLParser.__init__(self)
+        self.valid_tags = valid_tags
+        self.self_closing = self_closing
+        self.opened_tags = []
+        self.unclosed_tag = None
+        self.invalid_tag = None
+
+    def handle_starttag(self, tag, attrs):
+        if tag not in self.valid_tags:
+            self.invalid_tag = tag
+            raise self.InvalidTagError()
+
+        if tag not in self.self_closing:
+            self.opened_tags.append(tag)
+
+    def handle_endtag(self, tag):
+        last_open_tag = self.opened_tags.pop()
+        if tag != last_open_tag:
+            self.unclosed_tag = last_open_tag
+            raise self.UnclosedTagError()
+
+
+class Html(Validator):
+    """Simple HTML string validator
+    Confirms that opening tags have matching closing tags in correct order.
+    Permitted tags must be whitelisted.
+    Self-closing tags must be identified.
+
+    """
+    tag = 'html'
+
+    def __init__(self, *args, **kwargs):
+        self.valid_tags = kwargs.pop('tags')
+        self_closing = kwargs.pop('self_closing', [])
+        self._parser = LimitedHtmlParser(self.valid_tags, self_closing)
+
+        super(Html, self).__init__(*args, **kwargs)
+
+        self.invalid_tag = None
+        self.unclosed_tag = None
+
+    def _is_valid(self, value):
+        try:
+            self._parser.feed(value)
+        except LimitedHtmlParser.InvalidTagError:
+            self.invalid_tag = self._parser.invalid_tag
+            return False
+        except LimitedHtmlParser.UnclosedTagError:
+            self.unclosed_tag = self._parser.unclosed_tag
+            return False
+
+        # if we get to end of string and there's an unclosed opener
+        if self._parser.opened_tags:
+            self.unclosed_tag = self._parser.opened_tags[0]
+            return False
+
+        return True
+
+    def fail(self, value):
+        if self._parser.invalid_tag is not None:
+            return '\'%s\' not in valid tag list %s' % (value, self.valid_tags)
+        if self._parser.unclosed_tag is not None:
+            return '\'%s\' tag is missing matching closing tag' % value
 
 
 DefaultValidators = {}
