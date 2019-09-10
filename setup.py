@@ -15,7 +15,7 @@ elif PY3:
 
 setup(
     name='yamale',
-    version='2.0',
+    version='2.0.1',
     url='https://github.com/23andMe/Yamale',
     author='Bo Lopker',
     author_email='blopker@23andme.com',
