@@ -20,7 +20,15 @@ schemas = {}
 
 
 def _validate(schema_path, data_path, parser, strict):
-    schema = schemas.get(schema_path)
+    try:
+        if os.path.getsize(schema_path) > 0
+            schema = schemas.get(schema_path)
+    except Exception as e:
+        error = '\nError!\n'
+        error += 'Schema: %s\n' % schema_path
+        error += traceback.format_exc()
+        print(error)
+        raise ValueError('schema.yml is an empty file!')
     try:
         if not schema:
             schema = yamale.make_schema(schema_path, parser)
