@@ -21,7 +21,7 @@ schemas = {}
 
 def _validate(schema_path, data_path, parser, strict):
     try:
-        if os.path.getsize(schema_path) > 0
+        if os.path.getsize(schema_path):
             schema = schemas.get(schema_path)
     except Exception as e:
         error = '\nError!\n'
