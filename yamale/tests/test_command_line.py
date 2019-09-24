@@ -75,17 +75,6 @@ def test_bad_dir():
     assert False
 
 
-def test_empty_schema_file():
-    try:
-        command_line._router(
-            'yamale/tests/command_line_fixtures',
-            'empty_schema.yaml', 1, 'PyYAML')
-    except ValueError as e:
-        assert 'Validation failed!' in str(e)
-        return
-    assert False
-
-
 def test_bad_strict(capsys):
     try:
         command_line._router(
