@@ -18,6 +18,7 @@ def make_schema(path, parser='PyYAML', validators=None):
     # Import readers here so we can get version information in setup.py.
     from . import readers
     raw_schemas = readers.parse_file(path, parser)
+
     # First document is the base schema
     try:
         s = Schema(raw_schemas[0], path, validators=validators)
