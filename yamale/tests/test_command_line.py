@@ -81,7 +81,7 @@ def test_empty_schema_file():
             'yamale/tests/command_line_fixtures',
             'empty_schema.yaml', 1, 'PyYAML')
     except ValueError as e:
-        assert 'schema.yml is an empty file!' in str(e)
+        assert 'Validation failed!' in str(e)
         return
     assert False
 
