@@ -213,8 +213,7 @@ def test_bad_schema():
 def test_empty_schema():
     with pytest.raises(ValueError) as excinfo:
         yamale.make_schema(get_fixture('empty_schema.yaml'))
-        print(excinfo)
-    assert 'schema.yaml is an empty file!' in str(excinfo.value)
+    assert 'empty_schema.yaml is an empty file!' in str(excinfo.value)
 
 
 def test_list_is_not_a_map():

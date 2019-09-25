@@ -11,9 +11,9 @@ def make_schema(path, parser='PyYAML', validators=None):
     # test if the schema.yaml file is empty
     try:
         if not os.path.getsize(path):
-            raise ValueError('schema.yaml is an empty file!')
+            error_message = os.path.basename(path) + 'is an empty file!'
+            raise ValueError(error_message)
     except ValueError as e:
-        print(e)
         raise ValueError(e)
     # Import readers here so we can get version information in setup.py.
     from . import readers
