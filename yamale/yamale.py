@@ -11,7 +11,7 @@ def make_schema(path, parser='PyYAML', validators=None):
     # test if the schema.yaml file is empty
     try:
         if not os.path.getsize(path):
-            error_message = os.path.basename(path) + 'is an empty file!'
+            error_message = os.path.basename(path) + ' is an empty file!'
             raise ValueError(error_message)
     except ValueError as e:
         raise ValueError(e)
