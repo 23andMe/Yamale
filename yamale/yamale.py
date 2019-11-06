@@ -8,14 +8,11 @@ PY2 = sys.version_info[0] == 2
 
 def make_schema(path, parser='PyYAML', validators=None):
     # validators = None means use default.
-    # test if the schema.yaml file is empty
-    if not os.path.getsize(path):
-        error_message = os.path.basename(path) + ' is an empty file!'
-        raise ValueError(error_message)
     # Import readers here so we can get version information in setup.py.
     from . import readers
     raw_schemas = readers.parse_file(path, parser)
-
+    if not raw_schemas:
+        raise ValueError('{} is an empty file!'.format(path))
     # First document is the base schema
     try:
         s = Schema(raw_schemas[0], path, validators=validators)
