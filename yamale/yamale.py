@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import sys
+import os
 from .schema import Schema
 
 PY2 = sys.version_info[0] == 2
@@ -10,7 +11,8 @@ def make_schema(path, parser='PyYAML', validators=None):
     # Import readers here so we can get version information in setup.py.
     from . import readers
     raw_schemas = readers.parse_file(path, parser)
-
+    if not raw_schemas:
+        raise ValueError('{} is an empty file!'.format(path))
     # First document is the base schema
     try:
         s = Schema(raw_schemas[0], path, validators=validators)

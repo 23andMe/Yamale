@@ -58,6 +58,15 @@ def test_external_glob_schema(parser):
         os.path.join(dir_path, 'command_line_fixtures/schema_dir/ex*.yaml'), 1, parser)
 
 
+def test_empty_schema_file():
+    try:
+        command_line._router(
+            'yamale/tests/command_line_fixtures/empty_schema',
+            'empty_schema.yaml' , 1, 'PyYAML')
+    except ValueError as e:
+        assert 'empty_schema.yaml is an empty file!' in str(e)
+
+
 def test_external_schema():
     command_line._router(
         'yamale/tests/command_line_fixtures/yamls/good.yaml',

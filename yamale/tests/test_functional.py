@@ -217,6 +217,12 @@ def test_bad_schema():
     assert 'fixtures/bad_schema.yaml' in str(excinfo.value)
 
 
+def test_empty_schema():
+    with pytest.raises(ValueError) as excinfo:
+        yamale.make_schema(get_fixture('empty_schema.yaml'))
+    assert 'empty_schema.yaml is an empty file!' in str(excinfo.value)
+
+
 def test_list_is_not_a_map():
     exp = [": '[1, 2]' is not a map"]
     match_exception_lines(strict_map['schema'],
