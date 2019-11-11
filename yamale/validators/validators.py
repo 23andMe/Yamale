@@ -153,9 +153,8 @@ class Regex(Validator):
     def __init__(self, *args, **kwargs):
         self.regex_name = kwargs.pop('name', None)
 
-        flags = 0
-        for k, v in util.get_iter(self._regex_flags):
-            flags |= v if kwargs.pop(k, False) else 0
+        flags = sum(v for k, v in util.get_iter(self._regex_flags)
+                    if kwargs.pop(k, False))
 
         self.regexes = [re.compile(arg, flags) for arg in args if util.isstr(arg)]
         super(Regex, self).__init__(*args, **kwargs)
