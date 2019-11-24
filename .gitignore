@@ -38,3 +38,6 @@ coverage.xml
 
 # Virtual env
 venv/
+
+# Pyenv
+.python-version

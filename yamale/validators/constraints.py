@@ -85,7 +85,7 @@ class Max(Constraint):
 
 class LengthMin(Constraint):
     keywords = {'min': int}
-    fail = 'Length of %s is less than than %s'
+    fail = 'Length of %s is less than %s'
 
     def _is_valid(self, value):
         return self.min <= len(value)
