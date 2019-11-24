@@ -37,18 +37,18 @@ def test_regex():
     assert not v.is_valid('\12')
     assert v.fail('woopz') == '\'woopz\' is not a test regex.'
 
-    v = val.Regex('[a-z0-9]{3,}s\s$', ignore_case=True)
+    v = val.Regex(r'[a-z0-9]{3,}s\s$', ignore_case=True)
     assert v.is_valid('b33S\v')
     assert v.is_valid('B33s\t')
     assert not v.is_valid(' b33s ')
     assert not v.is_valid('b33s  ')
     assert v.fail('fdsa') == '\'fdsa\' is not a regex match.'
 
-    v = val.Regex('A.+\d$', ignore_case=False, multiline=True)
+    v = val.Regex(r'A.+\d$', ignore_case=False, multiline=True)
     assert v.is_valid('A_-3\n\n')
     assert not v.is_valid('a!!!!!5\n\n')
 
-    v = val.Regex('.*^Ye.*s\.', ignore_case=True, multiline=True, dotall=True)
+    v = val.Regex(r'.*^Ye.*s\.', ignore_case=True, multiline=True, dotall=True)
     assert v.is_valid('YEeeEEEEeeeeS.')
     assert v.is_valid('What?\nYes!\nBEES.\nOK.')
     assert not v.is_valid('YES-TA-TOES?')
