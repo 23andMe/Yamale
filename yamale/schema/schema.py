@@ -116,7 +116,8 @@ class Schema(object):
         elif isinstance(validator, (val.Map, val.List)):
             errors += self._validate_map_list(validator, data, path, strict)
 
-        elif isinstance(validator, val.Any):
+        # Validate any when is Any or when has validators (eg. CustomValidators)
+        elif isinstance(validator, val.Any) or hasattr(validator, 'validators'):
             errors += self._validate_any(validator, data, path, strict)
 
         return errors
