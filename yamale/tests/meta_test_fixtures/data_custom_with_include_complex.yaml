@@ -1,0 +1,4 @@
+test_includes:
+  dev:
+    string: custom data - date
+    custom: 10C

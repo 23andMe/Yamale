@@ -1,0 +1,4 @@
+test_includes:
+  my_custom_env:
+    string: custom data - date
+    custom: 10C

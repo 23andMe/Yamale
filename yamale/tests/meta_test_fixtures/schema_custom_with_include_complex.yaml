@@ -1,0 +1,12 @@
+test_includes: environment(include('test_include_complex'))
+
+---
+test_include:
+  custom: card()
+  string: str()
+  number: num(required=False)
+
+test_include_complex:
+  dev: include('test_include', required=False)
+  stg: include('test_include', required=False)
+  prd: include('test_include', required=False)

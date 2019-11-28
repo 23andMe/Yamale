@@ -54,6 +54,23 @@ class Card(Validator):
     def _is_valid(self, value):
         return re.match(self.card_regex, value)
 
+class Environment(Validator):
+    """ Custom validator for testing purpose """
+    tag = 'environment'
+    ENVIRONMENTS = ['dev','stg','prd']
+
+    def __init__(self, *args, **kwargs):
+        self.validators = [val for val in args if isinstance(val, Validator)]
+        super(Environment, self).__init__(*args, **kwargs)
+
+    def _is_valid(self, value):
+        envs = value.keys()
+        for env in envs:
+            self.env = env
+            return False if env not in self.ENVIRONMENTS else True
+    
+    def fail(self, value):
+        return 'Environment \'%s\' not in %s' % (self.env, self.ENVIRONMENTS)
 
 class TestCustomValidator(YamaleTestCase):
     base_dir = data_folder
@@ -65,7 +82,6 @@ class TestCustomValidator(YamaleTestCase):
         validators['card'] = Card
         self.assertTrue(self.validate(validators))
 
-
 class TestCustomValidatorWithIncludes(YamaleTestCase):
     base_dir = data_folder
     schema = 'meta_test_fixtures/schema_custom_with_include.yaml'
@@ -73,9 +89,31 @@ class TestCustomValidatorWithIncludes(YamaleTestCase):
 
     def runTest(self):
         validators = DefaultValidators.copy()
-        validators['card'] = Card
+        validators[Card.tag] = Card
         self.assertTrue(self.validate(validators))
 
+class TestCustomValidatorWithIncludesComplex(YamaleTestCase):
+    base_dir = data_folder
+    schema = 'meta_test_fixtures/schema_custom_with_include_complex.yaml'
+    yaml = 'meta_test_fixtures/data_custom_with_include_complex.yaml'
+
+    def runTest(self):
+        validators = DefaultValidators.copy()
+        validators[Environment.tag] = Environment
+        validators[Card.tag] = Card
+        self.assertTrue(self.validate(validators))
+
+class TestCustomValidatorWithIncludesComplexFail(YamaleTestCase):
+    base_dir = data_folder
+    schema = 'meta_test_fixtures/schema_custom_with_include_complex.yaml'
+    yaml = 'meta_test_fixtures/data_custom_with_include_complex_fail.yaml'
+
+    def runTest(self):
+        validators = DefaultValidators.copy()
+        validators[Environment.tag] = Environment
+        validators[Card.tag] = Card
+        with self.assertRaises(ValueError) as cm:
+            self.validate(validators)
 
 class TestBadRequiredYaml(YamaleTestCase):
     base_dir = data_folder
