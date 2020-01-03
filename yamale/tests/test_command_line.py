@@ -65,7 +65,6 @@ def test_external_schema():
         os.path.join(dir_path, 'command_line_fixtures/schema_dir/external.yaml'), 1, 'PyYAML')
 
 
-@pytest.mark.skip(reason="test doesn't exit")
 def test_bad_dir():
     with pytest.raises(ValueError, match='Validation failed!'):
         command_line._router(
