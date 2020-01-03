@@ -11,30 +11,22 @@ parsers = ['pyyaml', 'PyYAML', 'ruamel']
 
 @pytest.mark.parametrize('parser', parsers)
 def test_bad_yaml(capsys, parser):
-    try:
+    with pytest.raises(ValueError, match='Validation failed!'):
         command_line._router(
             'yamale/tests/command_line_fixtures/yamls/bad.yaml',
             'schema.yaml', 1, parser)
-    except ValueError as e:
-        assert 'Validation failed!' in str(e)
-        captured = capsys.readouterr()
-        assert "map.bad: '12.5' is not a str." in captured.out
-        return
-    assert False
+    captured = capsys.readouterr()
+    assert "map.bad: '12.5' is not a str." in captured.out
 
 
 @pytest.mark.parametrize('parser', parsers)
 def test_required_keys_yaml(capsys, parser):
-    try:
+    with pytest.raises(ValueError, match='Validation failed!'):
         command_line._router(
             'yamale/tests/command_line_fixtures/yamls/required_keys_bad.yaml',
             'required_keys_schema.yaml', 1, parser)
-    except ValueError as e:
-        assert 'Validation failed!' in str(e)
-        captured = capsys.readouterr()
-        assert "map.key: Required field missing" in captured.out
-        return
-    assert False
+    captured = capsys.readouterr()
+    assert "map.key: Required field missing" in captured.out
 
 
 @pytest.mark.parametrize('parser', parsers)
@@ -58,13 +50,13 @@ def test_external_glob_schema(parser):
         os.path.join(dir_path, 'command_line_fixtures/schema_dir/ex*.yaml'), 1, parser)
 
 
-def test_empty_schema_file():
-    try:
+def test_empty_schema_file(capsys):
+    with pytest.raises(ValueError, match='Validation failed!'):
         command_line._router(
-            'yamale/tests/command_line_fixtures/empty_schema',
+            'yamale/tests/command_line_fixtures/empty_schema/data.yaml',
             'empty_schema.yaml' , 1, 'PyYAML')
-    except ValueError as e:
-        assert 'empty_schema.yaml is an empty file!' in str(e)
+    captured = capsys.readouterr()
+    assert 'empty_schema.yaml is an empty file!' in captured.out
 
 
 def test_external_schema():
@@ -74,28 +66,20 @@ def test_external_schema():
 
 
 def test_bad_dir():
-    try:
+    with pytest.raises(ValueError, match='Validation failed!'):
         command_line._router(
             'yamale/tests/command_line_fixtures/yamls',
             'schema.yaml', 4, 'PyYAML')
-    except ValueError as e:
-        assert 'Validation failed!' in str(e)
-        return
-    assert False
 
 
 def test_bad_strict(capsys):
-    try:
+    with pytest.raises(ValueError, match='Validation failed!'):
         command_line._router(
             'yamale/tests/command_line_fixtures/yamls/required_keys_extra_element.yaml',
             'required_keys_schema.yaml',
             4, 'PyYAML', strict=True)
-    except ValueError as e:
-        assert 'Validation failed!' in str(e)
-        captured = capsys.readouterr()
-        assert "map.key2: Unexpected element" in captured.out
-        return
-    assert False
+    captured = capsys.readouterr()
+    assert "map.key2: Unexpected element" in captured.out
 
 
 def test_bad_issue_54(capsys):
