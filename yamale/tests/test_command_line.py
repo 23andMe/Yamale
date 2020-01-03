@@ -50,12 +50,13 @@ def test_external_glob_schema(parser):
         os.path.join(dir_path, 'command_line_fixtures/schema_dir/ex*.yaml'), 1, parser)
 
 
-def test_empty_schema_file():
-    with pytest.raises(ValueError) as e:
+def test_empty_schema_file(capsys):
+    with pytest.raises(ValueError, match='Validation failed!'):
         command_line._router(
-            'yamale/tests/command_line_fixtures/empty_schema',
+            'yamale/tests/command_line_fixtures/empty_schema/data.yaml',
             'empty_schema.yaml' , 1, 'PyYAML')
-    assert 'empty_schema.yaml is an empty file!' in str(e)
+    captured = capsys.readouterr()
+    assert 'empty_schema.yaml is an empty file!' in captured.out
 
 
 def test_external_schema():
