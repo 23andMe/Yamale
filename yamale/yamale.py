@@ -33,7 +33,7 @@ def make_data(path, parser='PyYAML'):
     from . import readers
     raw_data = readers.parse_file(path, parser)
     if len(raw_data) == 0:
-        return [(None, path)]
+        return [({}, path)]
     return [(d, path) for d in raw_data]
 
 

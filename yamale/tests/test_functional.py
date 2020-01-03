@@ -183,7 +183,7 @@ def test_bad_nested():
 
 
 def test_bad_nested_issue_54():
-    assert count_exception_lines(nested_issue_54['schema'], nested_issue_54['bad']) == 3
+    assert count_exception_lines(nested_issue_54['schema'], nested_issue_54['bad']) == 10
 
 
 def test_bad_custom():
