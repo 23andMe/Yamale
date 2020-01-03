@@ -96,3 +96,11 @@ def test_bad_strict(capsys):
         assert "map.key2: Unexpected element" in captured.out
         return
     assert False
+
+
+def test_bad_issue_54():
+    with pytest.raises(ValueError, match='Validation failed!'):
+        command_line._router(
+            'yamale/tests/fixtures/nested_issue_54.yaml',
+            'nested.yaml',
+            4, 'PyYAML', strict=True)

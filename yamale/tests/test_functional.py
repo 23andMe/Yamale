@@ -127,6 +127,11 @@ static_list = {
     'bad': 'static_list_bad.yaml'
 }
 
+nested_issue_54 = {
+    'schema': 'nested.yaml',
+    'bad': 'nested_issue_54.yaml',
+    'good': 'nested_good_data.yaml'
+}
 
 test_data = [
     types, nested, custom,
@@ -136,7 +141,8 @@ test_data = [
     nested_map, top_level_map,
     include_validator, strict_map,
     mixed_strict_map, strict_list,
-    nested_map2, static_list
+    nested_map2, static_list,
+    nested_issue_54
 ]
 
 for d in test_data:
@@ -174,6 +180,10 @@ def test_bad_validate():
 
 def test_bad_nested():
     assert count_exception_lines(nested['schema'], nested['bad']) == 4
+
+
+def test_bad_nested_issue_54():
+    assert count_exception_lines(nested_issue_54['schema'], nested_issue_54['bad']) == 3
 
 
 def test_bad_custom():
