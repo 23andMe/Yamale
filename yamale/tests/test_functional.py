@@ -183,7 +183,17 @@ def test_bad_nested():
 
 
 def test_bad_nested_issue_54():
-    assert count_exception_lines(nested_issue_54['schema'], nested_issue_54['bad']) == 10
+    exp = [
+        'string: Required field missing',
+        'number: Required field missing',
+        'integer: Required field missing',
+        'boolean: Required field missing',
+        'date: Required field missing',
+        'datetime: Required field missing',
+        'nest: Required field missing',
+        'list: Required field missing'
+    ]
+    match_exception_lines(nested_issue_54['schema'], nested_issue_54['bad'], exp)
 
 
 def test_bad_custom():
