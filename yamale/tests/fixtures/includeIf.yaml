@@ -1,5 +1,5 @@
 a: bool()
-b: includeIf('b', 'a', 'isTrue', strict=True)
+b: includeIf('a', 'isTrue', 'b', strict=True)
 ---
 isTrue: enum(True)
 ---

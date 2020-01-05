@@ -129,18 +129,19 @@ class IncludeIf(Validator):
     tag = 'includeIf'
 
     def __init__(self, *args, **kwargs):
-        self.include_name = args[0]
-        self.if_path = args[1]
-        self.if_include_test = args[2]
+        self.if_path = args[0]
+        self.if_include_test = args[1]
+        self.then_include = args[2]
+        if len(args) >= 4:
+            self.else_include = args[3]
+        else:
+            self.else_include = None
         self.strict = kwargs.pop('strict', None)
         super(IncludeIf, self).__init__(*args, **kwargs)
         self.is_required = bool(kwargs.pop('required', False))
 
     def _is_valid(self, value):
         return True
-
-    def get_name(self):
-        return self.include_name
 
 
 class Any(Validator):

@@ -202,14 +202,18 @@ class Schema(object):
         # test if condition succeed
         errors = if_schema._validate(if_schema._schema, if_data, if_path, strict)
         if errors:
-            # condition failed => no schema to include
-            if strict and (not (data is None)):
-                return ['%s: Unexpected element' % path]
-            return []
-        include_schema = self.includes.get(validator.include_name)
+            # condition failed
+            if validator.else_include is None:
+                if strict and (not (data is None)):
+                    return ['%s: Unexpected element' % path]
+                return []
+            include_name = validator.else_include
+        else:
+            include_name = validator.then_include
+        include_schema = self.includes.get(include_name)
         if not include_schema:
             return [('Include \'%s\' has not been defined.'
-                     % validator.include_name)]
+                     % include_name)]
         return include_schema._validate(include_schema._schema,
                                         data,
                                         path,

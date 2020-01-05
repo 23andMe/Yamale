@@ -1,0 +1,10 @@
+a: bool()
+b: includeIf('a', 'isTrue', 'b1', 'b2', strict=True)
+---
+isTrue: enum(True)
+---
+b1:
+  c: int()
+---
+b2:
+  d: enum('OK')
