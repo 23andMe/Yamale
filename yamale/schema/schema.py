@@ -2,6 +2,7 @@ import sys
 from .datapath import DataPath
 from .. import syntax, util
 from .. import validators as val
+import dpath.util
 
 # Fix Python 2.x.
 PY2 = sys.version_info[0] == 2
@@ -54,6 +55,7 @@ class Schema(object):
 
     def validate(self, data, data_name, strict):
         path = DataPath()
+        self._root_data = data
         errors = self._validate(self._schema, data, path, strict)
 
         if errors:
@@ -75,12 +77,14 @@ class Schema(object):
         try:  # Pull value out of data. Data can be a map or a list/sequence
             data_item = data[key]
         except (KeyError, IndexError):  # Oops, that field didn't exist.
-            # Optional? Who cares.
-            if isinstance(validator, val.Validator) and validator.is_optional:
+            if not isinstance(validator, val.IncludeIf):
+                # Optional? Who cares.
+                if isinstance(validator, val.Validator) and validator.is_optional:
+                    return errors
+                # SHUT DOWN EVERTYHING
+                errors.append('%s: Required field missing' % path)
                 return errors
-            # SHUT DOWN EVERTYHING
-            errors.append('%s: Required field missing' % path)
-            return errors
+            data_item = None
 
         return self._validate(validator, data_item, path, strict)
 
@@ -102,7 +106,8 @@ class Schema(object):
         # Optional field with optional value? Who cares.
         if (data is None and
                 validator.is_optional and
-                validator.can_be_none):
+                validator.can_be_none and
+                not isinstance(validator, val.IncludeIf)):
             return errors
 
         errors += self._validate_primitive(validator, data, path)
@@ -112,6 +117,9 @@ class Schema(object):
 
         if isinstance(validator, val.Include):
             errors += self._validate_include(validator, data, path, strict)
+
+        if isinstance(validator, val.IncludeIf):
+            errors += self._validate_include_if(validator, data, path, strict)
 
         elif isinstance(validator, (val.Map, val.List)):
             errors += self._validate_map_list(validator, data, path, strict)
@@ -123,6 +131,8 @@ class Schema(object):
 
     def _validate_static_map_list(self, validator, data, path, strict):
         if util.is_map(validator) and not util.is_map(data):
+            if data is None:
+                return ["%s: Required field missing" % path]
             return ["%s : '%s' is not a map" % (path, data)]
 
         if util.is_list(validator) and not util.is_list(data):
@@ -171,6 +181,35 @@ class Schema(object):
             return [('Include \'%s\' has not been defined.'
                      % validator.include_name)]
         strict = strict if validator.strict is None else validator.strict
+        return include_schema._validate(include_schema._schema,
+                                        data,
+                                        path,
+                                        strict)
+
+    def _validate_include_if(self, validator, data, path, strict):
+        strict = strict if validator.strict is None else validator.strict
+        if_path = DataPath(validator.if_path.split('/'))
+        try:
+            if_data = dpath.util.get(self._root_data, validator.if_path)
+        except KeyError:
+            if strict:
+                return [('path \'%s\' does not exist.' % validator.if_path)]
+            if_data = {}
+        if_schema = self.includes.get(validator.if_include_test)
+        if not if_schema:
+            return [('Include \'%s\' has not been defined.'
+                     % validator.if_include_test)]
+        # test if condition succeed
+        errors = if_schema._validate(if_schema._schema, if_data, if_path, strict)
+        if errors:
+            # condition failed => no schema to include
+            if strict and (not (data is None)):
+                return ['%s: Unexpected element' % path]
+            return []
+        include_schema = self.includes.get(validator.include_name)
+        if not include_schema:
+            return [('Include \'%s\' has not been defined.'
+                     % validator.include_name)]
         return include_schema._validate(include_schema._schema,
                                         data,
                                         path,

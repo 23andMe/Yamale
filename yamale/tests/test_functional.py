@@ -127,6 +127,17 @@ static_list = {
     'bad': 'static_list_bad.yaml'
 }
 
+include_if_1 = {
+    'schema': 'includeIf.yaml',
+    'good': 'includeIf_good_1.yaml',
+    'bad': 'includeIf_bad_1.yaml'
+}
+
+include_if_2 = {
+    'schema': 'includeIf.yaml',
+    'good': 'includeIf_good_2.yaml',
+    'bad': 'includeIf_bad_2.yaml'
+}
 
 test_data = [
     types, nested, custom,
@@ -136,7 +147,8 @@ test_data = [
     nested_map, top_level_map,
     include_validator, strict_map,
     mixed_strict_map, strict_list,
-    nested_map2, static_list
+    nested_map2, static_list,
+    include_if_1, include_if_2
 ]
 
 for d in test_data:
@@ -264,6 +276,20 @@ def test_bad_static_list():
     exp = ['0: Required field missing']
     match_exception_lines(static_list['schema'],
                           static_list['bad'],
+                          exp)
+
+
+def test_bad_include_if_1():
+    exp = ['b: Unexpected element']
+    match_exception_lines(include_if_1['schema'],
+                          include_if_1['bad'],
+                          exp)
+
+
+def test_bad_include_if_2():
+    exp = ['b: Required field missing']
+    match_exception_lines(include_if_2['schema'],
+                          include_if_2['bad'],
                           exp)
 
 
