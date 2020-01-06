@@ -138,7 +138,16 @@ class IncludeIf(Validator):
             self.else_include = None
         self.strict = kwargs.pop('strict', None)
         super(IncludeIf, self).__init__(*args, **kwargs)
-        self.is_required = bool(kwargs.pop('required', False))
+
+    def __eq__(self, other):
+        if not super.__eq__(self, other):
+            return False
+        eq = [self.if_path == other.if_path,
+              self.if_include_test == other.if_include_test,
+              self.then_include == other.then_include,
+              self.else_include == other.else_include,
+              self.strict == other.strict]
+        return all(eq)
 
     def _is_valid(self, value):
         return True

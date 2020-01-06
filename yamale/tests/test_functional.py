@@ -312,6 +312,13 @@ def test_bad_include_if_2():
                           exp)
 
 
+def test_bad_include_if_3():
+    exp = ['b.c: Unexpected element']
+    match_exception_lines(include_if_3['schema'],
+                          include_if_3['bad'],
+                          exp)
+
+
 def test_bad_include_if_then_else_1():
     exp = ['b: Required field missing']
     match_exception_lines(include_if_then_else_1['schema'],
