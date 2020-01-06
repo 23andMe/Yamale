@@ -127,6 +127,12 @@ static_list = {
     'bad': 'static_list_bad.yaml'
 }
 
+nested_issue_54 = {
+    'schema': 'nested.yaml',
+    'bad': 'nested_issue_54.yaml',
+    'good': 'nested_good_data.yaml'
+}
+
 include_if_1 = {
     'schema': 'includeIf.yaml',
     'good': 'includeIf_good_1.yaml',
@@ -165,7 +171,7 @@ test_data = [
     nested_map, top_level_map,
     include_validator, strict_map,
     mixed_strict_map, strict_list,
-    nested_map2, static_list,
+    nested_map2, static_list, nested_issue_54,
     include_if_1, include_if_2, include_if_3,
     include_if_then_else_1, include_if_then_else_2
 ]
@@ -205,6 +211,20 @@ def test_bad_validate():
 
 def test_bad_nested():
     assert count_exception_lines(nested['schema'], nested['bad']) == 4
+
+
+def test_bad_nested_issue_54():
+    exp = [
+        'string: Required field missing',
+        'number: Required field missing',
+        'integer: Required field missing',
+        'boolean: Required field missing',
+        'date: Required field missing',
+        'datetime: Required field missing',
+        'nest: Required field missing',
+        'list: Required field missing'
+    ]
+    match_exception_lines(nested_issue_54['schema'], nested_issue_54['bad'], exp)
 
 
 def test_bad_custom():
