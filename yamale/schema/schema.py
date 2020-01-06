@@ -55,8 +55,7 @@ class Schema(object):
 
     def validate(self, data, data_name, strict):
         path = DataPath()
-        self._root_data = data
-        errors = self._validate(self._schema, data, path, strict)
+        errors = self._validate(self._schema, data, path, strict, data)
 
         if errors:
             header = '\nError validating data %s with schema %s' % (data_name,
@@ -88,13 +87,16 @@ class Schema(object):
 
         return self._validate(validator, data_item, path, strict)
 
-    def _validate(self, validator, data, path, strict):
+    def _validate(self, validator, data, path, strict, root_data=None):
         """
         Validate data with validator.
         Special handling of non-primitive validators.
 
         Returns an array of errors.
         """
+
+        if root_data:
+            self._root_data = root_data
 
         if util.is_list(validator) or util.is_map(validator):
             return self._validate_static_map_list(validator,
@@ -184,7 +186,8 @@ class Schema(object):
         return include_schema._validate(include_schema._schema,
                                         data,
                                         path,
-                                        strict)
+                                        strict,
+                                        self._root_data)
 
     def _validate_include_if(self, validator, data, path, strict):
         strict = strict if validator.strict is None else validator.strict
@@ -200,7 +203,7 @@ class Schema(object):
             return [('Include \'%s\' has not been defined.'
                      % validator.if_include_test)]
         # test if condition succeed
-        errors = if_schema._validate(if_schema._schema, if_data, if_path, strict)
+        errors = if_schema._validate(if_schema._schema, if_data, if_path, strict, self._root_data)
         if errors:
             # condition failed
             if validator.else_include is None:
@@ -217,7 +220,8 @@ class Schema(object):
         return include_schema._validate(include_schema._schema,
                                         data,
                                         path,
-                                        strict)
+                                        strict,
+                                        self._root_data)
 
     def _validate_any(self, validator, data, path, strict):
         errors = []

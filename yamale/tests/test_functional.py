@@ -139,6 +139,12 @@ include_if_2 = {
     'bad': 'includeIf_bad_2.yaml'
 }
 
+include_if_3 = {
+    'schema': 'include_includeIf.yaml',
+    'good': 'includeIf_good_1.yaml',
+    'bad': 'includeIf_bad_1.yaml'
+}
+
 include_if_then_else_1 = {
     'schema': 'includeIfThenElse.yaml',
     'good': 'includeIf_good_1.yaml',
@@ -160,7 +166,7 @@ test_data = [
     include_validator, strict_map,
     mixed_strict_map, strict_list,
     nested_map2, static_list,
-    include_if_1, include_if_2,
+    include_if_1, include_if_2, include_if_3,
     include_if_then_else_1, include_if_then_else_2
 ]
 
