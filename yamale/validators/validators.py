@@ -140,9 +140,11 @@ class IncludeIf(Validator):
         super(IncludeIf, self).__init__(*args, **kwargs)
 
     def __eq__(self, other):
-        if not super.__eq__(self, other):
+        if not isinstance(other, IncludeIf):
             return False
-        eq = [self.if_path == other.if_path,
+        eq = [self.args == other.args,
+              self.kwargs == other.kwargs,
+              self.if_path == other.if_path,
               self.if_include_test == other.if_include_test,
               self.then_include == other.then_include,
               self.else_include == other.else_include,
