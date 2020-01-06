@@ -80,3 +80,20 @@ def test_bad_strict(capsys):
             4, 'PyYAML', strict=True)
     captured = capsys.readouterr()
     assert "map.key2: Unexpected element" in captured.out
+
+
+def test_bad_issue_54(capsys):
+    with pytest.raises(ValueError, match='Validation failed!'):
+        command_line._router(
+            'yamale/tests/fixtures/nested_issue_54.yaml',
+            'nested.yaml',
+            4, 'PyYAML', strict=True)
+    captured = capsys.readouterr()
+    assert 'string: Required field missing' in captured.out
+    assert 'number: Required field missing' in captured.out
+    assert 'integer: Required field missing' in captured.out
+    assert 'boolean: Required field missing' in captured.out
+    assert 'date: Required field missing' in captured.out
+    assert 'datetime: Required field missing' in captured.out
+    assert 'nest: Required field missing' in captured.out
+    assert 'list: Required field missing' in captured.out
