@@ -186,6 +186,84 @@ person:
 ##### Adding external includes
 After you construct a schema you can add extra, external include definitions by calling `schema.add_include(dict)`. This method takes a dictionary and adds each key as another include.
 
+#### Conditional Includes
+Sub-schema definition could dependes from other field value.
+
+##### If-Then example
+In France we cannot get driving license before 18 years old and so related vehicle. The following schema validate the first data but not the second.
+###### Scheam
+```yaml
+persons: list(include('person'))
+---
+person:
+    name: str()
+    age: int()
+    vehicles: includeIf('person/age', 'minimal-age', 'vehicles')
+minimal-age: int(min=18)
+vehicles: list(enum('car', 'bus'))
+```
+###### Good data
+```yaml
+persons:
+  - name: john
+    age: 36
+    vehicles:
+      - car
+  - name: boby
+    age: 50
+  - name: junior
+    age: 16
+```
+###### Bad data
+```yaml
+persons:
+  - name: junior
+    age: 16
+    vehicles:
+      - car
+```
+
+##### If-Then-Else example
+Same as before but every body can have bicycle. The following schema validate the first data but not the second.
+
+###### Scheam
+```yaml
+persons: list(include('person'))
+---
+person:
+    name: str()
+    age: int()
+    vehicles: includeIf('person/age', 'minimal-age', 'vehicles-old', 'vehicles-young')
+minimal-age: int(min=18)
+vehicles-old: list(enum('car', 'bus', 'bicycle'))
+vehicles-young: list(enum('bicycle', max=1))
+```
+
+###### Good data
+```yaml
+persons:
+  - name: john
+    age: 36
+    vehicles:
+      - car
+      - bicycle
+  - name: boby
+    age: 50
+  - name: junior
+    age: 16
+    vehicles:
+      - bicycle
+```
+
+###### Bad data
+```yaml
+persons:
+  - name: junior
+    age: 16
+    vehicles:
+      - car
+```
+
 ### Strict mode
 By default Yamale will not give any error for extra elements present in lists and maps that are not covered by the schema. With strict mode any additional element will give an error. Strict mode is enabled by passing the strict=True flag to the validate function.
 
