@@ -18,22 +18,21 @@ import yamale
 
 schemas = {}
 
+status = 0
 
 def _validate(schema_path, data_path, parser, strict):
     schema = schemas.get(schema_path)
-    try:
-        if not schema:
-            schema = yamale.make_schema(schema_path, parser)
-            schemas[schema_path] = schema
-        data = yamale.make_data(data_path, parser)
-        yamale.validate(schema, data, strict)
-    except Exception as e:
-        error = '\nError!\n'
-        error += 'Schema: %s\n' % schema_path
-        error += 'Data file: %s\n' % data_path
-        error += traceback.format_exc()
-        print(error)
-        raise ValueError('Validation failed!')
+    if not schema:
+        schema = yamale.make_schema(schema_path, parser)
+        schemas[schema_path] = schema
+    data = yamale.make_data(data_path, parser)
+    results = yamale.validate(schema, data, strict)
+    status = 0
+    for result in results:
+        if result.isValid:
+            print(str(result))
+            status = 1
+    return status
 
 
 def _find_data_path_schema(data_path, schema_name):
@@ -65,7 +64,7 @@ def _validate_single(yaml_path, schema_name, parser, strict):
     s = _find_schema(yaml_path, schema_name)
     if not s:
         raise ValueError("Invalid schema name for '{}' or schema not found.".format(schema_name))
-    _validate(s, yaml_path, parser, strict)
+    return _validate(s, yaml_path, parser, strict)
 
 
 def _validate_dir(root, schema_name, cpus, parser, strict):
@@ -85,18 +84,21 @@ def _validate_dir(root, schema_name, cpus, parser, strict):
 
     print('Found %s yaml files.' % len(res))
     print('Validating...')
+    status = 0
     for r in res:
-        r.get(timeout=300)
+        if r.get(timeout=300):
+            status = 1
     pool.close()
     pool.join()
+    return status
 
 
 def _router(root, schema_name, cpus, parser, strict=False):
     root = os.path.abspath(root)
     if os.path.isfile(root):
-        _validate_single(root, schema_name, parser, strict)
+        return _validate_single(root, schema_name, parser, strict)
     else:
-        _validate_dir(root, schema_name, cpus, parser, strict)
+        return _validate_dir(root, schema_name, cpus, parser, strict)
 
 
 def main():
@@ -112,8 +114,11 @@ def main():
     parser.add_argument('--strict', action='store_true',
                         help='Enable strict mode, unexpected elements in the data will not be accepted.')
     args = parser.parse_args()
-    _router(args.path, args.schema, args.cpu_num, args.parser, args.strict)
-    print('Validation success! 👍')
+    if _router(args.path, args.schema, args.cpu_num, args.parser, args.strict):
+        print('Validation success! 👍')
+    else:
+        print('Validation failed!')
+        exit(1)
 
 
 if __name__ == '__main__':

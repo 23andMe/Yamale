@@ -42,4 +42,8 @@ class YamaleTestCase(TestCase):
         yamale_schema = yamale.make_schema(schema, validators=validators)
         yamale_data = itertools.chain(*map(yamale.make_data, yaml))
 
-        return yamale.validate(yamale_schema, yamale_data) is not None
+        num_of_valid = 0
+        for result in yamale.validate(yamale_schema, yamale_data):
+            if not result.errors:
+                num_of_valid += 1
+        return num_of_valid

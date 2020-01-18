@@ -13,7 +13,7 @@ class TestAllYaml(YamaleTestCase):
     yaml = 'meta_test_fixtures/data_custom.yaml'
 
     def runTest(self):
-        self.assertTrue(self.validate())
+        self.assertEqual(1, self.validate())
 
 
 class TestBadYaml(YamaleTestCase):
@@ -22,7 +22,7 @@ class TestBadYaml(YamaleTestCase):
     yaml = 'meta_test_fixtures/data*.yaml'
 
     def runTest(self):
-        self.assertRaises(ValueError, self.validate)
+        self.assertEqual(2, self.validate())
 
 
 class TestMapYaml(YamaleTestCase):
@@ -34,7 +34,7 @@ class TestMapYaml(YamaleTestCase):
             'meta_test_fixtures/schema.yaml']
 
     def runTest(self):
-        self.assertTrue(self.validate())
+        self.assertEqual(2, self.validate())
 
 
 # class TestListYaml(YamaleTestCase):
@@ -63,7 +63,7 @@ class TestCustomValidator(YamaleTestCase):
     def runTest(self):
         validators = DefaultValidators.copy()
         validators['card'] = Card
-        self.assertTrue(self.validate(validators))
+        self.assertEqual(1, self.validate(validators))
 
 
 class TestCustomValidatorWithIncludes(YamaleTestCase):
@@ -74,7 +74,7 @@ class TestCustomValidatorWithIncludes(YamaleTestCase):
     def runTest(self):
         validators = DefaultValidators.copy()
         validators['card'] = Card
-        self.assertTrue(self.validate(validators))
+        self.assertEqual(1, self.validate(validators))
 
 
 class TestBadRequiredYaml(YamaleTestCase):
@@ -83,7 +83,7 @@ class TestBadRequiredYaml(YamaleTestCase):
     yaml = 'meta_test_fixtures/data_required_bad.yaml'
 
     def runTest(self):
-        self.assertRaises(ValueError, self.validate)
+        self.assertEqual(0, self.validate())
 
 
 class TestGoodRequiredYaml(YamaleTestCase):
@@ -92,4 +92,4 @@ class TestGoodRequiredYaml(YamaleTestCase):
     yaml = 'meta_test_fixtures/data_required_good.yaml'
 
     def runTest(self):
-        self.assertTrue(self.validate())
+        self.assertEqual(1, self.validate())

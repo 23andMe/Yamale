@@ -1,5 +1,6 @@
 import sys
 from .datapath import DataPath
+from .validationresults import ValidationResult
 from .. import syntax, util
 from .. import validators as val
 
@@ -55,7 +56,7 @@ class Schema(object):
     def validate(self, data, data_name, strict):
         path = DataPath()
         errors = self._validate(self._schema, data, path, strict)
-        return (data_name, self.name, errors)
+        return ValidationResult(data_name, self.name, errors)
 
     def _validate_item(self, validator, data, path, strict, key):
         """

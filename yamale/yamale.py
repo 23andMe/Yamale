@@ -38,14 +38,8 @@ def make_data(path, parser='PyYAML'):
 
 
 def validate(schema, data, strict=False):
+    result = []
     for d, path in data:
-        result = schema.validate(d, path, strict)
-        if result[2]:
-            header = '\nError validating data %s with schema %s' % (result[0],
-                                                                    result[1])
-            error_str = header + '\n\t' + '\n\t'.join(result[2])
-            if PY2:
-                error_str = error_str.encode('utf-8')
-            raise ValueError(error_str)
+        result.append(schema.validate(d, path, strict))
 
-    return data
+    return result
