@@ -20,32 +20,36 @@ def test_bad_yaml(capsys, parser):
 
 @pytest.mark.parametrize('parser', parsers)
 def test_required_keys_yaml(capsys, parser):
-    command_line._router(
+    result = command_line._router(
         'yamale/tests/command_line_fixtures/yamls/required_keys_bad.yaml',
         'required_keys_schema.yaml', 1, parser)
+    assert result == 1
     captured = capsys.readouterr()
     assert "map.key: Required field missing" in captured.out
 
 
 @pytest.mark.parametrize('parser', parsers)
 def test_good_yaml(parser):
-    command_line._router(
+    result = command_line._router(
         'yamale/tests/command_line_fixtures/yamls/good.yaml',
         'schema.yaml', 1, parser)
+    assert result == 0
 
 
 @pytest.mark.parametrize('parser', parsers)
 def test_good_relative_yaml(parser):
-    command_line._router(
+    result = command_line._router(
         'yamale/tests/command_line_fixtures/yamls/good.yaml',
         '../schema_dir/external.yaml', 1, parser)
+    assert result == 0
 
 
 @pytest.mark.parametrize('parser', parsers)
 def test_external_glob_schema(parser):
-    command_line._router(
+    result = command_line._router(
         'yamale/tests/command_line_fixtures/yamls/good.yaml',
         os.path.join(dir_path, 'command_line_fixtures/schema_dir/ex*.yaml'), 1, parser)
+    assert result == 0
 
 
 def test_empty_schema_file():
@@ -61,11 +65,23 @@ def test_external_schema():
         os.path.join(dir_path, 'command_line_fixtures/schema_dir/external.yaml'), 1, 'PyYAML')
 
 
-def test_bad_dir():
-    with pytest.raises(ValueError, match='Validation failed!'):
-        command_line._router(
-            'yamale/tests/command_line_fixtures/yamls',
-            'schema.yaml', 4, 'PyYAML')
+def test_bad_dir(capsys):
+    schema = 'yamale/tests/command_line_fixtures/schema.yaml'
+    bad = 'yamale/tests/command_line_fixtures/yamls/bad.yaml'
+    line = "Error validating data '%s' with '%s'" % (os.path.abspath(bad), os.path.abspath(schema))
+    results = command_line._router(
+        'yamale/tests/command_line_fixtures/yamls',
+        'schema.yaml', 4, 'PyYAML')
+    assert results == 1
+    out, err = capsys.readouterr()
+    assert 'Finding yaml files...' in out
+    assert "Found 4 yaml files." in out
+    assert "Validating..." in out
+    assert line in out
+    assert "map.bad: '12.5' is not a str." in out
+    assert "map.bad: '12.5' is not a int." in out
+    assert "map.not: '[]' is not a str." in out
+    assert "map.not: '[]' is not a int." in out
 
 
 def test_bad_strict(capsys):

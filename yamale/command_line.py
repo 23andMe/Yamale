@@ -26,13 +26,7 @@ def _validate(schema_path, data_path, parser, strict):
         schema = yamale.make_schema(schema_path, parser)
         schemas[schema_path] = schema
     data = yamale.make_data(data_path, parser)
-    results = yamale.validate(schema, data, strict)
-    status = 0
-    for result in results:
-        if result.isValid:
-            print(str(result))
-            status = 1
-    return status
+    return yamale.validate(schema, data, strict)
 
 
 def _find_data_path_schema(data_path, schema_name):
@@ -84,21 +78,28 @@ def _validate_dir(root, schema_name, cpus, parser, strict):
 
     print('Found %s yaml files.' % len(res))
     print('Validating...')
-    status = 0
+    results = []
     for r in res:
-        if r.get(timeout=300):
-            status = 1
+        sub_results = r.get(timeout=300)
+        for result in sub_results:
+            results.append(result)
     pool.close()
     pool.join()
-    return status
+    return results
 
 
 def _router(root, schema_name, cpus, parser, strict=False):
     root = os.path.abspath(root)
     if os.path.isfile(root):
-        return _validate_single(root, schema_name, parser, strict)
+        results = _validate_single(root, schema_name, parser, strict)
     else:
-        return _validate_dir(root, schema_name, cpus, parser, strict)
+        results = _validate_dir(root, schema_name, cpus, parser, strict)
+    status = 0
+    for result in results:
+        if not result.isValid():
+            print(str(result))
+            status = 1
+    return status
 
 
 def main():
