@@ -9,7 +9,6 @@
 """
 
 import argparse
-import traceback
 import glob
 import os
 from multiprocessing import Pool
