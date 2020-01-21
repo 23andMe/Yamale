@@ -291,8 +291,6 @@ def match_exception_lines(schema, data, expected, strict=False):
     results = yamale.validate(schema, data, strict)
 
     got = results[0].errors
-    for error in got:
-        print(error)
     got.sort()
     expected.sort()
     assert got == expected
