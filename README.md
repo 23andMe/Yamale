@@ -24,9 +24,7 @@ $ pip install yamale
 ```
 
 ### Manual
-1. Download Yamale from: https://github.com/23andMe/Yamale/archive/master.zip
-2. Unzip somewhere temporary
-3. Run `python setup.py install` (may have to prepend `sudo`)
+Run `pip install https://github.com/23andMe/Yamale/archive/master.zip` (may have to prepend `sudo`)
 
 Usage
 -----
