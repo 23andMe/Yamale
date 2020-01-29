@@ -114,7 +114,7 @@ def main():
     parser.add_argument('--strict', action='store_true',
                         help='Enable strict mode, unexpected elements in the data will not be accepted.')
     args = parser.parse_args()
-    if _router(args.path, args.schema, args.cpu_num, args.parser, args.strict):
+    if _router(args.path, args.schema, args.cpu_num, args.parser, args.strict) == 0:
         print('Validation success! 👍')
     else:
         print('Validation failed!')
