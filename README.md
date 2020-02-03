@@ -434,6 +434,31 @@ questions:
         - id: 'id_str1'
 ```
 
+### The data is a list of items without a keyword at the top level
+#### Schema:
+```yaml
+list(include('human'), min=2, max=2)
+
+---
+human:
+  name: str()
+  age: int(max=200)
+  height: num()
+  awesome: bool()
+```
+#### Valid Data:
+```yaml
+- name: Bill
+  age: 26
+  height: 6.2
+  awesome: True
+
+- name: Adrian
+  age: 23
+  height: 6.3
+  awesome: True
+```
+
 Writing Tests
 -------------
 To validate YAML files when you run your program's tests use Yamale's YamaleTestCase
