@@ -335,7 +335,7 @@ class Date(Validator):
 
 validators = DefaultValidators.copy()  # This is a dictionary
 validators[Date.tag] = Date
-schema = yamale.make_schema('./schema.yaml' validators=validators)
+schema = yamale.make_schema('./schema.yaml', validators=validators)
 # Then use `schema` as normal
 ```
 
