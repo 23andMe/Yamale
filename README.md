@@ -324,6 +324,7 @@ It is also possible to add your own custom validators. This is an advanced topic
 
 ```python
 import yamale
+import datetime
 from yamale.validators import DefaultValidators, Validator
 
 class Date(Validator):
