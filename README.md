@@ -324,6 +324,7 @@ It is also possible to add your own custom validators. This is an advanced topic
 
 ```python
 import yamale
+import datetime
 from yamale.validators import DefaultValidators, Validator
 
 class Date(Validator):
@@ -335,7 +336,7 @@ class Date(Validator):
 
 validators = DefaultValidators.copy()  # This is a dictionary
 validators[Date.tag] = Date
-schema = yamale.make_schema('./schema.yaml' validators=validators)
+schema = yamale.make_schema('./schema.yaml', validators=validators)
 # Then use `schema` as normal
 ```
 
