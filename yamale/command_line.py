@@ -17,8 +17,6 @@ import yamale
 
 schemas = {}
 
-status = 0
-
 def _validate(schema_path, data_path, parser, strict):
     schema = schemas.get(schema_path)
     if not schema:
