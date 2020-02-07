@@ -324,6 +324,7 @@ It is also possible to add your own custom validators. This is an advanced topic
 
 ```python
 import yamale
+import datetime
 from yamale.validators import DefaultValidators, Validator
 
 class Date(Validator):
@@ -335,7 +336,7 @@ class Date(Validator):
 
 validators = DefaultValidators.copy()  # This is a dictionary
 validators[Date.tag] = Date
-schema = yamale.make_schema('./schema.yaml' validators=validators)
+schema = yamale.make_schema('./schema.yaml', validators=validators)
 # Then use `schema` as normal
 ```
 
@@ -431,6 +432,31 @@ questions:
       - choices:
         - id: 'id_str'
         - id: 'id_str1'
+```
+
+### The data is a list of items without a keyword at the top level
+#### Schema:
+```yaml
+list(include('human'), min=2, max=2)
+
+---
+human:
+  name: str()
+  age: int(max=200)
+  height: num()
+  awesome: bool()
+```
+#### Valid Data:
+```yaml
+- name: Bill
+  age: 26
+  height: 6.2
+  awesome: True
+
+- name: Adrian
+  age: 23
+  height: 6.3
+  awesome: True
 ```
 
 Writing Tests
