@@ -23,7 +23,11 @@ def _validate(schema_path, data_path, parser, strict):
         schema = yamale.make_schema(schema_path, parser)
         schemas[schema_path] = schema
     data = yamale.make_data(data_path, parser)
-    return yamale.validate(schema, data, strict)
+    results = yamale.validate(schema, data, strict)
+    for result in results:
+        if not result.isValid():
+            print(str(result))
+            raise ValueError('Validation failed!')
 
 
 def _find_data_path_schema(data_path, schema_name):
@@ -55,7 +59,7 @@ def _validate_single(yaml_path, schema_name, parser, strict):
     s = _find_schema(yaml_path, schema_name)
     if not s:
         raise ValueError("Invalid schema name for '{}' or schema not found.".format(schema_name))
-    return _validate(s, yaml_path, parser, strict)
+    _validate(s, yaml_path, parser, strict)
 
 
 def _validate_dir(root, schema_name, cpus, parser, strict):
@@ -75,28 +79,18 @@ def _validate_dir(root, schema_name, cpus, parser, strict):
 
     print('Found %s yaml files.' % len(res))
     print('Validating...')
-    results = []
     for r in res:
-        sub_results = r.get(timeout=300)
-        for result in sub_results:
-            results.append(result)
+        r.get(timeout=300)
     pool.close()
     pool.join()
-    return results
 
 
 def _router(root, schema_name, cpus, parser, strict=False):
     root = os.path.abspath(root)
     if os.path.isfile(root):
-        results = _validate_single(root, schema_name, parser, strict)
+        _validate_single(root, schema_name, parser, strict)
     else:
-        results = _validate_dir(root, schema_name, cpus, parser, strict)
-    status = 0
-    for result in results:
-        if not result.isValid():
-            print(str(result))
-            status = 1
-    return status
+        _validate_dir(root, schema_name, cpus, parser, strict)
 
 
 def main():
@@ -112,9 +106,10 @@ def main():
     parser.add_argument('--strict', action='store_true',
                         help='Enable strict mode, unexpected elements in the data will not be accepted.')
     args = parser.parse_args()
-    if _router(args.path, args.schema, args.cpu_num, args.parser, args.strict) == 0:
+    try:
+        _router(args.path, args.schema, args.cpu_num, args.parser, args.strict)
         print('Validation success! 👍')
-    else:
+    except ValueError:
         print('Validation failed!')
         exit(1)
 
