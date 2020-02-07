@@ -81,7 +81,7 @@ def _validate_dir(root, schema_name, cpus, parser, strict):
     for r in res:
         try:
             r.get(timeout=300)
-        except Exception as e:
+        except (SyntaxError, NameError, TypeError, ValueError) as e:
             errors.append(''.join(e.args))
     pool.close()
     pool.join()
