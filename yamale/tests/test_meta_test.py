@@ -1,6 +1,7 @@
 import re
 import os
-from yamale import YamaleTestCase
+import unittest
+from yamale import YamaleTestCase, YamaleAssertions
 from yamale.validators import DefaultValidators, Validator
 
 
@@ -93,3 +94,11 @@ class TestGoodRequiredYaml(YamaleTestCase):
 
     def runTest(self):
         self.assertEqual(1, self.validate())
+
+class TestAssetIsValid(unittest.TestCase, YamaleAssertions):
+    def runTest(self):
+        self.assertIsValid('meta_test_fixtures/data_required_good.yaml', 'meta_test_fixtures/schema_required_good.yaml', data_folder)
+
+class TestAssetHasError(unittest.TestCase, YamaleAssertions):
+    def runTest(self):
+        self.assertError('meta_test_fixtures/data_required_bad.yaml', 'meta_test_fixtures/schema_required_bad.yaml', "required_default: 'None' is not a str.", data_folder)

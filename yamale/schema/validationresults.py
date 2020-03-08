@@ -20,7 +20,7 @@ class ValidationResult:
         return len(self.errors) == 0
 
     def hasError(self, expected):
-        if self.isValid:
+        if self.isValid():
             return False
         for error in self.errors:
             if expected in error:
