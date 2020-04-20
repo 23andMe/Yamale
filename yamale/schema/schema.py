@@ -178,8 +178,8 @@ class Schema(object):
 
     def _validate_any(self, validator, data, path, strict):
         if not validator.validators:
-            return
-        
+            return []
+
         errors = []
 
         sub_errors = []
