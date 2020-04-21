@@ -305,12 +305,13 @@ Examples:
 
 
 ### Any - `any([validators])`
-Validates against a union of types. Use when a node can contain one of several types. It is valid if at least one of the listed validators is valid.
-- arguments: one or more validators to test values with
+Validates against a union of types. Use when a node can contain one of several types. It is valid if at least one of the listed validators is valid. If no validators are given, accept any value.
+- arguments: validators to test values with (if none is given, allow any value)
 
 Examples:
 - `any(int(), null())`: Validates an integer or a null value.
 - `any(num(), include('vector'))`: Validates a number or an included 'vector' type.
+- `any()`: Allows any value.
 
 ### Include - `include(include_name)`
 Validates included structures. Must supply the name of a valid include.

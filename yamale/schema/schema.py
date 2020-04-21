@@ -177,11 +177,10 @@ class Schema(object):
                                         strict)
 
     def _validate_any(self, validator, data, path, strict):
-        errors = []
-
         if not validator.validators:
-            errors.append('No validators specified for "any".')
-            return errors
+            return []
+
+        errors = []
 
         sub_errors = []
         for v in validator.validators:
