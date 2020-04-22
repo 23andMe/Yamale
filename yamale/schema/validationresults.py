@@ -18,11 +18,3 @@ class ValidationResult:
 
     def isValid(self):
         return len(self.errors) == 0
-
-    def hasError(self, expected):
-        if self.isValid():
-            return False
-        for error in self.errors:
-            if expected in error:
-                return True
-        return False

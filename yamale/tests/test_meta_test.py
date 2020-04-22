@@ -1,7 +1,6 @@
 import re
 import os
-import unittest
-from yamale import YamaleTestCase, YamaleAssertions
+from yamale import YamaleTestCase
 from yamale.validators import DefaultValidators, Validator
 
 
@@ -14,7 +13,7 @@ class TestAllYaml(YamaleTestCase):
     yaml = 'meta_test_fixtures/data_custom.yaml'
 
     def runTest(self):
-        self.assertEqual(1, self.validate())
+        self.assertTrue(self.validate())
 
 
 class TestBadYaml(YamaleTestCase):
@@ -23,7 +22,7 @@ class TestBadYaml(YamaleTestCase):
     yaml = 'meta_test_fixtures/data*.yaml'
 
     def runTest(self):
-        self.assertEqual(2, self.validate())
+        self.assertRaises(ValueError, self.validate)
 
 
 class TestMapYaml(YamaleTestCase):
@@ -35,7 +34,7 @@ class TestMapYaml(YamaleTestCase):
             'meta_test_fixtures/schema.yaml']
 
     def runTest(self):
-        self.assertEqual(2, self.validate())
+        self.assertTrue(self.validate())
 
 
 # class TestListYaml(YamaleTestCase):
@@ -64,7 +63,7 @@ class TestCustomValidator(YamaleTestCase):
     def runTest(self):
         validators = DefaultValidators.copy()
         validators['card'] = Card
-        self.assertEqual(1, self.validate(validators))
+        self.assertTrue(self.validate(validators))
 
 
 class TestCustomValidatorWithIncludes(YamaleTestCase):
@@ -75,7 +74,7 @@ class TestCustomValidatorWithIncludes(YamaleTestCase):
     def runTest(self):
         validators = DefaultValidators.copy()
         validators['card'] = Card
-        self.assertEqual(1, self.validate(validators))
+        self.assertTrue(self.validate(validators))
 
 
 class TestBadRequiredYaml(YamaleTestCase):
@@ -84,7 +83,7 @@ class TestBadRequiredYaml(YamaleTestCase):
     yaml = 'meta_test_fixtures/data_required_bad.yaml'
 
     def runTest(self):
-        self.assertEqual(0, self.validate())
+        self.assertRaises(ValueError, self.validate)
 
 
 class TestGoodRequiredYaml(YamaleTestCase):
@@ -93,12 +92,4 @@ class TestGoodRequiredYaml(YamaleTestCase):
     yaml = 'meta_test_fixtures/data_required_good.yaml'
 
     def runTest(self):
-        self.assertEqual(1, self.validate())
-
-class TestAssetIsValid(unittest.TestCase, YamaleAssertions):
-    def runTest(self):
-        self.assertIsValid('meta_test_fixtures/data_required_good.yaml', 'meta_test_fixtures/schema_required_good.yaml', data_folder)
-
-class TestAssetHasError(unittest.TestCase, YamaleAssertions):
-    def runTest(self):
-        self.assertError('meta_test_fixtures/data_required_bad.yaml', 'meta_test_fixtures/schema_required_bad.yaml', "required_default: 'None' is not a str.", data_folder)
+        self.assertTrue(self.validate())
