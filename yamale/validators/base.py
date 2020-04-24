@@ -62,7 +62,10 @@ class Validator(object):
         for constraint in self._constraints_inst:
             error = constraint.is_valid(value)
             if error:
-                errors.append(error)
+                if isinstance(error, list):
+                    errors.extend(error)
+                else:
+                    errors.append(error)
 
         return errors
 
