@@ -4,6 +4,7 @@ import datetime
 from yamale.util import to_unicode
 from .base import Validator
 
+
 class Constraint(object):
     keywords = {}  # Keywords and types accepted by this constraint
     is_active = False
