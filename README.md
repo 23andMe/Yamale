@@ -266,7 +266,7 @@ Validates a timestamp in the form of YYYY-MM-DD HH:MM:SS.
 Examples:
 - `timestamp(min='2001-01-01 01:00:00', max='2100-01-01 23:00:00')`: Only allows times between 2001-01-01 01:00:00 and 2100-01-01 23:00:00.
 
-### List - `list([validators])`
+### List - `list([validators], min=int, max=int)`
 Validates lists. If one or more validators are passed to `list()` only nodes that pass at least one of those validators will be accepted.
 - arguments: one or more validators to test values with
 
