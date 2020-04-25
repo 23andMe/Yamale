@@ -308,7 +308,6 @@ Validates MAC addresses.
 Examples:
 - `mac()`: Allows any valid MAC address
 
-
 ### Any - `any([validators])`
 Validates against a union of types. Use when a node can contain one of several types. It is valid if at least one of the listed validators is valid. If no validators are given, accept any value.
 - arguments: validators to test values with (if none is given, allow any value)
@@ -487,7 +486,6 @@ class TestYaml(YamaleTestCase):
 `schema`: String of path to the schema file to use. One schema file per test case.
 
 `yaml`: String or list of yaml files to validate. Accepts globs.
-
 
 Developers
 ----------
