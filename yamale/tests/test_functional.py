@@ -288,15 +288,17 @@ def test_bad_static_list():
 
 
 def match_exception_lines(schema, data, expected, strict=False):
-    results = yamale.validate(schema, data, strict)
+    with pytest.raises(ValueError) as e:
+        yamale.validate(schema, data, strict)
 
-    got = results[0].errors
+    got = e.value.results[0].errors
     got.sort()
     expected.sort()
     assert got == expected
 
 
 def count_exception_lines(schema, data, strict=False):
-    results = yamale.validate(schema, data, strict)
-    result = results[0]
+    with pytest.raises(ValueError) as e:
+        yamale.validate(schema, data, strict)
+    result = e.value.results[0]
     return len(result.errors)

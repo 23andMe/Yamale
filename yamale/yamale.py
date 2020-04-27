@@ -2,6 +2,7 @@
 import sys
 import os
 from .schema import Schema
+from .yamale_error import YamaleError
 
 PY2 = sys.version_info[0] == 2
 
@@ -38,8 +39,12 @@ def make_data(path, parser='PyYAML'):
 
 
 def validate(schema, data, strict=False):
-    result = []
+    results = []
+    is_valid = True
     for d, path in data:
-        result.append(schema.validate(d, path, strict))
-
-    return result
+        result = schema.validate(d, path, strict)
+        results.append(result)
+        is_valid = is_valid and result.isValid()
+    if not is_valid:
+        raise YamaleError(results)
+    return results
