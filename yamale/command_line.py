@@ -23,7 +23,7 @@ def _validate(schema_path, data_path, parser, strict):
         schema = yamale.make_schema(schema_path, parser)
         schemas[schema_path] = schema
     data = yamale.make_data(data_path, parser)
-    results = yamale.validate(schema, data, strict)
+    return yamale.validate(schema, data, strict)
 
 
 def _find_data_path_schema(data_path, schema_name):
