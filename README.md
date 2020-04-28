@@ -74,7 +74,7 @@ data = yamale.make_data('./data.yaml')
 yamale.validate(schema, data)
 ```
 
-If `data` is valid, nothing will happen. However, if `data` is invalid Yamale will throw a `ValueError` with a message containing all the invalid nodes.
+If `data` is valid, nothing will happen. However, if `data` is invalid Yamale will throw a `YamaleError` with a message containing all the invalid nodes and an array of results.
 
 You can also specifiy an optional `parser` if you'd like to use the `ruamel.yaml` (YAML 1.2 support) instead:
 ```python
