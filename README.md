@@ -266,7 +266,7 @@ Validates a timestamp in the form of YYYY-MM-DD HH:MM:SS.
 Examples:
 - `timestamp(min='2001-01-01 01:00:00', max='2100-01-01 23:00:00')`: Only allows times between 2001-01-01 01:00:00 and 2100-01-01 23:00:00.
 
-### List - `list([validators])`
+### List - `list([validators], min=int, max=int)`
 Validates lists. If one or more validators are passed to `list()` only nodes that pass at least one of those validators will be accepted.
 - arguments: one or more validators to test values with
 
@@ -278,13 +278,18 @@ Examples:
 - `list()`: Validates any list
 - `list(include('custom'), int(), min=4)`: Only validates lists that contain the `custom` include or integers and contains a minimum of 4 items.
 
-### Map - `map([validators])`
-Validates maps. Use when you want a node to contain freeform data. Similar to `List`, `Map` also takes a number of validators to
-run against its children nodes. A child validates if at least one validator passes.
+### Map - `map([validators], key=validator)`
+Validates maps. Use when you want a node to contain freeform data. Similar to `List`, `Map` takes one or more validators to run against the values of its nodes, and only nodes that pass at least one of those validators will be accepted.
+By default, only the values of nodes are validated and the keys aren't checked.
+- arguments: one or more validators to test values with
+
+- keywords
+    - `key`: A validator for the keys of the map.
 
 Examples:
 - `map()`: Validates any map
-- `map(str(), int())`: Only validates maps whose children are strings or integers.
+- `map(str(), int())`: Only validates maps whose values are strings or integers.
+- `map(str(), key=int())`: Only validates maps whose keys are integers and values are strings. `1: one` would be valid but `'1': one` would not.
 
 ### IP Address - `ip()`
 Validates IPv4 and IPv6 addresses.
@@ -303,14 +308,14 @@ Validates MAC addresses.
 Examples:
 - `mac()`: Allows any valid MAC address
 
-
 ### Any - `any([validators])`
-Validates against a union of types. Use when a node can contain one of several types. It is valid if at least one of the listed validators is valid.
-- arguments: one or more validators to test values with
+Validates against a union of types. Use when a node can contain one of several types. It is valid if at least one of the listed validators is valid. If no validators are given, accept any value.
+- arguments: validators to test values with (if none is given, allow any value)
 
 Examples:
 - `any(int(), null())`: Validates an integer or a null value.
 - `any(num(), include('vector'))`: Validates a number or an included 'vector' type.
+- `any()`: Allows any value.
 
 ### Include - `include(include_name)`
 Validates included structures. Must supply the name of a valid include.
@@ -481,7 +486,6 @@ class TestYaml(YamaleTestCase):
 `schema`: String of path to the schema file to use. One schema file per test case.
 
 `yaml`: String or list of yaml files to validate. Accepts globs.
-
 
 Developers
 ----------

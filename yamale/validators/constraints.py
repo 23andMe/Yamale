@@ -2,6 +2,7 @@ from __future__ import absolute_import
 import datetime
 
 from yamale.util import to_unicode
+from .base import Validator
 
 
 class Constraint(object):
@@ -103,6 +104,23 @@ class LengthMax(Constraint):
 
     def _fail(self, value):
         return self.fail % (value, self.max)
+
+
+class Key(Constraint):
+    keywords = {'key': Validator}
+    fail = 'Key error - %s'
+
+    def _is_valid(self, value):
+        for k in value.keys():
+            if self.key.validate(k) != []:
+                return False
+        return True
+
+    def _fail(self, value):
+        error_list = []
+        for k in value.keys():
+            error_list.extend( self.key.validate(k) )
+        return [self.fail % (e) for e in error_list]
 
 
 class CharacterExclude(Constraint):

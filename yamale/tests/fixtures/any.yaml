@@ -3,3 +3,4 @@ any_list: list(include('address'))
 address:
   street: str()
   postal_code: any(str(), int(), null())
+  note: any()

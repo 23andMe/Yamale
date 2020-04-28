@@ -133,6 +133,14 @@ nested_issue_54 = {
     'good': 'nested_good_data.yaml'
 }
 
+map_key_constraint = {
+    'schema': 'map_key_constraint.yaml',
+    'good': 'map_key_constraint_good.yaml',
+    'bad_base': 'map_key_constraint_bad_base.yaml',
+    'bad_nest': 'map_key_constraint_bad_nest.yaml',
+    'bad_nest_con': 'map_key_constraint_bad_nest_con.yaml',
+}
+
 test_data = [
     types, nested, custom,
     keywords, lists, maps,
@@ -142,7 +150,8 @@ test_data = [
     include_validator, strict_map,
     mixed_strict_map, strict_list,
     nested_map2, static_list,
-    nested_issue_54
+    nested_issue_54,
+    map_key_constraint,
 ]
 
 for d in test_data:
@@ -284,6 +293,30 @@ def test_bad_static_list():
     exp = ['0: Required field missing']
     match_exception_lines(static_list['schema'],
                           static_list['bad'],
+                          exp)
+
+
+def test_bad_map_key_constraint_base():
+    exp = [": Key error - 'bad' is not a int."]
+    match_exception_lines(map_key_constraint['schema'],
+                          map_key_constraint['bad_base'],
+                          exp)
+
+
+def test_bad_map_key_constraint_nest():
+    exp = ["1.0: Key error - '100' is not a str."]
+    match_exception_lines(map_key_constraint['schema'],
+                          map_key_constraint['bad_nest'],
+                          exp)
+
+
+def test_bad_map_key_constraint_nest_con():
+    exp = [
+        "1.0: Key error - '100' is not a str.",
+        "1.0: Key error - 'baz' contains excluded character 'z'",
+    ]
+    match_exception_lines(map_key_constraint['schema'],
+                          map_key_constraint['bad_nest_con'],
                           exp)
 
 
