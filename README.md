@@ -74,7 +74,28 @@ data = yamale.make_data('./data.yaml')
 yamale.validate(schema, data)
 ```
 
-If `data` is valid, nothing will happen. However, if `data` is invalid Yamale will throw a `YamaleError` with a message containing all the invalid nodes and an array of results.
+If `data` is valid, nothing will happen. However, if `data` is invalid Yamale will throw a `YamaleError` with a message containing all the invalid nodes:
+```python
+try:
+    yamale.validate(schema, data)
+    print('Validation success! 👍')
+except ValueError as e:
+    print('Validation failed!\n%s' % e.value.message)
+    exit(1)
+```
+and an array of `ValidationResult`.
+```python
+try:
+    yamale.validate(schema, data)
+    print('Validation success! 👍')
+except YamaleError as e:
+    print('Validation failed!\n')
+    for resul in e.value.results:
+        print("Error validating data '%s' with '%s'\n\t" % (result.data, result.schema))
+        for error in result.errors:
+            print('\t%s' % error)
+    exit(1)
+```
 
 You can also specifiy an optional `parser` if you'd like to use the `ruamel.yaml` (YAML 1.2 support) instead:
 ```python
