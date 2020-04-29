@@ -105,7 +105,7 @@ def main():
     try:
         _router(args.path, args.schema, args.cpu_num, args.parser, args.strict)
         print('Validation success! 👍')
-    except ValueError as e:
+    except (SyntaxError, NameError, TypeError, ValueError) as e:
         print('Validation failed!\n%s' % str(e))
         exit(1)
 
