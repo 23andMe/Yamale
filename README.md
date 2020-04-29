@@ -80,7 +80,7 @@ try:
     yamale.validate(schema, data)
     print('Validation success! 👍')
 except ValueError as e:
-    print('Validation failed!\n%s' % e.value.message)
+    print('Validation failed!\n%s' % str(e))
     exit(1)
 ```
 and an array of `ValidationResult`.

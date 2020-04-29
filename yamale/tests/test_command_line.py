@@ -3,6 +3,7 @@ import os
 import pytest
 
 from .. import command_line
+from .. import yamale_error
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -78,7 +79,7 @@ def test_bad_strict():
 
 
 def test_bad_issue_54():
-    with pytest.raises(ValueError) as e:
+    with pytest.raises(yamale_error.YamaleError) as e:
         command_line._router(
             'yamale/tests/fixtures/nested_issue_54.yaml',
             'nested.yaml',
