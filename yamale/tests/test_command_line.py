@@ -68,7 +68,6 @@ def test_bad_dir():
             'yamale/tests/command_line_fixtures/yamls',
             'schema.yaml', 4, 'PyYAML')
 
-
 def test_bad_strict():
     with pytest.raises(ValueError) as e:
         command_line._router(

@@ -12,18 +12,19 @@ import argparse
 import glob
 import os
 from multiprocessing import Pool
+from .yamale_error import YamaleError
 
 import yamale
 
 schemas = {}
 
-def _validate(schema_path, data_path, parser, strict):
+def _validate(schema_path, data_path, parser, strict, raiseError):
     schema = schemas.get(schema_path)
     if not schema:
         schema = yamale.make_schema(schema_path, parser)
         schemas[schema_path] = schema
     data = yamale.make_data(data_path, parser)
-    return yamale.validate(schema, data, strict)
+    return yamale.validate(schema, data, strict, raiseError)
 
 
 def _find_data_path_schema(data_path, schema_name):
@@ -55,12 +56,14 @@ def _validate_single(yaml_path, schema_name, parser, strict):
     s = _find_schema(yaml_path, schema_name)
     if not s:
         raise ValueError("Invalid schema name for '{}' or schema not found.".format(schema_name))
-    _validate(s, yaml_path, parser, strict)
+    return _validate(s, yaml_path, parser, strict, True)
 
 
 def _validate_dir(root, schema_name, cpus, parser, strict):
     pool = Pool(processes=cpus)
     res = []
+    results = []
+    areValid = True
     print('Finding yaml files...')
     for root, dirs, files in os.walk(root):
         for f in files:
@@ -69,24 +72,29 @@ def _validate_dir(root, schema_name, cpus, parser, strict):
                 s = _find_schema(d, schema_name)
                 if s:
                     res.append(pool.apply_async(_validate,
-                                                (s, d, parser, strict)))
+                                                (s, d, parser, strict, False)))
                 else:
                     print('No schema found for: %s' % d)
 
     print('Found %s yaml files.' % len(res))
     print('Validating...')
     for r in res:
-        r.get(timeout=300)
+        result = r.get(timeout=300)
+        results.extend(result)
+        for r in result:
+            areValid = areValid and r.isValid()
     pool.close()
     pool.join()
+    if not areValid:
+        raise YamaleError(results)
 
 
 def _router(root, schema_name, cpus, parser, strict=False):
     root = os.path.abspath(root)
     if os.path.isfile(root):
-        _validate_single(root, schema_name, parser, strict)
+        return _validate_single(root, schema_name, parser, strict)
     else:
-        _validate_dir(root, schema_name, cpus, parser, strict)
+        return _validate_dir(root, schema_name, cpus, parser, strict)
 
 
 def main():
