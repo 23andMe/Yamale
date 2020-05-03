@@ -56,7 +56,7 @@ def _validate_single(yaml_path, schema_name, parser, strict):
     s = _find_schema(yaml_path, schema_name)
     if not s:
         raise ValueError("Invalid schema name for '{}' or schema not found.".format(schema_name))
-    return _validate(s, yaml_path, parser, strict, True)
+    _validate(s, yaml_path, parser, strict, True)
 
 
 def _validate_dir(root, schema_name, cpus, parser, strict):
@@ -79,10 +79,10 @@ def _validate_dir(root, schema_name, cpus, parser, strict):
     print('Found %s yaml files.' % len(res))
     print('Validating...')
     for r in res:
-        result = r.get(timeout=300)
-        results.extend(result)
-        for r in result:
-            areValid = areValid and r.isValid()
+        sub_results = r.get(timeout=300)
+        results.extend(sub_results)
+        for result in sub_results:
+            areValid = areValid and result.isValid()
     pool.close()
     pool.join()
     if not areValid:
@@ -92,9 +92,9 @@ def _validate_dir(root, schema_name, cpus, parser, strict):
 def _router(root, schema_name, cpus, parser, strict=False):
     root = os.path.abspath(root)
     if os.path.isfile(root):
-        return _validate_single(root, schema_name, parser, strict)
+        _validate_single(root, schema_name, parser, strict)
     else:
-        return _validate_dir(root, schema_name, cpus, parser, strict)
+        _validate_dir(root, schema_name, cpus, parser, strict)
 
 
 def main():
