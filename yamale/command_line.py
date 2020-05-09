@@ -18,13 +18,13 @@ import yamale
 
 schemas = {}
 
-def _validate(schema_path, data_path, parser, strict, raiseError):
+def _validate(schema_path, data_path, parser, strict, raise_error):
     schema = schemas.get(schema_path)
     if not schema:
         schema = yamale.make_schema(schema_path, parser)
         schemas[schema_path] = schema
     data = yamale.make_data(data_path, parser)
-    return yamale.validate(schema, data, strict, raiseError)
+    return yamale.validate(schema, data, strict, raise_error)
 
 
 def _find_data_path_schema(data_path, schema_name):

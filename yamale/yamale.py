@@ -38,13 +38,13 @@ def make_data(path, parser='PyYAML'):
     return [(d, path) for d in raw_data]
 
 
-def validate(schema, data, strict=False, raiseError=True):
+def validate(schema, data, strict=False, raise_error=True):
     results = []
     is_valid = True
     for d, path in data:
         result = schema.validate(d, path, strict)
         results.append(result)
         is_valid = is_valid and result.isValid()
-    if raiseError and not is_valid:
+    if raise_error and not is_valid:
         raise YamaleError(results)
     return results
