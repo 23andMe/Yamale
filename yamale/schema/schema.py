@@ -1,5 +1,6 @@
 import sys
 from .datapath import DataPath
+from .validationresults import ValidationResult
 from .. import syntax, util
 from .. import validators as val
 
@@ -55,14 +56,7 @@ class Schema(object):
     def validate(self, data, data_name, strict):
         path = DataPath()
         errors = self._validate(self._schema, data, path, strict)
-
-        if errors:
-            header = '\nError validating data %s with schema %s' % (data_name,
-                                                                    self.name)
-            error_str = header + '\n\t' + '\n\t'.join(errors)
-            if PY2:
-                error_str = error_str.encode('utf-8')
-            raise ValueError(error_str)
+        return ValidationResult(data_name, self.name, errors)
 
     def _validate_item(self, validator, data, path, strict, key):
         """

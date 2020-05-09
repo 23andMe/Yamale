@@ -184,11 +184,11 @@ def test_good(data_map):
 
 
 def test_bad_validate():
-    assert count_exception_lines(types['schema'], types['bad']) == 11
+    assert count_exception_lines(types['schema'], types['bad']) == 9
 
 
 def test_bad_nested():
-    assert count_exception_lines(nested['schema'], nested['bad']) == 4
+    assert count_exception_lines(nested['schema'], nested['bad']) == 2
 
 
 def test_bad_nested_issue_54():
@@ -206,31 +206,31 @@ def test_bad_nested_issue_54():
 
 
 def test_bad_custom():
-    assert count_exception_lines(custom['schema'], custom['bad']) == 3
+    assert count_exception_lines(custom['schema'], custom['bad']) == 1
 
 
 def test_bad_lists():
-    assert count_exception_lines(lists['schema'], lists['bad']) == 6
+    assert count_exception_lines(lists['schema'], lists['bad']) == 4
 
 
 def test_bad2_lists():
-    assert count_exception_lines(lists['schema'], lists['bad2']) == 3
+    assert count_exception_lines(lists['schema'], lists['bad2']) == 1
 
 
 def test_bad_maps():
-    assert count_exception_lines(maps['schema'], maps['bad']) == 6
+    assert count_exception_lines(maps['schema'], maps['bad']) == 4
 
 
 def test_bad_keywords():
-    assert count_exception_lines(keywords['schema'], keywords['bad']) == 10
+    assert count_exception_lines(keywords['schema'], keywords['bad']) == 8
 
 
 def test_bad_anys():
-    assert count_exception_lines(anys['schema'], anys['bad']) == 7
+    assert count_exception_lines(anys['schema'], anys['bad']) == 5
 
 
 def test_bad_regexes():
-    assert count_exception_lines(regexes['schema'], regexes['bad']) == 9
+    assert count_exception_lines(regexes['schema'], regexes['bad']) == 4
 
 
 def test_bad_include_validator():
@@ -253,7 +253,7 @@ def test_empty_schema():
 
 
 def test_list_is_not_a_map():
-    exp = [": '[1, 2]' is not a map"]
+    exp = [" : '[1, 2]' is not a map"]
     match_exception_lines(strict_map['schema'],
                           strict_list['good'],
                           exp)
@@ -322,20 +322,16 @@ def test_bad_map_key_constraint_nest_con():
 
 def match_exception_lines(schema, data, expected, strict=False):
     with pytest.raises(ValueError) as e:
-        assert yamale.validate(schema, data, strict)
+        yamale.validate(schema, data, strict)
 
-    message = str(e.value)
-    # only match the actual error message and remove the leading \t
-    got = set(s.lstrip() for s in message.split('\n') if s.startswith('\t'))
-    expected = set(expected)
+    got = e.value.results[0].errors
+    got.sort()
+    expected.sort()
     assert got == expected
 
 
 def count_exception_lines(schema, data, strict=False):
-    try:
+    with pytest.raises(ValueError) as e:
         yamale.validate(schema, data, strict)
-    except ValueError as exp:
-        message = str(exp)
-        count = len(message.split('\n'))
-        return count
-    raise Exception("Data valid")
+    result = e.value.results[0]
+    return len(result.errors)

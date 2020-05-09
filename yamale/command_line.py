@@ -9,31 +9,22 @@
 """
 
 import argparse
-import traceback
 import glob
 import os
 from multiprocessing import Pool
+from .yamale_error import YamaleError
 
 import yamale
 
 schemas = {}
 
-
-def _validate(schema_path, data_path, parser, strict):
+def _validate(schema_path, data_path, parser, strict, _raise_error):
     schema = schemas.get(schema_path)
-    try:
-        if not schema:
-            schema = yamale.make_schema(schema_path, parser)
-            schemas[schema_path] = schema
-        data = yamale.make_data(data_path, parser)
-        yamale.validate(schema, data, strict)
-    except Exception as e:
-        error = '\nError!\n'
-        error += 'Schema: %s\n' % schema_path
-        error += 'Data file: %s\n' % data_path
-        error += traceback.format_exc()
-        print(error)
-        raise ValueError('Validation failed!')
+    if not schema:
+        schema = yamale.make_schema(schema_path, parser)
+        schemas[schema_path] = schema
+    data = yamale.make_data(data_path, parser)
+    return yamale.validate(schema, data, strict, _raise_error)
 
 
 def _find_data_path_schema(data_path, schema_name):
@@ -65,12 +56,14 @@ def _validate_single(yaml_path, schema_name, parser, strict):
     s = _find_schema(yaml_path, schema_name)
     if not s:
         raise ValueError("Invalid schema name for '{}' or schema not found.".format(schema_name))
-    _validate(s, yaml_path, parser, strict)
+    _validate(s, yaml_path, parser, strict, True)
 
 
 def _validate_dir(root, schema_name, cpus, parser, strict):
     pool = Pool(processes=cpus)
     res = []
+    results = []
+    areValid = True
     print('Finding yaml files...')
     for root, dirs, files in os.walk(root):
         for f in files:
@@ -79,16 +72,21 @@ def _validate_dir(root, schema_name, cpus, parser, strict):
                 s = _find_schema(d, schema_name)
                 if s:
                     res.append(pool.apply_async(_validate,
-                                                (s, d, parser, strict)))
+                                                (s, d, parser, strict, False)))
                 else:
                     print('No schema found for: %s' % d)
 
     print('Found %s yaml files.' % len(res))
     print('Validating...')
     for r in res:
-        r.get(timeout=300)
+        sub_results = r.get(timeout=300)
+        results.extend(sub_results)
+        for result in sub_results:
+            areValid = areValid and result.isValid()
     pool.close()
     pool.join()
+    if not areValid:
+        raise YamaleError(results)
 
 
 def _router(root, schema_name, cpus, parser, strict=False):
@@ -112,8 +110,12 @@ def main():
     parser.add_argument('--strict', action='store_true',
                         help='Enable strict mode, unexpected elements in the data will not be accepted.')
     args = parser.parse_args()
-    _router(args.path, args.schema, args.cpu_num, args.parser, args.strict)
-    print('Validation success! 👍')
+    try:
+        _router(args.path, args.schema, args.cpu_num, args.parser, args.strict)
+        print('Validation success! 👍')
+    except (SyntaxError, NameError, TypeError, ValueError) as e:
+        print('Validation failed!\n%s' % str(e))
+        exit(1)
 
 
 if __name__ == '__main__':
