@@ -13,16 +13,24 @@ import glob
 import os
 from multiprocessing import Pool
 from .yamale_error import YamaleError
+from .schema.validationresults import Result
 
 import yamale
 
 schemas = {}
 
+
 def _validate(schema_path, data_path, parser, strict, _raise_error):
     schema = schemas.get(schema_path)
-    if not schema:
-        schema = yamale.make_schema(schema_path, parser)
-        schemas[schema_path] = schema
+    try:
+        if not schema:
+            schema = yamale.make_schema(schema_path, parser)
+            schemas[schema_path] = schema
+    except (SyntaxError, ValueError) as e:
+        results = [Result([str(e)])]
+        if not _raise_error:
+            return results
+        raise YamaleError(results)
     data = yamale.make_data(data_path, parser)
     return yamale.validate(schema, data, strict, _raise_error)
 
@@ -62,8 +70,7 @@ def _validate_single(yaml_path, schema_name, parser, strict):
 def _validate_dir(root, schema_name, cpus, parser, strict):
     pool = Pool(processes=cpus)
     res = []
-    results = []
-    areValid = True
+    error_messages = []
     print('Finding yaml files...')
     for root, dirs, files in os.walk(root):
         for f in files:
@@ -80,13 +87,13 @@ def _validate_dir(root, schema_name, cpus, parser, strict):
     print('Validating...')
     for r in res:
         sub_results = r.get(timeout=300)
-        results.extend(sub_results)
-        for result in sub_results:
-            areValid = areValid and result.isValid()
+        error_messages.extend([str(sub_result)
+                               for sub_result in sub_results
+                               if not sub_result.isValid()])
     pool.close()
     pool.join()
-    if not areValid:
-        raise YamaleError(results)
+    if error_messages:
+        raise ValueError('\n----\n'.join(set(error_messages)))
 
 
 def _router(root, schema_name, cpus, parser, strict=False):
