@@ -21,6 +21,13 @@ def test_parse(parser, use_string):
     assert a['string'] == 'str()'
 
 
+def test_parse_validates_arguments():
+    with pytest.raises(TypeError):
+        yaml_reader.parse_yaml(path=TYPES, content="name: Bob")
+    with pytest.raises(TypeError):
+        yaml_reader.parse_yaml(path=None, content=None)
+
+
 @pytest.mark.parametrize('parser', parsers)
 def test_types(parser):
     t = yaml_reader.parse_yaml(TYPES, parser)[0]
