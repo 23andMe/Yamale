@@ -1,21 +1,20 @@
 from __future__ import absolute_import
+from io import StringIO
 
 
-def _pyyaml(file_name):
+def _pyyaml(f):
     import yaml
     try:
         Loader = yaml.CSafeLoader
     except AttributeError:  # System does not have libyaml
         Loader = yaml.SafeLoader
-    with open(file_name) as f:
-        return list(yaml.load_all(f, Loader=Loader))
+    return list(yaml.load_all(f, Loader=Loader))
 
 
-def _ruamel(file_name):
+def _ruamel(f):
     from ruamel.yaml import YAML
     yaml = YAML(typ='safe')
-    with open(file_name) as f:
-        return list(yaml.load_all(f))
+    return list(yaml.load_all(f))
 
 
 _parsers = {
@@ -24,9 +23,15 @@ _parsers = {
 }
 
 
-def parse_file(file_name, parser):
+def parse_yaml(path=None, parser='pyyaml', content=None):
     try:
         parse = _parsers[parser.lower()]
     except KeyError:
         raise NameError('Parser "' + parser + '" is not supported\nAvailable parsers are listed below:\nPyYAML\nruamel')
-    return parse(file_name)
+    if (path is None and content is None) or (path is not None and content is not None):
+        raise TypeError("Pass either path= or content=, not both")
+    if path is not None:
+        with open(path) as f:
+            return parse(f)
+    else:
+        return parse(StringIO(content))
