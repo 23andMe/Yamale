@@ -32,7 +32,6 @@ class ValidationResult(Result):
                 head_line_bits.append("'{}'".format(self.data))
             if self.schema:
                 head_line_bits.append("with schema '{}'".format(self.schema))
-            #head_line = "Error validating data '%s' with '%s'\n\t" % (self.data, self.schema)
             head_line = " ".join(head_line_bits)
             error_str = head_line + '\n\t'.join(self.errors)
         if PY2:
