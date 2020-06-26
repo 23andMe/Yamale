@@ -1,11 +1,7 @@
-import sys
 from .datapath import DataPath
 from .validationresults import ValidationResult
 from .. import syntax, util
 from .. import validators as val
-
-# Fix Python 2.x.
-PY2 = sys.version_info[0] == 2
 
 
 class Schema(object):
@@ -13,6 +9,7 @@ class Schema(object):
     Makes a Schema object from a schema dict.
     Still acts like a dict.
     """
+
     def __init__(self, schema_dict, name='', validators=None, includes=None):
         self.validators = validators or val.DefaultValidators
         self.dict = schema_dict

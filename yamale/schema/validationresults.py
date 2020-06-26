@@ -1,17 +1,9 @@
-import sys
-
-PY2 = sys.version_info[0] == 2
-
-
 class Result(object):
     def __init__(self, errors):
         self.errors = errors
 
     def __str__(self):
-        error_str = '\n'.join(self.errors)
-        if PY2:
-            error_str = error_str.encode('utf-8')
-        return error_str
+        return '\n'.join(self.errors)
 
     def isValid(self):
         return len(self.errors) == 0
@@ -35,6 +27,4 @@ class ValidationResult(Result):
             head_line = ' '.join(head_line_bits)
             head_line += '\n\t'
             error_str = head_line + '\n\t'.join(self.errors)
-        if PY2:
-            error_str = error_str.encode('utf-8')
         return error_str

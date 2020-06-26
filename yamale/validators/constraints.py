@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 import datetime
+import ipaddress
 
 from yamale.util import to_unicode
 from .base import Validator
@@ -119,7 +120,7 @@ class Key(Constraint):
     def _fail(self, value):
         error_list = []
         for k in value.keys():
-            error_list.extend( self.key.validate(k) )
+            error_list.extend(self.key.validate(k))
         return [self.fail % (e) for e in error_list]
 
 
@@ -143,10 +144,6 @@ class IpVersion(Constraint):
     fail = 'IP version of %s is not %s'
 
     def _is_valid(self, value):
-        try:
-            import ipaddress
-        except ImportError:
-            raise ImportError("You must install the ipaddress backport in Py2")
         try:
             ip = ipaddress.ip_interface(to_unicode(value))
         except ValueError:

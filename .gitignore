@@ -23,6 +23,7 @@ var/
 # IDE dot directories
 .idea/
 .ropeproject/
+.vscode
 
 # Installer logs
 pip-log.txt
