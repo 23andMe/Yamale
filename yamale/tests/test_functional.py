@@ -323,10 +323,10 @@ def test_bad_map_key_constraint_nest_con():
 
 
 @pytest.mark.parametrize("use_schema_string,use_data_string,expected_message_re", [
-    (False, False, "^Error validating data '.*?' with schema '.*?'"),
-    (True, False, "^Error validating data '.*?'"),
-    (False, True, "^Error validating data with schema '.*?'"),
-    (True, True, "^Error validating data"),
+    (False, False, "^Error validating data '.*?' with schema '.*?'\n\t"),
+    (True, False, "^Error validating data '.*?'\n\t"),
+    (False, True, "^Error validating data with schema '.*?'\n\t"),
+    (True, True, "^Error validating data\n\t"),
 ])
 def test_validate_errors(use_schema_string, use_data_string, expected_message_re):
     schema_path = get_fixture('types.yaml')
@@ -343,9 +343,10 @@ def test_validate_errors(use_schema_string, use_data_string, expected_message_re
         data = yamale.make_data(data_path)
     with pytest.raises(yamale.yamale_error.YamaleError) as excinfo:
         yamale.validate(schema, data)
-    assert re.match(expected_message_re, excinfo.value.message), 'Message {} should match {}'.format(
-        excinfo.value.message, expected_message_re
-    )
+    assert re.match(expected_message_re, excinfo.value.message, re.MULTILINE), \
+        'Message {} should match {}'.format(
+            excinfo.value.message, expected_message_re
+        )
 
 
 def match_exception_lines(schema, data, expected, strict=False):

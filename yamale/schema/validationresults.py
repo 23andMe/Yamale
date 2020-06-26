@@ -32,7 +32,8 @@ class ValidationResult(Result):
                 head_line_bits.append("'{}'".format(self.data))
             if self.schema:
                 head_line_bits.append("with schema '{}'".format(self.schema))
-            head_line = " ".join(head_line_bits)
+            head_line = ' '.join(head_line_bits)
+            head_line += '\n\t'
             error_str = head_line + '\n\t'.join(self.errors)
         if PY2:
             error_str = error_str.encode('utf-8')
