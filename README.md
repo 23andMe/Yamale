@@ -73,6 +73,17 @@ data = yamale.make_data('./data.yaml')
 yamale.validate(schema, data)
 ```
 
+You can pass a string of YAML to `make_schema()` and `make_data()` instead of passing a file path by using the `content=` parameter:
+
+```python
+data = yamale.make_data(content="""
+name: Bill
+age: 26
+height: 6.2
+awesome: True
+""")
+```
+
 If `data` is valid, nothing will happen. However, if `data` is invalid Yamale will throw a `YamaleError` with a message containing all the invalid nodes:
 ```python
 try:

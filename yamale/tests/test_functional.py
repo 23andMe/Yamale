@@ -1,4 +1,6 @@
+import io
 import pytest
+import re
 import yamale
 
 from . import get_fixture
@@ -318,6 +320,33 @@ def test_bad_map_key_constraint_nest_con():
     match_exception_lines(map_key_constraint['schema'],
                           map_key_constraint['bad_nest_con'],
                           exp)
+
+
+@pytest.mark.parametrize("use_schema_string,use_data_string,expected_message_re", [
+    (False, False, "^Error validating data '.*?' with schema '.*?'\n\t"),
+    (True, False, "^Error validating data '.*?'\n\t"),
+    (False, True, "^Error validating data with schema '.*?'\n\t"),
+    (True, True, "^Error validating data\n\t"),
+])
+def test_validate_errors(use_schema_string, use_data_string, expected_message_re):
+    schema_path = get_fixture('types.yaml')
+    data_path = get_fixture('types_bad_data.yaml')
+    if use_schema_string:
+        with io.open(schema_path, encoding='utf-8') as f:
+            schema = yamale.make_schema(content=f.read())
+    else:
+        schema = yamale.make_schema(schema_path)
+    if use_data_string:
+        with io.open(data_path, encoding='utf-8') as f:
+            data = yamale.make_data(content=f.read())
+    else:
+        data = yamale.make_data(data_path)
+    with pytest.raises(yamale.yamale_error.YamaleError) as excinfo:
+        yamale.validate(schema, data)
+    assert re.match(expected_message_re, excinfo.value.message, re.MULTILINE), \
+        'Message {} should match {}'.format(
+            excinfo.value.message, expected_message_re
+        )
 
 
 def match_exception_lines(schema, data, expected, strict=False):
