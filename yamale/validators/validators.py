@@ -1,5 +1,6 @@
 import re
 from datetime import date, datetime
+import ipaddress
 from .base import Validator
 from . import constraints as con
 from .. import util
@@ -158,7 +159,8 @@ class Regex(Validator):
         for k, v in util.get_iter(self._regex_flags):
             flags |= v if kwargs.pop(k, False) else 0
 
-        self.regexes = [re.compile(arg, flags) for arg in args if util.isstr(arg)]
+        self.regexes = [re.compile(arg, flags)
+                        for arg in args if util.isstr(arg)]
         super(Regex, self).__init__(*args, **kwargs)
 
     def _is_valid(self, value):
@@ -178,14 +180,11 @@ class Ip(Validator):
 
     def ip_address(self, value):
         try:
-            import ipaddress
-        except ImportError:
-            raise ImportError("You must install the ipaddress backport in Py2")
-        try:
             ipaddress.ip_interface(util.to_unicode(value))
         except ValueError:
             return False
         return True
+
 
 class Mac(Regex):
     """MAC address validator"""
@@ -194,8 +193,10 @@ class Mac(Regex):
     def __init__(self, *args, **kwargs):
         super(Mac, self).__init__(*args, **kwargs)
         self.regexes = [
-            re.compile("[0-9a-fA-F]{2}([-:]?)[0-9a-fA-F]{2}(\\1[0-9a-fA-F]{2}){4}$"),
-            re.compile("[0-9a-fA-F]{4}([-:]?)[0-9a-fA-F]{4}(\\1[0-9a-fA-F]{4})$"),
+            re.compile(
+                "[0-9a-fA-F]{2}([-:]?)[0-9a-fA-F]{2}(\\1[0-9a-fA-F]{2}){4}$"),
+            re.compile(
+                "[0-9a-fA-F]{4}([-:]?)[0-9a-fA-F]{4}(\\1[0-9a-fA-F]{4})$"),
         ]
 
 

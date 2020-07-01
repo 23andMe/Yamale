@@ -1,10 +1,6 @@
 #!/usr/bin/env python
-import sys
-import os
 from .schema import Schema
 from .yamale_error import YamaleError
-
-PY2 = sys.version_info[0] == 2
 
 
 def make_schema(path=None, parser='PyYAML', validators=None, content=None):
@@ -23,8 +19,6 @@ def make_schema(path=None, parser='PyYAML', validators=None, content=None):
     except (TypeError, SyntaxError) as e:
         error = 'Schema error in file %s\n' % path
         error += str(e)
-        if PY2:
-            error.encode('utf-8')
         raise SyntaxError(error)
 
     return s

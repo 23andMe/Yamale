@@ -10,8 +10,7 @@ What's YAML? See the current spec [here](http://www.yaml.org/spec/1.2/spec.html)
 
 Requirements
 ------------
-* Python 2.7+
-* Python 3.4+ (Only tested on 3.4, may work on older versions)
+* Python 3.6+
 * PyYAML
 * ruamel.yaml (optional)
 
