@@ -143,6 +143,12 @@ map_key_constraint = {
     'bad_nest_con': 'map_key_constraint_bad_nest_con.yaml',
 }
 
+numeric_bool_coercion = {
+    'schema': 'numeric_bool_coercion.yaml',
+    'good': 'numeric_bool_coercion_good.yaml',
+    'bad': 'numeric_bool_coercion_bad.yaml',
+}
+
 test_data = [
     types, nested, custom,
     keywords, lists, maps,
@@ -154,6 +160,7 @@ test_data = [
     nested_map2, static_list,
     nested_issue_54,
     map_key_constraint,
+    numeric_bool_coercion,
 ]
 
 for d in test_data:
@@ -321,6 +328,17 @@ def test_bad_map_key_constraint_nest_con():
                           map_key_constraint['bad_nest_con'],
                           exp)
 
+
+def test_bad_numeric_bool_coercion():
+    exp = [
+        "integers.0: 'False' is not a int.",
+        "integers.1: 'True' is not a int.",
+        "numbers.0: 'False' is not a num.",
+        "numbers.1: 'True' is not a num.",
+    ]
+    match_exception_lines(numeric_bool_coercion['schema'],
+                          numeric_bool_coercion['bad'],
+                          exp)
 
 @pytest.mark.parametrize("use_schema_string,use_data_string,expected_message_re", [
     (False, False, "^Error validating data '.*?' with schema '.*?'\n\t"),

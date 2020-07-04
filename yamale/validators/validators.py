@@ -28,7 +28,7 @@ class Number(Validator):
     constraints = [con.Min, con.Max]
 
     def _is_valid(self, value):
-        return isinstance(value, (int, float))
+        return isinstance(value, (int, float)) and not isinstance(value, bool)
 
 
 class Integer(Validator):
@@ -38,7 +38,7 @@ class Integer(Validator):
     constraints = [con.Min, con.Max]
 
     def _is_valid(self, value):
-        return isinstance(value, int)
+        return isinstance(value, int) and not isinstance(value, bool)
 
 
 class Boolean(Validator):
