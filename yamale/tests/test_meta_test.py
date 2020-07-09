@@ -10,7 +10,7 @@ data_folder = os.path.dirname(os.path.realpath(__file__))
 class TestAllYaml(YamaleTestCase):
     base_dir = data_folder
     schema = 'meta_test_fixtures/schema.yaml'
-    yaml = 'meta_test_fixtures/data_custom.yaml'
+    yaml = 'meta_test_fixtures/data1.yaml'
 
     def runTest(self):
         self.assertTrue(self.validate())
@@ -28,7 +28,7 @@ class TestBadYaml(YamaleTestCase):
 class TestMapYaml(YamaleTestCase):
     base_dir = data_folder
     schema = 'meta_test_fixtures/schema.yaml'
-    yaml = ['meta_test_fixtures/data_custom.yaml',
+    yaml = ['meta_test_fixtures/data1.yaml',
             'meta_test_fixtures/some_data.yaml',
             # Make sure  schema doesn't validate itself
             'meta_test_fixtures/schema.yaml']

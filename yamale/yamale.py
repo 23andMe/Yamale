@@ -32,7 +32,7 @@ def make_data(path=None, parser='PyYAML', content=None):
     return [(d, path) for d in raw_data]
 
 
-def validate(schema, data, strict=False, _raise_error=True):
+def validate(schema, data, strict=True, _raise_error=True):
     results = []
     is_valid = True
     for d, path in data:
