@@ -96,7 +96,7 @@ def _validate_dir(root, schema_name, cpus, parser, strict):
         raise ValueError('\n----\n'.join(set(error_messages)))
 
 
-def _router(root, schema_name, cpus, parser, strict=False):
+def _router(root, schema_name, cpus, parser, strict=True):
     root = os.path.abspath(root)
     if os.path.isfile(root):
         _validate_single(root, schema_name, parser, strict)
@@ -114,11 +114,11 @@ def main():
                         help='number of CPUs to use. Default is 4.')
     parser.add_argument('-p', '--parser', default='pyyaml',
                         help='YAML library to load files. Choices are "ruamel" or "pyyaml" (default).')
-    parser.add_argument('--strict', action='store_true',
-                        help='Enable strict mode, unexpected elements in the data will not be accepted.')
+    parser.add_argument('--no-strict', action='store_true',
+                        help='Disable strict mode, unexpected elements in the data will be accepted.')
     args = parser.parse_args()
     try:
-        _router(args.path, args.schema, args.cpu_num, args.parser, args.strict)
+        _router(args.path, args.schema, args.cpu_num, args.parser, args.no_strict)
         print('Validation success! 👍')
     except (SyntaxError, NameError, TypeError, ValueError) as e:
         print('Validation failed!\n%s' % str(e))
