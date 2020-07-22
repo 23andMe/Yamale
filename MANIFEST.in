@@ -1,2 +1,3 @@
 include *.md LICENSE
 include yamale/tests/fixtures/*.yaml
+include yamale/py.typed
