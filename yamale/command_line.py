@@ -118,7 +118,7 @@ def main():
                         help='Disable strict mode, unexpected elements in the data will be accepted.')
     args = parser.parse_args()
     try:
-        _router(args.path, args.schema, args.cpu_num, args.parser, args.no_strict)
+        _router(args.path, args.schema, args.cpu_num, args.parser, not args.no_strict)
         print('Validation success! 👍')
     except (SyntaxError, NameError, TypeError, ValueError) as e:
         print('Validation failed!\n%s' % str(e))
