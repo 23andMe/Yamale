@@ -368,6 +368,12 @@ Validates MAC addresses.
 Examples:
 - `mac()`: Allows any valid MAC address
 
+### UUID - `uuid()`
+Validates a Universally Unique Identifier (UUID).
+
+Examples:
+- `uuid()`: Allows any valid UUID
+
 ### Any - `any([validators])`
 Validates against a union of types. Use when a node can contain one of several types. It is valid 
 if at least one of the listed validators is valid. If no validators are given, accept any value.

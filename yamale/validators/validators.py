@@ -199,6 +199,19 @@ class Mac(Regex):
                 "[0-9a-fA-F]{4}([-:]?)[0-9a-fA-F]{4}(\\1[0-9a-fA-F]{4})$"),
         ]
 
+class Uuid(Regex):
+    """Uuid validator"""
+    tag = 'uuid'
+
+    def __init__(self, *args, **kwargs):
+        super(Uuid, self).__init__(*args, **kwargs)
+        self.regexes = [
+            re.compile(
+                "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89AaBb][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"),
+            re.compile(
+                "^\{[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89AaBb][0-9a-fA-F]{3}-[0-9a-fA-F]{12}\}$"),
+        ]
+
 
 DefaultValidators = {}
 
