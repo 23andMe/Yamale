@@ -1,7 +1,7 @@
 Yamale (ya·ma·lē)
 =================
 
-![Yamale](https://github.com/23andMe/Yamale/blob/master/yamale.png?raw=true)
+<img src="https://github.com/23andMe/Yamale/blob/master/yamale.png?raw=true" alt="Yamale" width="400"/>
 
 A schema and validator for YAML.
 
