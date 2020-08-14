@@ -371,13 +371,15 @@ Examples:
 - `mac()`: Allows any valid MAC address
 
 ### Any - `any([validators])`
-Validates against a union of types. Use when a node can contain one of several types. It is valid
+Validates against a union of types. Use when a node **must** contain **one and only one** of several types. It is valid
 if at least one of the listed validators is valid. If no validators are given, accept any value.
-- arguments: validators to test values with (if none is given, allow any value)
+- arguments: validators to test values with (if none is given, allow any value; if one or more are given,
+one must be present)
 
 Examples:
-- `any(int(), null())`: Validates an integer or a null value.
-- `any(num(), include('vector'))`: Validates a number or an included 'vector' type.
+- `any(int(), null())`: Validates either an integer **or** a null value.
+- `any(num(), include('vector'))`: Validates **either** a number **or** an included 'vector' type.
+- `any(str(min=3, max=3),str(min=5, max=5),str(min=7, max=7))`: validates to a string that is exactly 3, 5, or 7 characters long
 - `any()`: Allows any value.
 
 ### Include - `include(include_name)`
