@@ -24,6 +24,12 @@ Install
 $ pip install yamale
 ```
 
+*Mac OS users - try this:*
+```
+brew install python3
+pip3 install yamale
+```
+
 ### Manual
 1. Download Yamale from: https://github.com/23andMe/Yamale/archive/master.zip
 2. Unzip somewhere temporary
