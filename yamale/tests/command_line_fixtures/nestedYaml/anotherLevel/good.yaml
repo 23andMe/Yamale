@@ -1,0 +1,4 @@
+map:
+  goodStr1: 'hello'
+  goodInt: 12
+  goodStr2: 'done'
