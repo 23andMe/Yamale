@@ -38,7 +38,7 @@ def _validate(schema_path, data_path, parser, strict, _raise_error):
 def _find_data_path_schema(data_path, schema_name):
     """ Starts in the data file folder and recursively looks
     in parents for `schema_name` """
-    if not data_path or data_path == '/' or data_path == '.':
+    if not data_path or data_path == os.path.abspath(os.sep) or data_path == '.':
         return None
     directory = os.path.dirname(data_path)
     path = glob.glob(os.path.join(directory, schema_name))
