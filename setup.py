@@ -6,7 +6,7 @@ license = open('LICENSE', encoding='utf-8').read()
 
 setup(
     name='yamale',
-    version='3.0.2',
+    version='3.0.3',
     url='https://github.com/23andMe/Yamale',
     author='Bo Lopker',
     author_email='blopker@23andme.com',
