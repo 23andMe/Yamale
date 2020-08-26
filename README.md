@@ -564,8 +564,8 @@ Developers
 ----------
 ### Testing
 Yamale uses [Tox](https://tox.readthedocs.org/en/latest/) to run its tests against multiple Python
-versions. To run tests, first checkout Yamale, install Tox, then run `make test` in the Yamale's
-root directory. You may also have to install the correct Python versions to test with as well.
+versions. To run tests, first checkout Yamale, install Tox, then run `make test` in Yamale's root
+directory. You may also have to install the correct Python versions to test with as well.
 
 NOTE on Python versions: `tox.ini` specifies the lowest and highest versions of Python supported by
 Yamale. Unless your development environment is configured to support testing against multiple Python
