@@ -4,9 +4,10 @@ import ipaddress
 
 from yamale.util import to_unicode
 from .base import Validator
+from yamale.schema.datapath import DataPath
 
 
-class Constraint(object):
+class BaseConstraint(object):
     keywords = {}  # Keywords and types accepted by this constraint
     is_active = False
 
@@ -44,7 +45,21 @@ class Constraint(object):
         except (TypeError, ValueError):
             raise SyntaxError('%s is not a %s' % (key, kwtype))
 
-    def is_valid(self, value):
+    def is_valid(self, value, schema, path, strict):
+        if not self.is_active:
+            return None
+
+        if not self._is_valid(value, schema, path, strict):
+            return self._fail(value, schema, path, strict)
+
+        return None
+
+    def _fail(self, value, *args):
+        return '\'%s\' violates %s.' % (value, self.__class__.__name__)
+
+class Constraint(BaseConstraint):
+
+    def is_valid(self, value, schema, path, strict):
         if not self.is_active:
             return None
 
@@ -52,9 +67,6 @@ class Constraint(object):
             return self._fail(value)
 
         return None
-
-    def _fail(self, value):
-        return '\'%s\' violates %s.' % (value, self.__class__.__name__)
 
 
 class Min(Constraint):
@@ -107,20 +119,22 @@ class LengthMax(Constraint):
         return self.fail % (value, self.max)
 
 
-class Key(Constraint):
+class Key(BaseConstraint):
     keywords = {'key': Validator}
     fail = 'Key error - %s'
 
-    def _is_valid(self, value):
+    def _is_valid(self, value, schema, path, strict):
         for k in value.keys():
-            if self.key.validate(k) != []:
+            errors = schema._validate(self.key, k, DataPath(), strict)
+            if errors != []:
                 return False
         return True
 
-    def _fail(self, value):
+    def _fail(self, value, schema, path, strict):
         error_list = []
         for k in value.keys():
-            error_list.extend(self.key.validate(k))
+            errors = schema._validate(self.key, k, DataPath(), strict)
+            error_list.extend(errors)
         return [self.fail % (e) for e in error_list]
 
 

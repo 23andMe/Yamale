@@ -1,4 +1,4 @@
-class Validator(object):
+class BaseValidator(object):
     """Base class for all Validators"""
     constraints = []
     value_type = None
@@ -30,37 +30,32 @@ class Validator(object):
 
     @property
     def is_optional(self):
+        """ used for test """
         return not self.is_required
-
-    @property
-    def can_be_none(self):
-        """Check if value for optional field can be None."""
-        return self._value_can_be_none
-
-    def _is_valid(self, value):
-        """Validators must implement this. Return True if value is valid."""
-        raise NotImplementedError('You need to override this function')
 
     def get_name(self):
         return self.tag
 
-    def validate(self, value):
+    def validate(self, value, schema, path, strict):
         """
         Check if ``value`` is valid.
 
         :returns: [errors] If ``value`` is invalid, otherwise [].
         """
-        errors = []
 
-        # Make sure the type validates first.
-        valid = self._is_valid(value)
-        if not valid:
-            errors.append(self.fail(value))
+        # Optional field with optional value? Who cares.
+        if (value is None and
+                not self.is_required and
+                self._value_can_be_none):
+            return []
+
+        errors = self._validate(value, schema, path, strict)
+        if errors:
             return errors
 
         # Then validate all the constraints second.
         for constraint in self._constraints_inst:
-            error = constraint.is_valid(value)
+            error = constraint.is_valid(value, schema, path, strict)
             if error:
                 if isinstance(error, list):
                     errors.extend(error)
@@ -69,8 +64,8 @@ class Validator(object):
 
         return errors
 
-    def is_valid(self, value):
-        return self.validate(value) == []
+    def _validate(self, value, schema, path, strict):
+        raise NotImplementedError('You need to override this function')
 
     def fail(self, value):
         """Override to define a custom fail message"""
@@ -85,3 +80,19 @@ class Validator(object):
               self.args == other.args,
               self.kwargs == other.kwargs]
         return all(eq)
+
+
+class Validator(BaseValidator):
+
+    def _validate(self, value, schema, path, strict):
+        if not self._is_valid(value):
+            return [self.fail(value)]
+        return []
+
+    def _is_valid(self, value):
+        """Validators must implement this. Return True if value is valid."""
+        raise NotImplementedError('You need to override this function')
+
+    def is_valid(self, value):
+        """Used for test"""
+        return self.validate(value, None, None, None) == []

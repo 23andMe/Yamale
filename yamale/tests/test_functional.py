@@ -313,7 +313,7 @@ def test_bad_static_list():
 
 
 def test_bad_map_key_constraint_base():
-    exp = [": Key error - 'bad' is not a int."]
+    exp = ["Key error - 'bad' is not a int."]
     match_exception_lines(map_key_constraint['schema'],
                           map_key_constraint['bad_base'],
                           exp)

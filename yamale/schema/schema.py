@@ -89,14 +89,7 @@ class Schema(object):
                                                   path,
                                                   strict)
 
-        errors = []
-        # Optional field with optional value? Who cares.
-        if (data is None and
-                validator.is_optional and
-                validator.can_be_none):
-            return errors
-
-        errors += self._validate_primitive(validator, data, path)
+        errors = self._validate_primitive(validator, data, path, strict)
 
         if errors:
             return errors
@@ -186,10 +179,13 @@ class Schema(object):
 
         return errors
 
-    def _validate_primitive(self, validator, data, path):
-        errors = validator.validate(data)
+    def _validate_primitive(self, validator, data, path, strict):
+        errors = validator.validate(data, self, path, strict)
 
         for i, error in enumerate(errors):
-            errors[i] = ('%s: ' % path) + error
+            if str(path):
+                errors[i] = ('%s: ' % path) + error
+            else:
+                errors[i] = error
 
         return errors
