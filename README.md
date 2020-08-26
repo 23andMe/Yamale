@@ -24,7 +24,12 @@ Install
 $ pip install yamale
 ```
 
-NOTE: Some platforms, e.g., Mac OS, may ship with only Python 2, and may not have pip installed. Installation of Python 3 should also install pip. To preserve any system dependencies on default software, consider installing Python 3 as a local package: replacing system-provided Python may disrupt other software. Mac OS users may wish to investigate MacPorts, homebrew, or building Python 3 from source; in all three cases, Apple's Command Line Tools (CLT) for Xcode may be required. See also [developers](#developers), below.
+NOTE: Some platforms, e.g., Mac OS, may ship with only Python 2 and may not have pip installed.
+Installation of Python 3 should also install pip. To preserve any system dependencies on default
+software, consider installing Python 3 as a local package. Please note replacing system-provided
+Python may disrupt other software. Mac OS users may wish to investigate MacPorts, homebrew, or
+building Python 3 from source; in all three cases, Apple's Command Line Tools (CLT) for Xcode
+may be required. See also [developers](#developers), below.
 
 ### Manual
 1. Download Yamale from: https://github.com/23andMe/Yamale/archive/master.zip
@@ -562,9 +567,11 @@ Yamale uses [Tox](https://tox.readthedocs.org/en/latest/) to run its tests again
 versions. To run tests, first checkout Yamale, install Tox, then run `make test` in the Yamale's
 root directory. You may also have to install the correct Python versions to test with as well.
 
-NOTE on Python versions: If the current tox.ini specifies multiple versions of Python, consider
-installing pyenv and tox-pyenv, using pyenv to install the required Python versions, and running
-"pyenv local" in the yamale root directory, so that tox can locate the installed local versions.
+NOTE on Python versions: `tox.ini` specifies the lowest and highest versions of Python supported by
+Yamale. Unless your development environment is configured to support testing against multiple Python
+versions, one or more of the test branches may fail. One method of enabling testing against multiple
+versions of Python is to install `pyenv` and `tox-pyenv` and to use `pyenv install` and `pyenv local`
+to ensure that tox is able to locate appropriate Pythons.
 
 ### Releasing
 Yamale uses Travis to upload new tags to PyPi.
