@@ -1,0 +1,4 @@
+maptest: map(include('value'), key=include('key'))
+---
+value: str()
+key: int()

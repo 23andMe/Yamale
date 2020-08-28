@@ -149,6 +149,12 @@ numeric_bool_coercion = {
     'bad': 'numeric_bool_coercion_bad.yaml',
 }
 
+map_key_constraint_include = {
+    'schema': 'map_key_constraint_include.yaml',
+    'good': 'map_key_constraint_include_good.yaml',
+    'bad': 'map_key_constraint_include_bad.yaml'
+}
+
 test_data = [
     types, nested, custom,
     keywords, lists, maps,
@@ -161,6 +167,7 @@ test_data = [
     nested_issue_54,
     map_key_constraint,
     numeric_bool_coercion,
+    map_key_constraint_include
 ]
 
 for d in test_data:
@@ -338,6 +345,16 @@ def test_bad_numeric_bool_coercion():
     ]
     match_exception_lines(numeric_bool_coercion['schema'],
                           numeric_bool_coercion['bad'],
+                          exp)
+
+
+def test_bad_map_key_constraint_include():
+    exp = [
+        "maptest: Key error - 'one' is not a int.",
+        "maptest: Key error - 'two' is not a int."
+    ]
+    match_exception_lines(map_key_constraint_include['schema'],
+                          map_key_constraint_include['bad'],
                           exp)
 
 @pytest.mark.parametrize("use_schema_string,use_data_string,expected_message_re", [
