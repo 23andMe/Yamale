@@ -562,6 +562,19 @@ class TestYaml(YamaleTestCase):
 
 Developers
 ----------
+### Installing
+
+There are several ways to install the latest version of Yamale for development and testing purposes. Please choose your preferred approach:
+
+1. Clone the GitHub repo:
+  - `git clone https://github.com/23andMe/Yamale` or
+  - `git clone git@github.com:23andMe/Yamale.git`
+2. Manually download and install from the latest ZIP archive:
+   1. Download `https://github.com/23andMe/Yamale/archive/master.zip`
+   2. Unzip this to a convenient location and `cd` to that location
+   3. Run `python setup.py install` (may have to prepend `sudo`)
+3. Install directly using `pip`: `pip install https://github.com/23andMe/Yamale/archive/master.zip` (may have to prepend `sudo`)
+
 ### Testing
 Yamale uses [Tox](https://tox.readthedocs.org/en/latest/) to run its tests against multiple Python
 versions. To run tests, first checkout Yamale, install Tox, then run `make test` in Yamale's root
