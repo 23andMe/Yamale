@@ -125,7 +125,7 @@ class Key(BaseConstraint):
 
     def _is_valid(self, value, schema, path, strict):
         for k in value.keys():
-            errors = schema._validate(self.key, k, DataPath(), strict)
+            errors = schema.validate_data(self.key, k, DataPath(), strict)
             if errors != []:
                 return False
         return True
@@ -133,7 +133,7 @@ class Key(BaseConstraint):
     def _fail(self, value, schema, path, strict):
         error_list = []
         for k in value.keys():
-            errors = schema._validate(self.key, k, DataPath(), strict)
+            errors = schema.validate_data(self.key, k, DataPath(), strict)
             error_list.extend(errors)
         return [self.fail % (e) for e in error_list]
 

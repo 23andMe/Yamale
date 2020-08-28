@@ -52,7 +52,7 @@ class Schema(object):
 
     def validate(self, data, data_name, strict):
         path = DataPath()
-        errors = self._validate(self._schema, data, path, strict)
+        errors = self.validate_data(self._schema, data, path, strict)
         return ValidationResult(data_name, self.name, errors)
 
     def _validate_item(self, validator, data, path, strict, key):
@@ -73,9 +73,9 @@ class Schema(object):
             errors.append('%s: Required field missing' % path)
             return errors
 
-        return self._validate(validator, data_item, path, strict)
+        return self.validate_data(validator, data_item, path, strict)
 
-    def _validate(self, validator, data, path, strict):
+    def validate_data(self, validator, data, path, strict):
         """
         Validate data with validator.
         Special handling of non-primitive validators.
@@ -155,10 +155,10 @@ class Schema(object):
             return [('Include \'%s\' has not been defined.'
                      % validator.include_name)]
         strict = strict if validator.strict is None else validator.strict
-        return include_schema._validate(include_schema._schema,
-                                        data,
-                                        path,
-                                        strict)
+        return include_schema.validate_data(include_schema._schema,
+                                            data,
+                                            path,
+                                            strict)
 
     def _validate_any(self, validator, data, path, strict):
         if not validator.validators:
@@ -168,7 +168,7 @@ class Schema(object):
 
         sub_errors = []
         for v in validator.validators:
-            err = self._validate(v, data, path, strict)
+            err = self.validate_data(v, data, path, strict)
             if err:
                 sub_errors.append(err)
 
