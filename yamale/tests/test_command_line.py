@@ -94,8 +94,5 @@ def test_bad_issue_54():
     assert 'list: Required field missing' in e.value.message
 
 def test_nested_schema_issue_69():
-    curdir = os.getcwd()
-    os.chdir('yamale/tests/command_line_fixtures/nestedYaml')
-    command_line._router('./','schema.yaml', 1, 'PyYAML')
-    os.chdir(curdir)
+    command_line._router('yamale/tests/command_line_fixtures/nestedYaml','schema.yaml', 1, 'PyYAML')
 
