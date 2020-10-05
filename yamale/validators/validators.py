@@ -164,7 +164,7 @@ class Regex(Validator):
         super(Regex, self).__init__(*args, **kwargs)
 
     def _is_valid(self, value):
-        return util.isstr(value) and any(r.match(value) for r in self.regexes)
+        return util.isstr(str(value)) and any(r.match(str(value)) for r in self.regexes)
 
     def get_name(self):
         return self.regex_name or self.tag + " match"
