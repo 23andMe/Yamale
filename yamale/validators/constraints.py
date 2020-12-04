@@ -33,11 +33,23 @@ class Constraint(object):
         try:  # Try to convert value
             # Is this value one of the datetime types?
             if kwtype == datetime.date:
-                time = datetime.datetime.strptime(value, '%Y-%m-%d')
+                # Get custom format if used
+                if kwargs['format']: 
+                    dateformat = kwargs['format']
+                else: 
+                    dateformat = '%Y-%m-%d'
+                
+                time = datetime.datetime.strptime(value, dateformat)
                 return datetime.date(time.year, time.month, time.day)
 
             if kwtype == datetime.datetime:
-                return datetime.datetime.strptime(value, '%Y-%m-%d %H:%M:%S')
+                # Get custom format if used
+                if kwargs['format']: 
+                    dateformat = kwargs['format']
+                else: 
+                    dateformat = '%Y-%m-%d %H:%M:%S'
+
+                return datetime.datetime.strptime(value, dateformat)
 
             return kwtype(value)
         except (TypeError, ValueError):
@@ -155,3 +167,12 @@ class IpVersion(Constraint):
 
     def _fail(self, value):
         return self.fail % (value, self.version)
+
+
+class Format(Constraint):
+    keywords = {'format': str}
+    fail = 'Date %s is not in format %s'
+
+    def _is_valid(self, value):
+        # Date format is already tested in the Day and Timestamp validator() methods
+        return True

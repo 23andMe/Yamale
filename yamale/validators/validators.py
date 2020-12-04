@@ -64,13 +64,31 @@ class Enum(Validator):
 
 
 class Day(Validator):
-    """Day validator. Format: YYYY-MM-DD"""
+    """Day validator. """
     value_type = date
     tag = 'day'
-    constraints = [con.Min, con.Max]
+    constraints = [con.Min, con.Max, con.Format]
 
-    def _is_valid(self, value):
-        return isinstance(value, date)
+    def _is_valid(self, value): 
+        return isinstance(value, datetime)
+
+    def validate(self, value):
+        # Get format value if passed
+        format_con = next((x for x in self._constraints_inst if isinstance(x, con.Format)), None)
+
+        if format_con.is_active:
+            dateformat = format_con.__dict__['format']
+        else: 
+            dateformat = '%Y-%m-%d'
+
+        try: 
+            time = datetime.strptime(value, dateformat)
+            value = date(time.year, time.month, time.day)
+        except ValueError: 
+            # Cannot be coerced to date
+            return['Value %s does not match format %s' % (value, dateformat)]
+    
+        super().validate(value)
 
 
 class Timestamp(Validator):
