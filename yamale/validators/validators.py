@@ -70,9 +70,10 @@ class Day(Validator):
     constraints = [con.Min, con.Max, con.Format]
 
     def _is_valid(self, value): 
-        return isinstance(value, datetime)
+        return isinstance(value, date)
 
     def validate(self, value):
+        
         # Get format value if passed
         format_con = next((x for x in self._constraints_inst if isinstance(x, con.Format)), None)
 

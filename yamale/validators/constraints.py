@@ -176,3 +176,6 @@ class Format(Constraint):
     def _is_valid(self, value):
         # Date format is already tested in the Day and Timestamp validator() methods
         return True
+
+    def _fail(self, value):
+        return self.fail % (value, self.format)
