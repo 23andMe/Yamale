@@ -73,7 +73,6 @@ class Day(Validator):
         return isinstance(value, date)
 
     def validate(self, value):
-        
         # Get format value if passed
         format_con = next((x for x in self._constraints_inst if isinstance(x, con.Format)), None)
 
@@ -96,10 +95,27 @@ class Timestamp(Validator):
     """Timestamp validator. Format: YYYY-MM-DD HH:MM:SS"""
     value_type = datetime
     tag = 'timestamp'
-    constraints = [con.Min, con.Max]
+    constraints = [con.Min, con.Max, con.Format]
 
     def _is_valid(self, value):
         return isinstance(value, datetime)
+
+    def validate(self, value):
+        # Get format value if passed
+        format_con = next((x for x in self._constraints_inst if isinstance(x, con.Format)), None)
+
+        if format_con.is_active:
+            datetimeformat = format_con.__dict__['format']
+        else: 
+            datetimeformat = '%Y-%m-%d %H:%M:%S'
+
+        try: 
+            value = datetime.strptime(value, datetimeformat)            
+        except ValueError: 
+            # Cannot be coerced to datetime
+            return['Value %s does not match format %s' % (value, datetimeformat)]
+    
+        return super().validate(value)
 
 
 class Map(Validator):
