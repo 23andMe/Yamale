@@ -43,7 +43,15 @@ def test_timestamp_max():
     assert v.is_valid(datetime.datetime(2009, 2, 2))
     assert not v.is_valid(datetime.datetime(2010, 2, 2))
 
-
+def test_timestamp_format():
+    v = val.Timestamp(format='%m/%d/%Y %H:%M:%S')
+    assert v.is_valid('01/01/2010 12:00:00')
+    assert v.is_valid('12/31/2010 01:00:00')
+    assert not v.is_valid('1/1/2010 12:00:00')
+    assert not v.is_valid('01/01/2010 12:00')
+    assert not v.is_valid('12-31-2010 01:00:00')
+    assert not v.is_valid('12/31/2010 1:00:00')
+    
 def test_day_min():
     v = val.Day(min=datetime.date(2010, 1, 1))
     assert v.is_valid(datetime.date(2010, 1, 1))
@@ -57,6 +65,13 @@ def test_day_max():
     assert v.is_valid(datetime.date(2009, 2, 2))
     assert not v.is_valid(datetime.date(2010, 2, 2))
 
+def test_day_format():
+    v = val.Day(format='%m/%d/%Y')
+    assert v.is_valid('12/31/2010')
+    assert v.is_valid('01/01/2010')
+    assert not v.is_valid('12-31-2010')
+    assert not v.is_valid('1/1/10')
+    assert not v.is_valid('2010-01-01')
 
 def test_char_exclude():
     v = val.String(exclude='abcd')
