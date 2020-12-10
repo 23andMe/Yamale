@@ -89,7 +89,7 @@ class Day(Validator):
             # Cannot be coerced to date
             return['Value %s does not match format %s' % (value, dateformat)]
     
-        super().validate(value)
+        return super().validate(value)
 
 
 class Timestamp(Validator):
