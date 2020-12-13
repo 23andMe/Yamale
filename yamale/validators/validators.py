@@ -78,16 +78,20 @@ class Day(Validator):
 
         if format_con.is_active:
             dateformat = format_con.__dict__['format']
+            try: 
+                time = datetime.strptime(value, dateformat)
+                value = date(time.year, time.month, time.day)
+            except ValueError: 
+                # Cannot be coerced using datetime format
+                return['Value %s does not match format %s' % (value, dateformat)]
         else: 
-            dateformat = '%Y-%m-%d'
+            # If no format is passed, use the PyYAML method to coerce to datetime which would occur 
+            # without PyYAML NoDateBaseLoader
+            try: 
+                value = util.parse_default_date(value)
+            except Exception: 
+                raise
 
-        try: 
-            time = datetime.strptime(value, dateformat)
-            value = date(time.year, time.month, time.day)
-        except ValueError: 
-            # Cannot be coerced to date
-            return['Value %s does not match format %s' % (value, dateformat)]
-    
         return super().validate(value)
 
 

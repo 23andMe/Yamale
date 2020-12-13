@@ -22,6 +22,7 @@ class NoDatesSafeLoader(yaml.SafeLoader):
 
 NoDatesSafeLoader.remove_implicit_resolver('tag:yaml.org,2002:timestamp')
 
+
 def _pyyaml(f):
     try:
         Loader = NoDatesSafeLoader
@@ -36,6 +37,9 @@ def _pyyaml(f):
 def _ruamel(file_name):
     from ruamel.yaml import YAML
     yaml = YAML(typ='safe')
+    # Replace timestamp constructor to prevent converting to datetime obj
+    yaml.constructor.yaml_constructors[u'tag:yaml.org,2002:timestamp'] = \
+        yaml.constructor.yaml_constructors[u'tag:yaml.org,2002:str']
     with open(file_name) as f:
         return list(yaml.load_all(f))
 

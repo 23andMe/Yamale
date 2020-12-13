@@ -79,3 +79,70 @@ def get_subclasses(cls, _subclasses_yielded=None):
         # Yield all direct subclasses of this class as well.
         for subclass_subclass in get_subclasses(subclass, _subclasses_yielded):
             yield subclass_subclass
+
+
+class InvalidDatetimeValue(Exception):
+    """ Custom exception for date and datetime values that 
+    cannot be parsed without custom format parameter.
+    """
+    pass
+
+
+def parse_default_date(value):
+    """
+    This method parses day and timestamp values if no format is passed 
+    as a constraint. This is to ensure values are consistent as they 
+    would be if using the default PyYAML and ruamel loaders. 
+
+    Parameters
+    ----------
+    value : string
+    """
+    import re
+    import datetime
+
+    # Regex from PyYAML constructor.py ln 310
+    timestamp_regexp = re.compile(
+            r'''^(?P<year>[0-9][0-9][0-9][0-9])
+                -(?P<month>[0-9][0-9]?)
+                -(?P<day>[0-9][0-9]?)
+                (?:(?:[Tt]|[ \t]+)
+                (?P<hour>[0-9][0-9]?)
+                :(?P<minute>[0-9][0-9])
+                :(?P<second>[0-9][0-9])
+                (?:\.(?P<fraction>[0-9]*))?
+                (?:[ \t]*(?P<tz>Z|(?P<tz_sign>[-+])(?P<tz_hour>[0-9][0-9]?)
+                (?::(?P<tz_minute>[0-9][0-9]))?))?)?$''', re.X)
+
+    match = timestamp_regexp.match(value)
+    
+    if match:
+        values = match.groupdict()
+        year = int(values['year'])
+        month = int(values['month'])
+        day = int(values['day'])
+        if not values['hour']:
+            return datetime.date(year, month, day)
+        hour = int(values['hour'])
+        minute = int(values['minute'])
+        second = int(values['second'])
+        fraction = 0
+        tzinfo = None
+        if values['fraction']:
+            fraction = values['fraction'][:6]
+            while len(fraction) < 6:
+                fraction += '0'
+            fraction = int(fraction)
+        if values['tz_sign']:
+            tz_hour = int(values['tz_hour'])
+            tz_minute = int(values['tz_minute'] or 0)
+            delta = datetime.timedelta(hours=tz_hour, minutes=tz_minute)
+            if values['tz_sign'] == '-':
+                delta = -delta
+            tzinfo = datetime.timezone(delta)
+        elif values['tz']:
+            tzinfo = datetime.timezone.utc
+        return datetime.datetime(year, month, day, hour, minute, second, fraction,
+                                    tzinfo=tzinfo)
+    else: 
+        raise InvalidDatetimeValue('Datetime value is not in standard ISO 8601 format.')
