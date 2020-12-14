@@ -268,23 +268,26 @@ Validates from a list of constants.
 Examples:
 - `enum('a string', 1, False)`: a value can be either `'a string'`, `1` or `False`
 
-### Day - `day(min=date, max=date)`
-Validates a date in the form of YYYY-MM-DD.
+### Day - `day(format=string, min=date, max=date)`
+Validates a date in the form passed to the format argument. Defaults to YYYY-MM-DD.
 - keywords
+    - `format`: [datetime](https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes) format
     - `min`: date >= min
     - `max`: date <= max
 
 Examples:
 - `day(min='2001-01-01', max='2100-01-01')`: Only allows dates between 2001-01-01 and 2100-01-01.
-
-### Timestamp - `timestamp(min=time, max=time)`
-Validates a timestamp in the form of YYYY-MM-DD HH:MM:SS.
+- `day(format='%m/%d/%Y')`: Only allows dates that match the format like 01/01/2001
+### Timestamp - `timestamp(format=string, min=time, max=time)`
+Validates a timestamp in the form passed to the format argument. Defaults to YYYY-MM-DD HH:MM:SS.
 - keywords
+    - `format`: [datetime](https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes) format
     - `min`: time >= min
     - `max`: time <= max
 
 Examples:
 - `timestamp(min='2001-01-01 01:00:00', max='2100-01-01 23:00:00')`: Only allows times between 2001-01-01 01:00:00 and 2100-01-01 23:00:00.
+- `timestamp(format='%m/%d/%y %H:%M:%S')`: Only allows datetimes that match the format like 01/01/2001 01:00:00
 
 ### List - `list([validators], min=int, max=int)`
 Validates lists. If one or more validators are passed to `list()` only nodes that pass at least one of those validators will be accepted.
