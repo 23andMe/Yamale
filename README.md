@@ -257,12 +257,19 @@ Some validators take keywords and some take arguments, some take both. For insta
 validator takes one or more constants as arguments and the `required` keyword:
 `enum('a string', 1, False, required=False)`
 
-### String - `str(min=int, max=int, exclude=string)`
+### String - `str(min=int, max=int, equals=string, starts_with=string, ends_with=str, matches=regex, exclude=string)`
 Validates strings.
 - keywords
     - `min`: len(string) >= min
     - `max`: len(string) <= max
-    - `exclude`: Rejects strings that contains any character in the excluded value.
+    - `equals`: string == value (add `ignore_case=True` for case-insensitive checking)
+    - `starts_with`: Accepts only strings starting with given value (add `ignore_case=True` for
+      case-insensitive checking)
+    - `matches`: Validates the string against a given regex. Similar to the `regex()` validator,
+      you can use `ignore_case`, `multiline` and `dotall`)
+    - `ends_with`: Accepts only strings ending with given value (add `ignore_case=True` for case-insensitive checking)
+    
+- `exclude`: Rejects strings that contains any character in the excluded value.
 
 Examples:
 - `str(max=10, exclude='?!')`: Allows only strings less than 11 characters that don't contain `?` or `!`.
