@@ -268,8 +268,7 @@ Validates strings.
     - `matches`: Validates the string against a given regex. Similar to the `regex()` validator,
       you can use `ignore_case`, `multiline` and `dotall`)
     - `ends_with`: Accepts only strings ending with given value (add `ignore_case=True` for case-insensitive checking)
-    
-- `exclude`: Rejects strings that contains any character in the excluded value.
+    - `exclude`: Rejects strings that contains any character in the excluded value.
 
 Examples:
 - `str(max=10, exclude='?!')`: Allows only strings less than 11 characters that don't contain `?` or `!`.
