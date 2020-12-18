@@ -229,9 +229,19 @@ class CharacterExclude(Constraint):
         # Check if the function has only been called due to ignore_case
         if self.exclude is not None:
             for char in self.exclude:
-                if char in value:
-                    self._failed_char = char
-                    return False
+                if self.ignore_case is not None:
+                    if not self.ignore_case:
+                        if char in value:
+                            self._failed_char = char
+                            return False
+                    else:
+                        if char.casefold() in value.casefold():
+                            self._failed_char = char
+                            return False
+                else:
+                    if char in value:
+                        self._failed_char = char
+                        return False
             return True
         else:
             return True

@@ -132,6 +132,15 @@ def test_char_exclude():
     assert not v.is_valid('c')
 
 
+def test_char_exclude_igonre_case():
+    v = val.String(exclude='abcd', ignore_case=True)
+    assert v.is_valid('efg')
+    assert v.is_valid('Efg')
+    assert not v.is_valid('abc')
+    assert not v.is_valid('Def')
+    assert not v.is_valid('c')
+
+
 def test_ip4():
     v = val.Ip(version=4)
     assert v.is_valid('192.168.1.1')
