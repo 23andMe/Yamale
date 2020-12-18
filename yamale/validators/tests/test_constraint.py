@@ -58,6 +58,73 @@ def test_day_max():
     assert not v.is_valid(datetime.date(2010, 2, 2))
 
 
+def test_str_equals():
+    v = val.String(equals='abcd')
+    assert v.is_valid('abcd')
+    assert not v.is_valid('abcde')
+    assert not v.is_valid('c')
+
+
+def test_str_equals_ignore_case():
+    v = val.String(equals='abcd', ignore_case=True)
+    assert v.is_valid('abCd')
+    assert not v.is_valid('abcde')
+    assert not v.is_valid('C')
+
+
+def test_str_starts_with():
+    v = val.String(starts_with='abc')
+    assert v.is_valid('abcd')
+    assert not v.is_valid('bcd')
+    assert not v.is_valid('c')
+
+
+def test_str_starts_with_ignore_case():
+    v = val.String(starts_with='abC', ignore_case=True)
+    assert v.is_valid('abCde')
+    assert v.is_valid('abcde')
+    assert not v.is_valid('bcd')
+    assert not v.is_valid('C')
+
+
+def test_str_ends_with():
+    v = val.String(ends_with='abcd')
+    assert v.is_valid('abcd')
+    assert not v.is_valid('abcde')
+    assert not v.is_valid('c')
+
+
+def test_str_ends_with_ignore_case():
+    v = val.String(ends_with='abC', ignore_case=True)
+    assert v.is_valid('xyzabC')
+    assert v.is_valid('xyzabc')
+    assert not v.is_valid('cde')
+    assert not v.is_valid('C')
+
+
+def test_str_matches():
+    v = val.String(matches=r'^(abc)\1?de$')
+    assert v.is_valid('abcabcde')
+    assert not v.is_valid('abcabcabcde')
+    assert not v.is_valid('\12')
+
+    v = val.String(matches=r'[a-z0-9]{3,}s\s$', ignore_case=True)
+    assert v.is_valid('b33S\v')
+    assert v.is_valid('B33s\t')
+    assert not v.is_valid(' b33s ')
+    assert not v.is_valid('b33s  ')
+
+    v = val.String(matches=r'A.+\d$', ignore_case=False, multiline=True)
+    assert v.is_valid('A_-3\n\n')
+    assert not v.is_valid('a!!!!!5\n\n')
+
+    v = val.String(matches=r'.*^Ye.*s\.', ignore_case=True, multiline=True, dotall=True)
+    assert v.is_valid('YEeeEEEEeeeeS.')
+    assert v.is_valid('What?\nYes!\nBEES.\nOK.')
+    assert not v.is_valid('YES-TA-TOES?')
+    assert not v.is_valid('\n\nYaes.')
+
+
 def test_char_exclude():
     v = val.String(exclude='abcd')
     assert v.is_valid('efg')

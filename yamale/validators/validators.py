@@ -15,7 +15,13 @@ except ImportError:
 class String(Validator):
     """String validator"""
     tag = 'str'
-    constraints = [con.LengthMin, con.LengthMax, con.CharacterExclude]
+    constraints = [con.LengthMin,
+                   con.LengthMax,
+                   con.CharacterExclude,
+                   con.StringEquals,
+                   con.StringStartsWith,
+                   con.StringEndsWith,
+                   con.StringMatches]
 
     def _is_valid(self, value):
         return util.isstr(value)
