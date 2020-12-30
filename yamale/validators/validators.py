@@ -108,16 +108,20 @@ class Timestamp(Validator):
         # Get format value if passed
         format_con = next((x for x in self._constraints_inst if isinstance(x, con.Format)), None)
 
-        if format_con.is_active:
-            datetimeformat = format_con.__dict__['format']
-        else: 
-            datetimeformat = '%Y-%m-%d %H:%M:%S'
-
-        try: 
-            value = datetime.strptime(value, datetimeformat)            
-        except ValueError: 
-            # Cannot be coerced to datetime
-            return['Value %s does not match format %s' % (value, datetimeformat)]
+        # If value is string try parsing to datetime
+        if isinstance(value, str):
+            if format_con.is_active:
+                datetimeformat = format_con.__dict__['format']
+                try: 
+                    value = datetime.strptime(value, dateformat)
+                except ValueError: 
+                    # Cannot be coerced using datetime format
+                    return['Value %s does not match format %s' % (value, datetimeformat)]
+            else: 
+                # If no format is passed, use the PyYAML regex to coerce to date or datetime. 
+                # If it doesn't match, treat it as a string. This is the default PyYAML 
+                # SafeLoader and default ruamel behavior. 
+                value = util.parse_default_date(value)
     
         return super().validate(value)
 
