@@ -72,18 +72,18 @@ def test_boolean():
 
 def test_date():
     v = val.Day()
-    assert v.is_valid(date(2015, 1, 1))
-    assert v.is_valid(datetime(2015, 1, 1, 1))
+    assert v.is_valid('2015-01-01')
+    assert not v.is_valid('2015-1-1')
     assert not v.is_valid('')
     assert not v.is_valid(0)
 
 
-def test_datetime():
-    v = val.Timestamp()
-    assert v.is_valid(datetime(2015, 1, 1, 1))
-    assert not v.is_valid(date(2015, 1, 1))
-    assert not v.is_valid('')
-    assert not v.is_valid(0)
+# def test_datetime():
+#     v = val.Timestamp()
+#     assert v.is_valid(datetime(2015, 1, 1, 1))
+#     assert not v.is_valid(date(2015, 1, 1))
+#     assert not v.is_valid('')
+#     assert not v.is_valid(0)
 
 
 def test_list():

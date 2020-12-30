@@ -76,22 +76,21 @@ class Day(Validator):
         # Get format value if passed
         format_con = next((x for x in self._constraints_inst if isinstance(x, con.Format)), None)
 
-        if format_con.is_active:
-            dateformat = format_con.__dict__['format']
-            try: 
-                time = datetime.strptime(value, dateformat)
-                value = date(time.year, time.month, time.day)
-            except ValueError: 
-                # Cannot be coerced using datetime format
-                return['Value %s does not match format %s' % (value, dateformat)]
-        else: 
-            # If no format is passed, use the PyYAML regex to coerce to date or datetime. 
-            # If it doesn't match, treat it as a string. This is the default PyYAML 
-            # SafeLoader behavior. 
-            try: 
+        # If value is string try parsing to date 
+        if isinstance(value, str):
+            if format_con.is_active:
+                dateformat = format_con.__dict__['format']
+                try: 
+                    time = datetime.strptime(value, dateformat)
+                    value = date(time.year, time.month, time.day)
+                except ValueError: 
+                    # Cannot be coerced using datetime format
+                    return['Value %s does not match format %s' % (value, dateformat)]
+            else: 
+                # If no format is passed, use the PyYAML regex to coerce to date or datetime. 
+                # If it doesn't match, treat it as a string. This is the default PyYAML 
+                # SafeLoader and default ruamel behavior. 
                 value = util.parse_default_date(value)
-            except Exception: 
-                raise
 
         return super().validate(value)
 
