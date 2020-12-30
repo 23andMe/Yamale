@@ -113,7 +113,7 @@ class Timestamp(Validator):
             if format_con.is_active:
                 datetimeformat = format_con.__dict__['format']
                 try: 
-                    value = datetime.strptime(value, dateformat)
+                    value = datetime.strptime(value, datetimeformat)
                 except ValueError: 
                     # Cannot be coerced using datetime format
                     return['Value %s does not match format %s' % (value, datetimeformat)]
