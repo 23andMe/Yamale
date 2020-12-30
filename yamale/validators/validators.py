@@ -85,8 +85,9 @@ class Day(Validator):
                 # Cannot be coerced using datetime format
                 return['Value %s does not match format %s' % (value, dateformat)]
         else: 
-            # If no format is passed, use the PyYAML method to coerce to datetime which would occur 
-            # without PyYAML NoDateBaseLoader
+            # If no format is passed, use the PyYAML regex to coerce to date or datetime. 
+            # If it doesn't match, treat it as a string. This is the default PyYAML 
+            # SafeLoader behavior. 
             try: 
                 value = util.parse_default_date(value)
             except Exception: 
