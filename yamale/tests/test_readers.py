@@ -1,25 +1,61 @@
 import pytest
+import datetime
+
+import yaml 
+from yaml import SafeLoader
+
+# from ruamel.yaml import YAML 
+
 from .. import util
-from .. import readers
+from .. import readers 
+
+
+DATE_LIST = ['2010-01-01', '2001-1-1', '2001-01-01T12:00:00', '2001-1-1t12:00:00', '2001-1-1 12:00:00', '2001-1-1 12:00', 'thisisnotadate']
+
+def test_converter(): 
+    # Test that util function converts datetime strings properly
+    assert isinstance(util.parse_default_date('2001-01-01'), datetime.date)
+    assert isinstance(util.parse_default_date('2001-01-01T12:00:00'), datetime.datetime)
+    assert isinstance(util.parse_default_date('2001-1-1t12:00:00'), datetime.datetime)
+    assert isinstance(util.parse_default_date('2001-1-1 12:00:00'), datetime.datetime)
+
+    assert isinstance(util.parse_default_date('01/01/2010'), str)
+    assert isinstance(util.parse_default_date('2010-1-1'), str)
+    assert isinstance(util.parse_default_date('2001-1-1 12:00'), str)
+    assert isinstance(util.parse_default_date('thisisnotadate'), str)
+
+
+def test_pyyaml_base_case(): 
+    # Test that util function converts dates the same as pyyaml Safeloader 
+    for i in DATE_LIST: 
+        date_one = util.parse_default_date(i)
+        date_two = list(yaml.load_all('date: %s' % i, Loader=SafeLoader))[0]['date']
+        assert type(date_one) == type(date_two)
+
+def test_ruamel_base_case(): 
+    # Test that util function converts dates to the same as ruamel base loader
+    r_yaml = YAML(typ='safe')
+    
+    for i in DATE_LIST: 
+        date_one = util.parse_default_date(i)
+        date_two = list(r_yaml.load_all(i))
+        assert type(date_one) == type(date_two)
+
 
 def get_date(yaml_string, parser): 
     data = list(readers.parse_file(yaml_string, parser=parser))
     return data[0]['date']
 
-def test_pyyaml_loader(): 
-    # Test that NoDateSafeLoader loads datetimes as strings
-    assert isinstance(get_date('date: 2010-01-01', 'PyYAML'), str)
 
-def test_pyyaml_converter(): 
-    # Test that util function converts datetimes the same 
-    # as the standard PyYAML datetime constructor
+def test_pyyaml_NoDatesSafeLoader(): 
+    # Test that NoDatesSafeLoader loads all datelike strings as strings
+    for i in DATE_LIST: 
+        date = get_date('date: %s' % i, 'pyyaml')
+        assert isinstance(date, str)
 
 
 def test_ruamel_loader():
     # Test that ruamel loader loads datetimes as strings
-    assert isinstance(get_date('date: 2010-01-01', 'ruamel'), str)
-
-def test_ruamel_converter(): 
-    # Test that util function converts datetimes the same 
-    # as the standard ruamel datetime constructor
-
+    for i in DATE_LIST: 
+        date = get_date('date: %s' % i, 'ruamel')
+        assert isinstance(date, str)
