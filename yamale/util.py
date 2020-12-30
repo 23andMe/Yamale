@@ -89,7 +89,7 @@ class InvalidDatetimeValue(Exception):
 
 
 def parse_default_date(value):
-    """ This method parses day and timestamp values if no format is passed 
+    r""" This method parses day and timestamp values if no format is passed 
     as a constraint. This is to ensure values are consistent as they 
     would be if using the default PyYAML and ruamel loaders. 
 

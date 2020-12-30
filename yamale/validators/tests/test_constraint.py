@@ -46,11 +46,12 @@ def test_timestamp_max():
 def test_timestamp_format():
     v = val.Timestamp(format='%m/%d/%Y %H:%M:%S')
     assert v.is_valid('01/01/2010 12:00:00')
+    assert v.is_valid('12/31/2010 1:00:00')
     assert v.is_valid('12/31/2010 01:00:00')
-    assert not v.is_valid('1/1/2010 12:00:00')
+    assert v.is_valid('1/1/2010 12:00:00')
     assert not v.is_valid('01/01/2010 12:00')
     assert not v.is_valid('12-31-2010 01:00:00')
-    assert not v.is_valid('12/31/2010 1:00:00')
+
     
 def test_day_min():
     v = val.Day(min=datetime.date(2010, 1, 1))
