@@ -4,7 +4,7 @@ import datetime
 import yaml 
 from yaml import SafeLoader
 
-# from ruamel.yaml import YAML 
+from ruamel.yaml import YAML 
 
 from .. import util
 from .. import readers 
@@ -48,14 +48,14 @@ def get_date(yaml_string, parser):
 
 
 def test_pyyaml_NoDatesSafeLoader(): 
-    # Test that NoDatesSafeLoader loads all datelike strings as strings
+    # Test that NoDatesSafeLoader loads all date-like strings as strings
     for i in DATE_LIST: 
         date = get_date('date: %s' % i, 'pyyaml')
         assert isinstance(date, str)
 
 
 def test_ruamel_loader():
-    # Test that ruamel loader loads datetimes as strings
+    # Test that ruamel loader loads datetime-like strings as strings
     for i in DATE_LIST: 
         date = get_date('date: %s' % i, 'ruamel')
         assert isinstance(date, str)
