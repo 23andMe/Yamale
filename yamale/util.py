@@ -81,13 +81,6 @@ def get_subclasses(cls, _subclasses_yielded=None):
             yield subclass_subclass
 
 
-class InvalidDatetimeValue(Exception):
-    """ Custom exception for date and datetime values that 
-    cannot be parsed without custom format parameter.
-    """
-    pass
-
-
 def parse_default_date(value):
     r""" This method parses day and timestamp values if no format is passed 
     as a constraint. This is to ensure values are consistent as they 
@@ -167,4 +160,3 @@ def parse_default_date(value):
                                         tzinfo=tzinfo)
     else: 
         return value
-        #raise InvalidDatetimeValue('Datetime value is not in standard ISO 8601 format.')
