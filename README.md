@@ -113,14 +113,14 @@ try:
     print('Validation success! 👍')
 except YamaleError as e:
     print('Validation failed!\n')
-    for resul in e.value.results:
+    for result in e.value.results:
         print("Error validating data '%s' with '%s'\n\t" % (result.data, result.schema))
         for error in result.errors:
             print('\t%s' % error)
     exit(1)
 ```
 
-You can also specifiy an optional `parser` if you'd like to use the `ruamel.yaml` (YAML 1.2 support) instead:
+You can also specify an optional `parser` if you'd like to use the `ruamel.yaml` (YAML 1.2 support) instead:
 ```python
 # Import Yamale and make a schema object, make sure ruamel.yaml is installed already.
 import yamale

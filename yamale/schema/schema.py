@@ -57,7 +57,7 @@ class Schema(object):
 
     def _validate_item(self, validator, data, path, strict, key):
         """
-        Fetch item from data at the postion key and validate with validator.
+        Fetch item from data at the position key and validate with validator.
 
         Returns an array of errors.
         """
@@ -69,7 +69,7 @@ class Schema(object):
             # Optional? Who cares.
             if isinstance(validator, val.Validator) and validator.is_optional:
                 return errors
-            # SHUT DOWN EVERTYHING
+            # SHUT DOWN EVERYTHING
             errors.append('%s: Required field missing' % path)
             return errors
 
