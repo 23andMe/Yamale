@@ -57,7 +57,7 @@ class Schema(object):
 
     def _validate_item(self, validator, data, path, strict, key):
         """
-        Fetch item from data at the postion key and validate with validator.
+        Fetch item from data at the position key and validate with validator.
 
         Returns an array of errors.
         """
