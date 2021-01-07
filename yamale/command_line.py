@@ -38,7 +38,7 @@ def _validate(schema_path, data_path, parser, strict, _raise_error):
 def _find_data_path_schema(data_path, schema_name):
     """ Starts in the data file folder and recursively looks
     in parents for `schema_name` """
-    if not data_path or data_path == '/' or data_path == '.':
+    if not data_path or data_path == os.path.abspath(os.sep) or data_path == '.':
         return None
     directory = os.path.dirname(data_path)
     path = glob.glob(os.path.join(directory, schema_name))
@@ -51,7 +51,8 @@ def _find_schema(data_path, schema_name):
     """ Checks if `schema_name` is a valid file, if not
     searches in `data_path` for it. """
 
-    path = glob.glob(schema_name)
+    directory = os.path.dirname(data_path)
+    path = glob.glob(os.path.join(directory, schema_name))
     for p in path:
         if os.path.isfile(p):
             return p
@@ -96,7 +97,7 @@ def _validate_dir(root, schema_name, cpus, parser, strict):
         raise ValueError('\n----\n'.join(set(error_messages)))
 
 
-def _router(root, schema_name, cpus, parser, strict=False):
+def _router(root, schema_name, cpus, parser, strict=True):
     root = os.path.abspath(root)
     if os.path.isfile(root):
         _validate_single(root, schema_name, parser, strict)
@@ -114,11 +115,11 @@ def main():
                         help='number of CPUs to use. Default is 4.')
     parser.add_argument('-p', '--parser', default='pyyaml',
                         help='YAML library to load files. Choices are "ruamel" or "pyyaml" (default).')
-    parser.add_argument('--strict', action='store_true',
-                        help='Enable strict mode, unexpected elements in the data will not be accepted.')
+    parser.add_argument('--no-strict', action='store_true',
+                        help='Disable strict mode, unexpected elements in the data will be accepted.')
     args = parser.parse_args()
     try:
-        _router(args.path, args.schema, args.cpu_num, args.parser, args.strict)
+        _router(args.path, args.schema, args.cpu_num, args.parser, not args.no_strict)
         print('Validation success! 👍')
     except (SyntaxError, NameError, TypeError, ValueError) as e:
         print('Validation failed!\n%s' % str(e))

@@ -1,3 +1,3 @@
 from . import yaml_reader
 
-parse_file = yaml_reader.parse_file
+parse_yaml = yaml_reader.parse_yaml

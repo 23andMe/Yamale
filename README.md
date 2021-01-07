@@ -1,17 +1,19 @@
 Yamale (ya·ma·lē)
 =================
 
+<img src="https://github.com/23andMe/Yamale/blob/master/yamale.png?raw=true" alt="Yamale" width="400"/>
+
 A schema and validator for YAML.
 
-What's YAML? See the current spec [here](http://www.yaml.org/spec/1.2/spec.html) and an introduction to the syntax [here](https://github.com/Animosity/CraftIRC/wiki/Complete-idiot's-introduction-to-yaml).
+What's YAML? See the current spec [here](http://www.yaml.org/spec/1.2/spec.html) and an introduction
+to the syntax [here](https://github.com/Animosity/CraftIRC/wiki/Complete-idiot's-introduction-to-yaml).
 
 [![Build Status](https://travis-ci.org/23andMe/Yamale.svg?branch=master)](https://travis-ci.org/23andMe/Yamale)
 [![PyPI](https://img.shields.io/pypi/v/yamale.svg)](https://pypi.python.org/pypi/yamale)
 
 Requirements
 ------------
-* Python 2.7+
-* Python 3.4+ (Only tested on 3.4, may work on older versions)
+* Python 3.6+
 * PyYAML
 * ruamel.yaml (optional)
 
@@ -22,6 +24,13 @@ Install
 $ pip install yamale
 ```
 
+NOTE: Some platforms, e.g., Mac OS, may ship with only Python 2 and may not have pip installed.
+Installation of Python 3 should also install pip. To preserve any system dependencies on default
+software, consider installing Python 3 as a local package. Please note replacing system-provided
+Python may disrupt other software. Mac OS users may wish to investigate MacPorts, homebrew, or
+building Python 3 from source; in all three cases, Apple's Command Line Tools (CLT) for Xcode
+may be required. See also [developers](#developers), below.
+
 ### Manual
 1. Download Yamale from: https://github.com/23andMe/Yamale/archive/master.zip
 2. Unzip somewhere temporary
@@ -30,14 +39,15 @@ $ pip install yamale
 Usage
 -----
 ### Command line
-Yamale can be run from the command line to validate one or many YAML files. Yamale will search the directory you supply (current directory is default) for YAML files.
-Each YAML file it finds it will look in the same directory as that file for its schema, if there is no schema Yamale will keep looking up the directory tree until it finds one.
-If Yamale can not find a schema it will tell you.
+Yamale can be run from the command line to validate one or many YAML files. Yamale will search the
+directory you supply (current directory is default) for YAML files. Each YAML file it finds it will
+look in the same directory as that file for its schema, if there is no schema Yamale will keep
+looking up the directory tree until it finds one. If Yamale can not find a schema it will tell you.
 
 Usage:
 
 ```bash
-usage: yamale [-h] [-s SCHEMA] [-n CPU_NUM] [-p PARSER] [--strict] [PATH]
+usage: yamale [-h] [-s SCHEMA] [-n CPU_NUM] [-p PARSER] [--no-strict] [PATH]
 
 Validate yaml files.
 
@@ -53,12 +63,13 @@ optional arguments:
   -p PARSER, --parser PARSER
                         YAML library to load files. Choices are "ruamel" or
                         "pyyaml" (default).
-  --strict              Enable strict mode, unexpected elements in the data
-                        will not be accepted.
+  --no-strict           Disable strict mode, unexpected elements in the data
+                        will be accepted.
 ```
 
 ### API
-There are several ways to feed Yamale schema and data files. The simplest way is to let Yamale take care of reading and parsing your YAML files.
+There are several ways to feed Yamale schema and data files. The simplest way is to let Yamale take
+care of reading and parsing your YAML files.
 
 All you need to do is supply the files' path:
 ```python
@@ -73,7 +84,20 @@ data = yamale.make_data('./data.yaml')
 yamale.validate(schema, data)
 ```
 
-If `data` is valid, nothing will happen. However, if `data` is invalid Yamale will throw a `YamaleError` with a message containing all the invalid nodes:
+You can pass a string of YAML to `make_schema()` and `make_data()` instead of passing a file path
+by using the `content=` parameter:
+
+```python
+data = yamale.make_data(content="""
+name: Bill
+age: 26
+height: 6.2
+awesome: True
+""")
+```
+
+If `data` is valid, nothing will happen. However, if `data` is invalid Yamale will throw a
+`YamaleError` with a message containing all the invalid nodes:
 ```python
 try:
     yamale.validate(schema, data)
@@ -89,14 +113,14 @@ try:
     print('Validation success! 👍')
 except YamaleError as e:
     print('Validation failed!\n')
-    for resul in e.value.results:
+    for result in e.value.results:
         print("Error validating data '%s' with '%s'\n\t" % (result.data, result.schema))
         for error in result.errors:
             print('\t%s' % error)
     exit(1)
 ```
 
-You can also specifiy an optional `parser` if you'd like to use the `ruamel.yaml` (YAML 1.2 support) instead:
+You can also specify an optional `parser` if you'd like to use the `ruamel.yaml` (YAML 1.2 support) instead:
 ```python
 # Import Yamale and make a schema object, make sure ruamel.yaml is installed already.
 import yamale
@@ -110,7 +134,9 @@ yamale.validate(schema, data)
 ```
 
 ### Schema
-To use Yamale you must make a schema. A schema is a valid YAML file with one or more documents inside. Each node terminates in a string which contains valid Yamale syntax. For example, `str()` represents a [String validator](#validators).
+To use Yamale you must make a schema. A schema is a valid YAML file with one or more documents
+inside. Each node terminates in a string which contains valid Yamale syntax. For example, `str()`
+represents a [String validator](#validators).
 
 A basic schema:
 ```yaml
@@ -131,7 +157,9 @@ awesome: True
 Take a look at the [Examples](#examples) section for more complex schema ideas.
 
 #### Includes
-Schema files may contain more than one YAML document (nodes separated by `---`). The first document found will be the base schema. Any additional documents will be treated as Includes. Includes allow you to define a valid structure once and use it several times. They also allow you to do recursion.
+Schema files may contain more than one YAML document (nodes separated by `---`). The first document
+found will be the base schema. Any additional documents will be treated as Includes. Includes allow
+you to define a valid structure once and use it several times. They also allow you to do recursion.
 
 A schema with an Include validator:
 ```yaml
@@ -204,20 +232,30 @@ person:
 ```
 
 ##### Adding external includes
-After you construct a schema you can add extra, external include definitions by calling `schema.add_include(dict)`. This method takes a dictionary and adds each key as another include.
+After you construct a schema you can add extra, external include definitions by calling
+`schema.add_include(dict)`. This method takes a dictionary and adds each key as another include.
 
 ### Strict mode
-By default Yamale will not give any error for extra elements present in lists and maps that are not covered by the schema. With strict mode any additional element will give an error. Strict mode is enabled by passing the strict=True flag to the validate function.
+By default Yamale will provide errors for extra elements present in lists and maps that are not
+covered by the schema. With strict mode disabled (using the `--no-strict` command line option),
+additional elements will not cause any errors. In the API, strict mode can be toggled by passing
+the strict=True/False flag to the validate function.
 
-It is possible to mix strict and non-strict mode by setting the strict=True/False flag in the include validator, setting the option only for the included validators.
+It is possible to mix strict and non-strict mode by setting the strict=True/False flag in the
+include validator, setting the option only for the included validators.
 
 Validators
 ----------
-Here are all the validators Yamale knows about. Every validator takes a `required` keyword telling Yamale whether or not that node must exist. By default every node is required. Example: `str(required=False)`
+Here are all the validators Yamale knows about. Every validator takes a `required` keyword telling
+Yamale whether or not that node must exist. By default every node is required. Example: `str(required=False)`
 
-You can also require that an optional value is not `None` by using the `none` keyword. By default Yamale will accept `None` as a valid value for a key that's not required. Reject `None` values with `none=False` in any validator. Example: `str(required=False, none=False)`.
+You can also require that an optional value is not `None` by using the `none` keyword. By default
+Yamale will accept `None` as a valid value for a key that's not required. Reject `None` values
+with `none=False` in any validator. Example: `str(required=False, none=False)`.
 
-Some validators take keywords and some take arguments, some take both. For instance the `enum()` validator takes one or more constants as arguments and the `required` keyword: `enum('a string', 1, False, required=False)`
+Some validators take keywords and some take arguments, some take both. For instance the `enum()`
+validator takes one or more constants as arguments and the `required` keyword:
+`enum('a string', 1, False, required=False)`
 
 ### String - `str(min=int, max=int, exclude=string)`
 Validates strings.
@@ -235,13 +273,20 @@ Validates strings against one or more regular expressions.
 - keywords:
     - `name`: A friendly description for the patterns.
     - `ignore_case`: Validates strings in a case-insensitive manner.
-    - `multiline`: `^` and `$` in a pattern match at the beginning and end of each line in a string in addition to matching at the beginning and end of the entire string. (A pattern matches at [the beginning of a string](https://docs.python.org/3/library/re.html#re.match) even in multiline mode; see below for a workaround.)
-    - `dotall`: `.` in a pattern matches newline characters in a validated string in addition to matching every character that *isn't* a newline.
+    - `multiline`: `^` and `$` in a pattern match at the beginning and end of each line in a string
+       in addition to matching at the beginning and end of the entire string. (A pattern matches
+       at [the beginning of a string](https://docs.python.org/3/library/re.html#re.match) even in
+       multiline mode; see below for a workaround.)
+    - `dotall`: `.` in a pattern matches newline characters in a validated string in addition to
+      matching every character that *isn't* a newline.
 
 Examples:
 - `regex('^[^?!]{,10}$')`: Allows only strings less than 11 characters that don't contain `?` or `!`.
-- `regex(r'^(\d+)(\s\1)+$', name='repeated natural')`: Allows only strings that contain two or more identical digit sequences, each separated by a whitespace character. Non-matching strings like `sugar` are rejected with a message like `'sugar' is not a repeated natural.`
-- `regex('.*^apples$', multiline=True, dotall=True)`: Allows the string `apples` as well as multiline strings that contain the line `apples`.
+- `regex(r'^(\d+)(\s\1)+$', name='repeated natural')`: Allows only strings that contain two or
+  more identical digit sequences, each separated by a whitespace character. Non-matching strings
+  like `sugar` are rejected with a message like `'sugar' is not a repeated natural.`
+- `regex('.*^apples$', multiline=True, dotall=True)`: Allows the string `apples` as well
+  as multiline strings that contain the line `apples`.
 
 ### Integer - `int(min=int, max=int)`
 Validates integers.
@@ -290,22 +335,25 @@ Examples:
 - `timestamp(format='%m/%d/%y %H:%M:%S')`: Only allows datetimes that match the format like 01/01/2001 01:00:00
 
 ### List - `list([validators], min=int, max=int)`
-Validates lists. If one or more validators are passed to `list()` only nodes that pass at least one of those validators will be accepted.
-- arguments: one or more validators to test values with
+Validates lists. If one or more validators are passed to `list()` only nodes that pass at
+least one of those validators will be accepted.
 
+- arguments: one or more validators to test values with
 - keywords
     - `min`: len(list) >= min
     - `max`: len(list) <= max
 
 Examples:
 - `list()`: Validates any list
-- `list(include('custom'), int(), min=4)`: Only validates lists that contain the `custom` include or integers and contains a minimum of 4 items.
+- `list(include('custom'), int(), min=4)`: Only validates lists that contain the `custom` include
+  or integers and contains a minimum of 4 items.
 
 ### Map - `map([validators], key=validator)`
-Validates maps. Use when you want a node to contain freeform data. Similar to `List`, `Map` takes one or more validators to run against the values of its nodes, and only nodes that pass at least one of those validators will be accepted.
-By default, only the values of nodes are validated and the keys aren't checked.
+Validates maps. Use when you want a node to contain freeform data. Similar to `List`, `Map` takes
+one or more validators to run against the values of its nodes, and only nodes that pass at least
+one of those validators will be accepted. By default, only the values of nodes are validated and
+the keys aren't checked.
 - arguments: one or more validators to test values with
-
 - keywords
     - `key`: A validator for the keys of the map.
 
@@ -332,12 +380,15 @@ Examples:
 - `mac()`: Allows any valid MAC address
 
 ### Any - `any([validators])`
-Validates against a union of types. Use when a node can contain one of several types. It is valid if at least one of the listed validators is valid. If no validators are given, accept any value.
-- arguments: validators to test values with (if none is given, allow any value)
+Validates against a union of types. Use when a node **must** contain **one and only one** of several types. It is valid
+if at least one of the listed validators is valid. If no validators are given, accept any value.
+- arguments: validators to test values with (if none is given, allow any value; if one or more are given,
+one must be present)
 
 Examples:
-- `any(int(), null())`: Validates an integer or a null value.
-- `any(num(), include('vector'))`: Validates a number or an included 'vector' type.
+- `any(int(), null())`: Validates either an integer **or** a null value.
+- `any(num(), include('vector'))`: Validates **either** a number **or** an included 'vector' type.
+- `any(str(min=3, max=3),str(min=5, max=5),str(min=7, max=7))`: validates to a string that is exactly 3, 5, or 7 characters long
 - `any()`: Allows any value.
 
 ### Include - `include(include_name)`
@@ -348,7 +399,8 @@ Examples:
 - `include('person')`
 
 ### Custom validators
-It is also possible to add your own custom validators. This is an advanced topic, but here is an example of adding a `Date` validator and using it in a schema as `date()`
+It is also possible to add your own custom validators. This is an advanced topic, but here is an
+example of adding a `Date` validator and using it in a schema as `date()`
 
 ```python
 import yamale
@@ -513,7 +565,15 @@ class TestYaml(YamaleTestCase):
 Developers
 ----------
 ### Testing
-Yamale uses [Tox](https://tox.readthedocs.org/en/latest/) to run its tests against multiple Python versions. To run tests, first checkout Yamale, install Tox, then run `make test` in the Yamale's root directory. You may also have to install the correct Python versions to test with as well.
+Yamale uses [Tox](https://tox.readthedocs.org/en/latest/) to run its tests against multiple Python
+versions. To run tests, first checkout Yamale, install Tox, then run `make test` in Yamale's root
+directory. You may also have to install the correct Python versions to test with as well.
+
+NOTE on Python versions: `tox.ini` specifies the lowest and highest versions of Python supported by
+Yamale. Unless your development environment is configured to support testing against multiple Python
+versions, one or more of the test branches may fail. One method of enabling testing against multiple
+versions of Python is to install `pyenv` and `tox-pyenv` and to use `pyenv install` and `pyenv local`
+to ensure that tox is able to locate appropriate Pythons.
 
 ### Releasing
 Yamale uses Travis to upload new tags to PyPi.

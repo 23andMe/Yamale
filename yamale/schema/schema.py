@@ -1,11 +1,7 @@
-import sys
 from .datapath import DataPath
 from .validationresults import ValidationResult
 from .. import syntax, util
 from .. import validators as val
-
-# Fix Python 2.x.
-PY2 = sys.version_info[0] == 2
 
 
 class Schema(object):
@@ -13,6 +9,7 @@ class Schema(object):
     Makes a Schema object from a schema dict.
     Still acts like a dict.
     """
+
     def __init__(self, schema_dict, name='', validators=None, includes=None):
         self.validators = validators or val.DefaultValidators
         self.dict = schema_dict
@@ -60,7 +57,7 @@ class Schema(object):
 
     def _validate_item(self, validator, data, path, strict, key):
         """
-        Fetch item from data at the postion key and validate with validator.
+        Fetch item from data at the position key and validate with validator.
 
         Returns an array of errors.
         """
@@ -72,7 +69,7 @@ class Schema(object):
             # Optional? Who cares.
             if isinstance(validator, val.Validator) and validator.is_optional:
                 return errors
-            # SHUT DOWN EVERTYHING
+            # SHUT DOWN EVERYTHING
             errors.append('%s: Required field missing' % path)
             return errors
 

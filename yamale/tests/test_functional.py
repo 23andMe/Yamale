@@ -1,4 +1,6 @@
+import io
 import pytest
+import re
 import yamale
 
 from . import get_fixture
@@ -141,6 +143,12 @@ map_key_constraint = {
     'bad_nest_con': 'map_key_constraint_bad_nest_con.yaml',
 }
 
+numeric_bool_coercion = {
+    'schema': 'numeric_bool_coercion.yaml',
+    'good': 'numeric_bool_coercion_good.yaml',
+    'bad': 'numeric_bool_coercion_bad.yaml',
+}
+
 test_data = [
     types, nested, custom,
     keywords, lists, maps,
@@ -152,6 +160,7 @@ test_data = [
     nested_map2, static_list,
     nested_issue_54,
     map_key_constraint,
+    numeric_bool_coercion,
 ]
 
 for d in test_data:
@@ -318,6 +327,44 @@ def test_bad_map_key_constraint_nest_con():
     match_exception_lines(map_key_constraint['schema'],
                           map_key_constraint['bad_nest_con'],
                           exp)
+
+
+def test_bad_numeric_bool_coercion():
+    exp = [
+        "integers.0: 'False' is not a int.",
+        "integers.1: 'True' is not a int.",
+        "numbers.0: 'False' is not a num.",
+        "numbers.1: 'True' is not a num.",
+    ]
+    match_exception_lines(numeric_bool_coercion['schema'],
+                          numeric_bool_coercion['bad'],
+                          exp)
+
+@pytest.mark.parametrize("use_schema_string,use_data_string,expected_message_re", [
+    (False, False, "^Error validating data '.*?' with schema '.*?'\n\t"),
+    (True, False, "^Error validating data '.*?'\n\t"),
+    (False, True, "^Error validating data with schema '.*?'\n\t"),
+    (True, True, "^Error validating data\n\t"),
+])
+def test_validate_errors(use_schema_string, use_data_string, expected_message_re):
+    schema_path = get_fixture('types.yaml')
+    data_path = get_fixture('types_bad_data.yaml')
+    if use_schema_string:
+        with io.open(schema_path, encoding='utf-8') as f:
+            schema = yamale.make_schema(content=f.read())
+    else:
+        schema = yamale.make_schema(schema_path)
+    if use_data_string:
+        with io.open(data_path, encoding='utf-8') as f:
+            data = yamale.make_data(content=f.read())
+    else:
+        data = yamale.make_data(data_path)
+    with pytest.raises(yamale.yamale_error.YamaleError) as excinfo:
+        yamale.validate(schema, data)
+    assert re.match(expected_message_re, excinfo.value.message, re.MULTILINE), \
+        'Message {} should match {}'.format(
+            excinfo.value.message, expected_message_re
+        )
 
 
 def match_exception_lines(schema, data, expected, strict=False):

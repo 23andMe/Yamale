@@ -92,3 +92,7 @@ def test_bad_issue_54():
     assert 'datetime: Required field missing' in e.value.message
     assert 'nest: Required field missing' in e.value.message
     assert 'list: Required field missing' in e.value.message
+
+def test_nested_schema_issue_69():
+    command_line._router('yamale/tests/command_line_fixtures/nestedYaml','schema.yaml', 1, 'PyYAML')
+
