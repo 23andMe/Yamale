@@ -69,7 +69,7 @@ class Schema(object):
             # Optional? Who cares.
             if isinstance(validator, val.Validator) and validator.is_optional:
                 return errors
-            # SHUT DOWN EVERTYHING
+            # SHUT DOWN EVERYTHING
             errors.append('%s: Required field missing' % path)
             return errors
 
