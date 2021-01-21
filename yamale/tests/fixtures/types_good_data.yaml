@@ -9,3 +9,7 @@ map:
     hello: 1
     another: "hi"
 null: null
+defult_day: 2010-01-01
+default_timestamp: 2010-01-01 12:00:00 
+custom_day: 12/30/2010
+custom_timestamp: 12/30/2010 12:00:00

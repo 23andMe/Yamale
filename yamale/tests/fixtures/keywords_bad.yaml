@@ -7,3 +7,9 @@ max_example: NOT AN INT
 max_on_date: 2011-01-01
 max_on_datetime: NOT A TIMESTAMP
 boolean: "True"
+date_custom_format: 2010-01-01
+datetime_custom_format: 2010-01-01 12:00:00
+min_date_custom_format: 12/31/2009  
+max_date_custom_format: 01/01/2011 
+min_datetime_custom_format: 12/31/2009 23:59:59  
+max_datetime_custom_format: 01/01/2011 01:00:00 

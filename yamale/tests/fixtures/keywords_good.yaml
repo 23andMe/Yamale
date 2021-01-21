@@ -7,3 +7,9 @@ max_example: 100
 max_on_date: 2009-12-31
 max_on_datetime: 2010-01-01 00:00:00
 boolean: True
+date_custom_format: 10/31/2010
+datetime_custom_format: 10/31/2010 23:59:59
+min_date_custom_format: 02/01/2010
+max_date_custom_format: 12/12/2010 
+min_datetime_custom_format: 02/01/2010 12:00:00 
+max_datetime_custom_format: 12/12/2010 12:00:00 

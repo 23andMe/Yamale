@@ -1,6 +1,6 @@
 from datetime import date, datetime
 from yamale import validators as val
-
+from pytest import raises
 
 def test_validator_defaults():
     """
@@ -144,3 +144,20 @@ def test_mac():
     assert not v.is_valid('ab:cd:ef:12:34:56:78')
     assert not v.is_valid('abcdefghijkl')
     assert not v.is_valid('1234567890ax')
+
+
+def test_date_format(): 
+    # Test that mismatch between format and min/max raises SyntaxError
+    with raises(SyntaxError): 
+        val.Day(format='%m/%d/%Y', min='2010-01-01')
+    with raises(SyntaxError): 
+        val.Day(format='%m/%d/%Y', max='2010-12-31')
+
+
+def test_datetime_format(): 
+    # Test that mismatch between format and min/max raises SyntaxError
+    with raises(SyntaxError): 
+        val.Timestamp(format='%m/%d/%Y %H:%M:%S', min='2010-01-01 12:00:00')
+    with raises(SyntaxError): 
+        val.Timestamp(format='%m/%d/%Y', max='2010-12-31 12:00:00')
+    
