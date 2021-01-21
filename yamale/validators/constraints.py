@@ -35,7 +35,7 @@ class Constraint(object):
             # Is this value one of the datetime types?
             if kwtype == datetime.date:
                 # Get custom format if used
-                if kwargs['format']: 
+                if 'format' in kwargs: 
                     dateformat = kwargs['format']
                 else: 
                     dateformat = '%Y-%m-%d'
@@ -45,7 +45,7 @@ class Constraint(object):
 
             if kwtype == datetime.datetime:
                 # Get custom format if used
-                if kwargs['format']: 
+                if 'format' in kwargs: 
                     dateformat = kwargs['format']
                 else: 
                     dateformat = '%Y-%m-%d %H:%M:%S'
