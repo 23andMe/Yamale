@@ -120,7 +120,7 @@ def parse_default_date(value):
                      :(?P<second>[0-9][0-9]) 
                      (?:\.(?P<fraction>[0-9]*))?
                      (?:[ \t]*(?P<tz>Z|(?P<tz_sign>[-+])(?P<tz_hour>[0-9][0-9]?)
-                     (?::(?P<tz_minute>[0-9][0-9])?))?)$''', re.X)
+                     (?::?(?P<tz_minute>[0-9][0-9])?))?)$''', re.X)
 
     match = timestamp_regexp.match(value)
     
