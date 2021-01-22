@@ -38,12 +38,12 @@ def test_ruamel_base_case():
     
     for i in DATE_LIST: 
         date_one = util.parse_default_date(i)
-        date_two = list(r_yaml.load_all(i))
+        date_two = list(r_yaml.load_all(i))[0]
         assert type(date_one) == type(date_two)
 
 
 def get_date(yaml_string, parser): 
-    data = list(readers.parse_file(yaml_string, parser=parser))
+    data = list(readers.parse_yaml(parser=parser, content=yaml_string))
     return data[0]['date']
 
 
