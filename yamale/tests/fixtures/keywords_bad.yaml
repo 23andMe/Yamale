@@ -1,5 +1,5 @@
 optional: 'bad!?'
-optional_min: 9
+optional_min: 0
 min_example: 1.3
 min_on_date: NOT A DATE
 min_on_datetime: 2009-01-01 00:00:00
@@ -9,7 +9,7 @@ max_on_datetime: NOT A TIMESTAMP
 boolean: "True"
 date_custom_format: 2010-01-01
 datetime_custom_format: 2010-01-01 12:00:00
-min_date_custom_format: 12/31/2009  
-max_date_custom_format: 01/01/2011 
-min_datetime_custom_format: 12/31/2009 23:59:59  
-max_datetime_custom_format: 01/01/2011 01:00:00 
+min_date_custom_format: 12/31/2000  
+max_date_custom_format: 01/01/20120 
+min_datetime_custom_format: 12/31/2000 23:59:59  
+max_datetime_custom_format: 01/01/2020 01:00:00 

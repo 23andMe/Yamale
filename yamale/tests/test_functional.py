@@ -193,7 +193,7 @@ def test_good(data_map):
 
 
 def test_bad_validate():
-    assert count_exception_lines(types['schema'], types['bad']) == 9
+    assert count_exception_lines(types['schema'], types['bad']) == 13
 
 
 def test_bad_nested():
@@ -231,7 +231,7 @@ def test_bad_maps():
 
 
 def test_bad_keywords():
-    assert count_exception_lines(keywords['schema'], keywords['bad']) == 8
+    assert count_exception_lines(keywords['schema'], keywords['bad']) == 15
 
 
 def test_bad_anys():
