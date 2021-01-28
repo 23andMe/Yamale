@@ -84,9 +84,10 @@ class Day(Validator):
                 try: 
                     time = datetime.strptime(value, dateformat)
                     value = date(time.year, time.month, time.day)
-                except ValueError: 
+                except ValueError as e: 
                     # Cannot be coerced using datetime format
-                    return['Value %s does not match format %s' % (value, dateformat)]
+                    #return['Value %s does not match format %s' % (value, dateformat)]
+                    return [e.args[0]]
             else: 
                 # If no format is passed, use the PyYAML regex to coerce to date or datetime. 
                 # If it doesn't match, treat it as a string. This is the default PyYAML 

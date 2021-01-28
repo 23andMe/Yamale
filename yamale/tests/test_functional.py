@@ -83,6 +83,11 @@ macs = {
     'good': 'mac_good.yaml'
 }
 
+date = {
+    'schema': 'date.yaml', 
+    'bad': 'date_bad.yaml'
+}
+
 nested_map = {
     'schema': 'nested_map.yaml',
     'good': 'nested_map_good.yaml'
@@ -340,6 +345,15 @@ def test_bad_numeric_bool_coercion():
                           numeric_bool_coercion['bad'],
                           exp)
 
+
+def test_bad_date_format(): 
+    exp = ["date: 'L' is a bad directive in format '%d %B, %Y %L'"]
+    s = yamale.make_schema(get_fixture(date['schema']))
+    d = yamale.make_data(get_fixture(date['bad']))
+
+    match_exception_lines(s, d, exp)
+
+    
 @pytest.mark.parametrize("use_schema_string,use_data_string,expected_message_re", [
     (False, False, "^Error validating data '.*?' with schema '.*?'\n\t"),
     (True, False, "^Error validating data '.*?'\n\t"),
