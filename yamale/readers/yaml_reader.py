@@ -24,14 +24,7 @@ NoDatesSafeLoader.remove_implicit_resolver('tag:yaml.org,2002:timestamp')
 
 
 def _pyyaml(f):
-    try:
-        Loader = NoDatesSafeLoader
-    except: 
-        try: 
-            Loader = yaml.CSafeLoader
-        except AttributeError:  # System does not have libyaml
-            Loader = yaml.SafeLoader
-    return list(yaml.load_all(f, Loader=Loader))
+    return list(yaml.load_all(f, Loader=NoDatesSafeLoader))
 
 
 def _ruamel(f):
