@@ -147,7 +147,11 @@ class Subset(Validator):
         self.validators = [val for val in args if isinstance(val, Validator)]
 
     def _is_valid(self, value):
-        return True
+        return self.can_be_none or value is not None
+
+    def fail(self, value):
+        # Called in case `_is_valid` returns False
+        return '\'%s\' may not be an empty set.' % self.get_name()
 
     @property
     def is_optional(self):

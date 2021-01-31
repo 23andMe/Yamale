@@ -205,16 +205,15 @@ class Schema(object):
             return []
 
         errors = []
-        if isinstance(data, dict):
+        if util.is_map(data):
             for k, v in data.items():
                 errors += _internal_validate({k: v})
-        elif isinstance(data, list):
+        elif util.is_list(data):
             for k in data:
                 errors += _internal_validate(k)
         else:
             errors += _internal_validate(data)
         return errors
-
 
     def _validate_primitive(self, validator, data, path):
         errors = validator.validate(data)
