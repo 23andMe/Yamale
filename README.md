@@ -389,6 +389,19 @@ Examples:
 - `any(str(min=3, max=3),str(min=5, max=5),str(min=7, max=7))`: validates to a string that is exactly 3, 5, or 7 characters long
 - `any()`: Allows any value.
 
+### Subset - `subset([validators], allow_empty=False)`
+Validates against a subset of types. Unlike the `Any` validator, this validators allows **one or more** of several types.
+As such, it *automatically validates against a list*. It is valid if all values can be validated against at least one
+validator.
+- arguments: validators to test with (at least one; if none is given, a `ValueError` exception will be raised)
+- keywords:
+    - `allow_empty`: Allow the subset to be empty (and is, therefore, also optional). This overrides the `required`
+flag.
+      
+Examples:
+- `subset(int(), str())`: Validators against an integer, a string, or a list of either.
+- `subset(int(), str(), allow_empty=True)`: Same as above, but allows the empty set and makes the subset optional.
+
 ### Include - `include(include_name)`
 Validates included structures. Must supply the name of a valid include.
 - arguments: single name of a defined include, surrounded by quotes.
