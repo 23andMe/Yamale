@@ -145,6 +145,8 @@ class Subset(Validator):
         super(Subset, self).__init__(*args, **kwargs)
         self._allow_empty_set = bool(kwargs.pop('allow_empty', False))
         self.validators = [val for val in args if isinstance(val, Validator)]
+        if not self.validators:
+            raise ValueError('\'%s\' requires at least one validator!' % self.tag)
 
     def _is_valid(self, value):
         return self.can_be_none or value is not None
