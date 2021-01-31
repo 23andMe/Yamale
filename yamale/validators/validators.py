@@ -137,12 +137,12 @@ class Any(Validator):
     def _is_valid(self, value):
         return True
 
-class Union(Validator):
-    """Union of several types validator"""
-    tag = 'union'
+class Subset(Validator):
+    """Subset of several types validator"""
+    tag = 'subset'
 
     def __init__(self, *args, **kwargs):
-        super(Union, self).__init__(*args, **kwargs)
+        super(Subset, self).__init__(*args, **kwargs)
         self.validators = [val for val in args if isinstance(val, Validator)]
 
     def _is_valid(self, value):
