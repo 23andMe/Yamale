@@ -163,6 +163,10 @@ subset_empty = {
     'good2': 'subset_empty_good2.yaml'
 }
 
+subset_nodef = {
+    'schema': 'subset_nodef.yaml'
+}
+
 test_data = [
     types, nested, custom,
     keywords, lists, maps,
@@ -175,8 +179,7 @@ test_data = [
     nested_issue_54,
     map_key_constraint,
     numeric_bool_coercion,
-    subset,
-    subset_empty
+    subset, subset_empty
 ]
 
 for d in test_data:
@@ -382,6 +385,12 @@ def test_bad_subset3():
     match_exception_lines(subset['schema'],
                           subset['bad3'],
                           exp)
+
+def test_nodef_subset_schema():
+    with pytest.raises(ValueError) as e:
+        yamale.make_schema(get_fixture(subset_nodef['schema']))
+
+    assert "'subset' requires at least one validator!" in str(e.value)
 
 @pytest.mark.parametrize("use_schema_string,use_data_string,expected_message_re", [
     (False, False, "^Error validating data '.*?' with schema '.*?'\n\t"),
