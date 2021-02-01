@@ -2,7 +2,11 @@ from __future__ import absolute_import
 import yaml
 from io import StringIO
 
-class NoDatesSafeLoader(yaml.SafeLoader):
+try:
+    BaseLoader = yaml.CSafeLoader
+except AttributeError:  # System does not have libyaml
+    BaseLoader = yaml.SafeLoader
+class NoDatesSafeLoader(BaseLoader):
     @classmethod
     def remove_implicit_resolver(cls, tag_to_remove):
         """
