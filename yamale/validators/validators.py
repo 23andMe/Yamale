@@ -137,6 +137,32 @@ class Any(Validator):
     def _is_valid(self, value):
         return True
 
+class Subset(Validator):
+    """Subset of several types validator"""
+    tag = 'subset'
+
+    def __init__(self, *args, **kwargs):
+        super(Subset, self).__init__(*args, **kwargs)
+        self._allow_empty_set = bool(kwargs.pop('allow_empty', False))
+        self.validators = [val for val in args if isinstance(val, Validator)]
+        if not self.validators:
+            raise ValueError('\'%s\' requires at least one validator!' % self.tag)
+
+    def _is_valid(self, value):
+        return self.can_be_none or value is not None
+
+    def fail(self, value):
+        # Called in case `_is_valid` returns False
+        return '\'%s\' may not be an empty set.' % self.get_name()
+
+    @property
+    def is_optional(self):
+        return self._allow_empty_set
+
+    @property
+    def can_be_none(self):
+        return self._allow_empty_set
+
 
 class Null(Validator):
     """Validates null"""

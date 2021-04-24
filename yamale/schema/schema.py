@@ -110,6 +110,9 @@ class Schema(object):
         elif isinstance(validator, val.Any):
             errors += self._validate_any(validator, data, path, strict)
 
+        elif isinstance(validator, val.Subset):
+            errors += self._validate_subset(validator, data, path, strict)
+
         return errors
 
     def _validate_static_map_list(self, validator, data, path, strict):
@@ -184,6 +187,32 @@ class Schema(object):
             for err in sub_errors:
                 errors += err
 
+        return errors
+
+    def _validate_subset(self, validator, data, path, strict):
+        def _internal_validate(internal_data):
+            sub_errors = []
+            for val in validator.validators:
+                err = self._validate(val, internal_data, path, strict)
+                if not err:
+                    break
+                sub_errors += err
+            else:
+                return sub_errors
+            return []
+
+        if not validator.validators:
+            return []
+
+        errors = []
+        if util.is_map(data):
+            for k, v in data.items():
+                errors += _internal_validate({k: v})
+        elif util.is_list(data):
+            for k in data:
+                errors += _internal_validate(k)
+        else:
+            errors += _internal_validate(data)
         return errors
 
     def _validate_primitive(self, validator, data, path):
