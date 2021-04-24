@@ -1,8 +1,8 @@
 sudo: false
 language: python
 python:
-  - "3.6"
-  - "3.8"
+- '3.6'
+- '3.8'
 install:
 - pip install -r requirements.txt
 script:
@@ -10,8 +10,8 @@ script:
 deploy:
   provider: pypi
   distributions: sdist
-  user: blopker
+  user: yamale
   on:
     tags: true
   password:
-    secure: W+nmIfYmqTqMiufYR56FLrCi9IO0f6n/u4aV1ouIW3MGE9Mc9oTHQ30BjRaNIwR2qA8OtVBNl17Vcbp8Yof0SgjLaBbMark85BNjMbiBk0VFEdG4pNenZ7K4lEktDyqPgK0nX0qWZik+ZQrDYuQWi1/MGyn9ZH+FwFxbryYckWI=
+    secure: d9esqlG/qQ6J8rKMq6XtUZhwfL2D5lzALnNdfuH+nchJy3xsKPltLFBgycj0cz8zaZRajFqCZe3Vi37rPvNjWzjVnaD8jy5xokB8/YNihHXAc3esWO9UT52SAhTE5JOLh4zrmieRaPeQ8WOxTBUpLTnGO4yl2OTHOAnTKxvxxSk=
