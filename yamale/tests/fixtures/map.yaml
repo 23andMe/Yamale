@@ -1,1 +1,3 @@
 map: map(str(), int())
+min: map(int(), min = 1)
+max: map(int(), max = 2)

@@ -1,3 +1,8 @@
 map:
     bad: 12.5
     not: []
+min: {}
+max: 
+    a: 1
+    b: 2
+    c: 3

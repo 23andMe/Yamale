@@ -346,7 +346,7 @@ Examples:
 - `list(include('custom'), int(), min=4)`: Only validates lists that contain the `custom` include
   or integers and contains a minimum of 4 items.
 
-### Map - `map([validators], key=validator)`
+### Map - `map([validators], key=validator, min=int, max=int)`
 Validates maps. Use when you want a node to contain freeform data. Similar to `List`, `Map` takes
 one or more validators to run against the values of its nodes, and only nodes that pass at least
 one of those validators will be accepted. By default, only the values of nodes are validated and
@@ -354,11 +354,14 @@ the keys aren't checked.
 - arguments: one or more validators to test values with
 - keywords
     - `key`: A validator for the keys of the map.
+    - `min`: len(map) >= min
+    - `max`: len(map) <= max
 
 Examples:
 - `map()`: Validates any map
 - `map(str(), int())`: Only validates maps whose values are strings or integers.
 - `map(str(), key=int())`: Only validates maps whose keys are integers and values are strings. `1: one` would be valid but `'1': one` would not.
+- `map(str(), min=1)`: Only validates a non-empty map.
 
 ### IP Address - `ip()`
 Validates IPv4 and IPv6 addresses.

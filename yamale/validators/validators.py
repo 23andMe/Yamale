@@ -87,7 +87,7 @@ class Timestamp(Validator):
 class Map(Validator):
     """Map and dict validator"""
     tag = 'map'
-    constraints = [con.Key]
+    constraints = [con.LengthMin, con.LengthMax, con.Key]
 
     def __init__(self, *args, **kwargs):
         super(Map, self).__init__(*args, **kwargs)

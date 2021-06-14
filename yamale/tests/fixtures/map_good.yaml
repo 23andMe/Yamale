@@ -1,3 +1,7 @@
 map:
     good: "hello"
     yes: 5
+min:
+    a: 1
+max:
+    a: 1
