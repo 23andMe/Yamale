@@ -8,7 +8,7 @@ A schema and validator for YAML.
 What's YAML? See the current spec [here](http://www.yaml.org/spec/1.2/spec.html) and an introduction
 to the syntax [here](https://github.com/Animosity/CraftIRC/wiki/Complete-idiot's-introduction-to-yaml).
 
-[![Build Status](https://travis-ci.org/23andMe/Yamale.svg?branch=master)](https://travis-ci.org/23andMe/Yamale)
+[![Build Status](https://github.com/23andMe/Yamale/actions/workflows/run-tests.yml/badge.svg)](https://github.com/23andMe/Yamale/actions/workflows/run-tests.yml)
 [![PyPI](https://img.shields.io/pypi/v/yamale.svg)](https://pypi.python.org/pypi/yamale)
 
 Requirements
@@ -587,11 +587,11 @@ versions of Python is to install `pyenv` and `tox-pyenv` and to use `pyenv insta
 to ensure that tox is able to locate appropriate Pythons.
 
 ### Releasing
-Yamale uses Travis to upload new tags to PyPi.
+Yamale uses Github Actions to upload new tags to PyPi.
 To release a new version:
 
 1. Make a commit with the new version in `setup.py`.
 1. Run tests for good luck.
 1. Run `make release`.
 
-Travis will take care of the rest.
+Github Actions will take care of the rest.
