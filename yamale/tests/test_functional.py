@@ -40,6 +40,7 @@ lists = {
 maps = {
     'schema': 'map.yaml',
     'bad': 'map_bad.yaml',
+    'bad2': 'map_bad2.yaml',
     'good': 'map_good.yaml'
 }
 
@@ -247,8 +248,10 @@ def test_bad2_lists():
 
 
 def test_bad_maps():
-    assert count_exception_lines(maps['schema'], maps['bad']) == 4
+    assert count_exception_lines(maps['schema'], maps['bad']) == 7
 
+def test_bad_maps2():
+    assert count_exception_lines(maps['schema'], maps['bad2']) == 1
 
 def test_bad_keywords():
     assert count_exception_lines(keywords['schema'], keywords['bad']) == 8
