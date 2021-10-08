@@ -284,6 +284,16 @@ def test_empty_schema():
     assert 'empty_schema.yaml is an empty file!' in str(excinfo.value)
 
 
+@pytest.mark.parametrize(
+    "schema_filename",
+    ['bad_schema_rce.yaml', 'bad_schema_rce2.yaml']
+)
+def test_vulnerable_schema(schema_filename):
+    with pytest.raises(SyntaxError) as excinfo:
+        yamale.make_schema(get_fixture(schema_filename))
+    assert schema_filename in str(excinfo.value)
+
+
 def test_list_is_not_a_map():
     exp = [" : '[1, 2]' is not a map"]
     match_exception_lines(strict_map['schema'],

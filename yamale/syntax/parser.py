@@ -6,20 +6,35 @@ safe_globals = ('True', 'False', 'None')
 safe_builtins = dict((f, __builtins__[f]) for f in safe_globals)
 
 
-def parse(validator_string, validators=None):
-    validators = validators or val.DefaultValidators
-
-    if validator_string:
-        for validator in validators.keys():
-            if validator_string.startswith(validator):
-                break
+def _validate_expr(call_node, validators):
+    # Validate that the expression uses a known, registered validator.
+    try:
+        func_name = call_node.func.id
+    except AttributeError:
+        raise SyntaxError('Schema expressions must be enclosed by a validator.')
+    if func_name not in validators:
+        raise SyntaxError('Not a registered validator: \'%s\'. ' % func_name)
+    # Validate that all args are constant literals or other call nodes
+    arg_values = call_node.args + [kw.value for kw in call_node.keywords]
+    for arg in arg_values:
+        # In Python 3.8+, the following have been folded into ast.Constant.
+        constant_types = [
+            ast.Constant, ast.Num, ast.Str, ast.Bytes, ast.NameConstant]
+        if any(isinstance(arg, type) for type in constant_types):
+            continue
+        elif isinstance(arg, ast.Call):
+            _validate_expr(arg, validators)
         else:
             raise SyntaxError(
-                'Invalid schema expression: \'%s\'. ' % validator_string
-            )
+                'Argument values must either be constant literals, or else '
+                'reference other validators.')
 
+
+def parse(validator_string, validators=None):
+    validators = validators or val.DefaultValidators
     try:
         tree = ast.parse(validator_string, mode='eval')
+        _validate_expr(tree.body, validators)
         # evaluate with access to a limited global scope only
         return eval(compile(tree, '<ast>', 'eval'),
                     {'__builtins__': safe_builtins},
