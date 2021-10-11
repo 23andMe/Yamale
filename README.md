@@ -1,6 +1,9 @@
 Yamale (ya·ma·lē)
 =================
 
+| :warning: Ensure that your schema definitions come from internal or trusted sources. Yamale does not protect against intentionally malicious schemas. |
+|:------------|
+
 <img src="https://github.com/23andMe/Yamale/blob/master/yamale.png?raw=true" alt="Yamale" width="400"/>
 
 A schema and validator for YAML.
@@ -134,6 +137,10 @@ yamale.validate(schema, data)
 ```
 
 ### Schema
+
+| :warning: Ensure that your schema definitions come from internal or trusted sources. Yamale does not protect against intentionally malicious schemas. |
+|:------------|
+
 To use Yamale you must make a schema. A schema is a valid YAML file with one or more documents
 inside. Each node terminates in a string which contains valid Yamale syntax. For example, `str()`
 represents a [String validator](#validators).
@@ -436,6 +443,10 @@ schema = yamale.make_schema('./schema.yaml', validators=validators)
 
 Examples
 --------
+
+| :warning: Ensure that your schema definitions come from internal or trusted sources. Yamale does not protect against intentionally malicious schemas. |
+|:------------|
+
 ### Using keywords
 #### Schema:
 ```yaml
