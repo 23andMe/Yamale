@@ -254,7 +254,7 @@ def test_bad_maps2():
     assert count_exception_lines(maps['schema'], maps['bad2']) == 1
 
 def test_bad_keywords():
-    assert count_exception_lines(keywords['schema'], keywords['bad']) == 8
+    assert count_exception_lines(keywords['schema'], keywords['bad']) == 9
 
 
 def test_bad_anys():
