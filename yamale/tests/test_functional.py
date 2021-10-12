@@ -240,11 +240,11 @@ def test_bad_custom():
 
 
 def test_bad_lists():
-    assert count_exception_lines(lists['schema'], lists['bad']) == 4
+    assert count_exception_lines(lists['schema'], lists['bad']) == 6
 
 
 def test_bad2_lists():
-    assert count_exception_lines(lists['schema'], lists['bad2']) == 1
+    assert count_exception_lines(lists['schema'], lists['bad2']) == 2
 
 
 def test_bad_maps():

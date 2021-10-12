@@ -8,3 +8,4 @@ questions:
       - id: 'too_many'
   - questions:
       choices: str
+nested: [1,2]

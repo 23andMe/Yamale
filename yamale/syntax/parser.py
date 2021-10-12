@@ -19,7 +19,7 @@ def _validate_expr(call_node, validators):
     for arg in arg_values:
         # In Python 3.8+, the following have been folded into ast.Constant.
         constant_types = [
-            ast.Constant, ast.UnaryOp, ast.Num, ast.Str, ast.Bytes, ast.NameConstant]
+            ast.Name, ast.Constant, ast.UnaryOp, ast.Num, ast.Str, ast.Bytes, ast.NameConstant]
         if any(isinstance(arg, type) for type in constant_types):
             continue
         elif isinstance(arg, ast.Call):
