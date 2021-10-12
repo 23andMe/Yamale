@@ -240,11 +240,11 @@ def test_bad_custom():
 
 
 def test_bad_lists():
-    assert count_exception_lines(lists['schema'], lists['bad']) == 4
+    assert count_exception_lines(lists['schema'], lists['bad']) == 6
 
 
 def test_bad2_lists():
-    assert count_exception_lines(lists['schema'], lists['bad2']) == 1
+    assert count_exception_lines(lists['schema'], lists['bad2']) == 2
 
 
 def test_bad_maps():
@@ -254,7 +254,7 @@ def test_bad_maps2():
     assert count_exception_lines(maps['schema'], maps['bad2']) == 1
 
 def test_bad_keywords():
-    assert count_exception_lines(keywords['schema'], keywords['bad']) == 8
+    assert count_exception_lines(keywords['schema'], keywords['bad']) == 9
 
 
 def test_bad_anys():
@@ -286,7 +286,7 @@ def test_empty_schema():
 
 @pytest.mark.parametrize(
     "schema_filename",
-    ['bad_schema_rce.yaml', 'bad_schema_rce2.yaml']
+    ['bad_schema_rce.yaml', 'bad_schema_rce2.yaml', 'bad_schema_rce3.yaml']
 )
 def test_vulnerable_schema(schema_filename):
     with pytest.raises(SyntaxError) as excinfo:
