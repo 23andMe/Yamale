@@ -19,13 +19,14 @@ def _validate_expr(call_node, validators):
     for arg in arg_values:
         # In Python 3.8+, the following have been folded into ast.Constant.
         constant_types = [
-            ast.Constant, ast.UnaryOp, ast.Num, ast.Str, ast.Bytes, ast.NameConstant]
-        if any(isinstance(arg, type) for type in constant_types):
+            ast.Constant, ast.Num, ast.Str, ast.Bytes, ast.NameConstant]
+        base_arg = arg.operand if isinstance(arg, ast.UnaryOp) else arg
+        if any(isinstance(base_arg, type) for type in constant_types):
             continue
-        elif isinstance(arg, ast.Name) and arg.id in validators:
+        elif isinstance(base_arg, ast.Name) and base_arg.id in validators:
             continue
-        elif isinstance(arg, ast.Call):
-            _validate_expr(arg, validators)
+        elif isinstance(base_arg, ast.Call):
+            _validate_expr(base_arg, validators)
         else:
             raise SyntaxError(
                 'Argument values must either be constant literals, or else '
