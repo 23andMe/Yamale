@@ -286,7 +286,7 @@ def test_empty_schema():
 
 @pytest.mark.parametrize(
     "schema_filename",
-    ['bad_schema_rce.yaml', 'bad_schema_rce2.yaml']
+    ['bad_schema_rce.yaml', 'bad_schema_rce2.yaml', 'bad_schema_rce3.yaml']
 )
 def test_vulnerable_schema(schema_filename):
     with pytest.raises(SyntaxError) as excinfo:
