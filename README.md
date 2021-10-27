@@ -1,6 +1,9 @@
 Yamale (ya·ma·lē)
 =================
 
+| :warning: Ensure that your schema definitions come from internal or trusted sources. Yamale does not protect against intentionally malicious schemas. |
+|:------------|
+
 <img src="https://github.com/23andMe/Yamale/blob/master/yamale.png?raw=true" alt="Yamale" width="400"/>
 
 A schema and validator for YAML.
@@ -8,7 +11,7 @@ A schema and validator for YAML.
 What's YAML? See the current spec [here](http://www.yaml.org/spec/1.2/spec.html) and an introduction
 to the syntax [here](https://github.com/Animosity/CraftIRC/wiki/Complete-idiot's-introduction-to-yaml).
 
-[![Build Status](https://travis-ci.org/23andMe/Yamale.svg?branch=master)](https://travis-ci.org/23andMe/Yamale)
+[![Build Status](https://github.com/23andMe/Yamale/actions/workflows/run-tests.yml/badge.svg)](https://github.com/23andMe/Yamale/actions/workflows/run-tests.yml)
 [![PyPI](https://img.shields.io/pypi/v/yamale.svg)](https://pypi.python.org/pypi/yamale)
 
 Requirements
@@ -113,14 +116,14 @@ try:
     print('Validation success! 👍')
 except YamaleError as e:
     print('Validation failed!\n')
-    for resul in e.value.results:
+    for result in e.value.results:
         print("Error validating data '%s' with '%s'\n\t" % (result.data, result.schema))
         for error in result.errors:
             print('\t%s' % error)
     exit(1)
 ```
 
-You can also specifiy an optional `parser` if you'd like to use the `ruamel.yaml` (YAML 1.2 support) instead:
+You can also specify an optional `parser` if you'd like to use the `ruamel.yaml` (YAML 1.2 support) instead:
 ```python
 # Import Yamale and make a schema object, make sure ruamel.yaml is installed already.
 import yamale
@@ -134,6 +137,10 @@ yamale.validate(schema, data)
 ```
 
 ### Schema
+
+| :warning: Ensure that your schema definitions come from internal or trusted sources. Yamale does not protect against intentionally malicious schemas. |
+|:------------|
+
 To use Yamale you must make a schema. A schema is a valid YAML file with one or more documents
 inside. Each node terminates in a string which contains valid Yamale syntax. For example, `str()`
 represents a [String validator](#validators).
@@ -352,7 +359,7 @@ Examples:
 - `list(include('custom'), int(), min=4)`: Only validates lists that contain the `custom` include
   or integers and contains a minimum of 4 items.
 
-### Map - `map([validators], key=validator)`
+### Map - `map([validators], key=validator, min=int, max=int)`
 Validates maps. Use when you want a node to contain freeform data. Similar to `List`, `Map` takes
 one or more validators to run against the values of its nodes, and only nodes that pass at least
 one of those validators will be accepted. By default, only the values of nodes are validated and
@@ -360,11 +367,14 @@ the keys aren't checked.
 - arguments: one or more validators to test values with
 - keywords
     - `key`: A validator for the keys of the map.
+    - `min`: len(map) >= min
+    - `max`: len(map) <= max
 
 Examples:
 - `map()`: Validates any map
 - `map(str(), int())`: Only validates maps whose values are strings or integers.
 - `map(str(), key=int())`: Only validates maps whose keys are integers and values are strings. `1: one` would be valid but `'1': one` would not.
+- `map(str(), min=1)`: Only validates a non-empty map.
 
 ### IP Address - `ip()`
 Validates IPv4 and IPv6 addresses.
@@ -394,6 +404,19 @@ Examples:
 - `any(num(), include('vector'))`: Validates **either** a number **or** an included 'vector' type.
 - `any(str(min=3, max=3),str(min=5, max=5),str(min=7, max=7))`: validates to a string that is exactly 3, 5, or 7 characters long
 - `any()`: Allows any value.
+
+### Subset - `subset([validators], allow_empty=False)`
+Validates against a subset of types. Unlike the `Any` validator, this validators allows **one or more** of several types.
+As such, it *automatically validates against a list*. It is valid if all values can be validated against at least one
+validator.
+- arguments: validators to test with (at least one; if none is given, a `ValueError` exception will be raised)
+- keywords:
+    - `allow_empty`: Allow the subset to be empty (and is, therefore, also optional). This overrides the `required`
+flag.
+      
+Examples:
+- `subset(int(), str())`: Validators against an integer, a string, or a list of either.
+- `subset(int(), str(), allow_empty=True)`: Same as above, but allows the empty set and makes the subset optional.
 
 ### Include - `include(include_name)`
 Validates included structures. Must supply the name of a valid include.
@@ -426,6 +449,10 @@ schema = yamale.make_schema('./schema.yaml', validators=validators)
 
 Examples
 --------
+
+| :warning: Ensure that your schema definitions come from internal or trusted sources. Yamale does not protect against intentionally malicious schemas. |
+|:------------|
+
 ### Using keywords
 #### Schema:
 ```yaml
@@ -580,11 +607,11 @@ versions of Python is to install `pyenv` and `tox-pyenv` and to use `pyenv insta
 to ensure that tox is able to locate appropriate Pythons.
 
 ### Releasing
-Yamale uses Travis to upload new tags to PyPi.
+Yamale uses Github Actions to upload new tags to PyPi.
 To release a new version:
 
 1. Make a commit with the new version in `setup.py`.
 1. Run tests for good luck.
 1. Run `make release`.
 
-Travis will take care of the rest.
+Github Actions will take care of the rest.

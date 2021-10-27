@@ -3,7 +3,7 @@ import pkg_resources
 print(pkg_resources.require("yamale")[0].version)
 endef
 
-VERSION ?= $(shell .tox/py27/bin/python -c '$(VERSION_SCR)')
+VERSION ?= $(shell python -c '$(VERSION_SCR)')
 
 all: test
 

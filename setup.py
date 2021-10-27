@@ -6,7 +6,7 @@ license = open('LICENSE', encoding='utf-8').read()
 
 setup(
     name='yamale',
-    version='3.0.4',
+    version='4.0.1',
     url='https://github.com/23andMe/Yamale',
     author='Bo Lopker',
     author_email='blopker@23andme.com',
@@ -28,6 +28,9 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4'
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
     ]
 )

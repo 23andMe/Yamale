@@ -6,7 +6,6 @@ import yamale
 from . import get_fixture
 from .. import validators as val
 
-
 types = {
     'schema': 'types.yaml',
     'bad': 'types_bad_data.yaml',
@@ -41,6 +40,7 @@ lists = {
 maps = {
     'schema': 'map.yaml',
     'bad': 'map_bad.yaml',
+    'bad2': 'map_bad2.yaml',
     'good': 'map_good.yaml'
 }
 
@@ -149,6 +149,25 @@ numeric_bool_coercion = {
     'bad': 'numeric_bool_coercion_bad.yaml',
 }
 
+subset = {
+    'schema': 'subset.yaml',
+    'good': 'subset_good.yaml',
+    'good2': 'subset_good2.yaml',
+    'bad': 'subset_bad.yaml',
+    'bad2': 'subset_bad2.yaml',
+    'bad3': 'subset_bad3.yaml'
+}
+
+subset_empty = {
+    'schema': 'subset_empty.yaml',
+    'good': 'subset_empty_good.yaml',
+    'good2': 'subset_empty_good2.yaml'
+}
+
+subset_nodef = {
+    'schema': 'subset_nodef.yaml'
+}
+
 test_data = [
     types, nested, custom,
     keywords, lists, maps,
@@ -161,6 +180,7 @@ test_data = [
     nested_issue_54,
     map_key_constraint,
     numeric_bool_coercion,
+    subset, subset_empty
 ]
 
 for d in test_data:
@@ -189,7 +209,9 @@ def test_nested_schema():
 
 @pytest.mark.parametrize('data_map', test_data)
 def test_good(data_map):
-    yamale.validate(data_map['schema'], data_map['good'])
+    for k, v in data_map.items():
+        if k.startswith('good'):
+            yamale.validate(data_map['schema'], data_map[k])
 
 
 def test_bad_validate():
@@ -213,25 +235,26 @@ def test_bad_nested_issue_54():
     ]
     match_exception_lines(nested_issue_54['schema'], nested_issue_54['bad'], exp)
 
-
 def test_bad_custom():
     assert count_exception_lines(custom['schema'], custom['bad']) == 1
 
 
 def test_bad_lists():
-    assert count_exception_lines(lists['schema'], lists['bad']) == 4
+    assert count_exception_lines(lists['schema'], lists['bad']) == 6
 
 
 def test_bad2_lists():
-    assert count_exception_lines(lists['schema'], lists['bad2']) == 1
+    assert count_exception_lines(lists['schema'], lists['bad2']) == 2
 
 
 def test_bad_maps():
-    assert count_exception_lines(maps['schema'], maps['bad']) == 4
+    assert count_exception_lines(maps['schema'], maps['bad']) == 7
 
+def test_bad_maps2():
+    assert count_exception_lines(maps['schema'], maps['bad2']) == 1
 
 def test_bad_keywords():
-    assert count_exception_lines(keywords['schema'], keywords['bad']) == 8
+    assert count_exception_lines(keywords['schema'], keywords['bad']) == 9
 
 
 def test_bad_anys():
@@ -259,6 +282,16 @@ def test_empty_schema():
     with pytest.raises(ValueError) as excinfo:
         yamale.make_schema(get_fixture('empty_schema.yaml'))
     assert 'empty_schema.yaml is an empty file!' in str(excinfo.value)
+
+
+@pytest.mark.parametrize(
+    "schema_filename",
+    ['bad_schema_rce.yaml', 'bad_schema_rce2.yaml', 'bad_schema_rce3.yaml', 'bad_schema_rce4.yaml']
+)
+def test_vulnerable_schema(schema_filename):
+    with pytest.raises(SyntaxError) as excinfo:
+        yamale.make_schema(get_fixture(schema_filename))
+    assert schema_filename in str(excinfo.value)
 
 
 def test_list_is_not_a_map():
@@ -339,6 +372,38 @@ def test_bad_numeric_bool_coercion():
     match_exception_lines(numeric_bool_coercion['schema'],
                           numeric_bool_coercion['bad'],
                           exp)
+
+def test_bad_subset():
+    exp = [
+        "subset_list: 'subset' may not be an empty set."
+    ]
+    match_exception_lines(subset['schema'],
+                          subset['bad'],
+                          exp)
+
+def test_bad_subset2():
+    exp = [
+        "subset_list: '[1]' is not a int.",
+        "subset_list: '[1]' is not a str."
+    ]
+    match_exception_lines(subset['schema'],
+                          subset['bad2'],
+                          exp)
+
+def test_bad_subset3():
+    exp = [
+        "subset_list: '{'a': 1}' is not a int.",
+        "subset_list: '{'a': 1}' is not a str."
+    ]
+    match_exception_lines(subset['schema'],
+                          subset['bad3'],
+                          exp)
+
+def test_nodef_subset_schema():
+    with pytest.raises(ValueError) as e:
+        yamale.make_schema(get_fixture(subset_nodef['schema']))
+
+    assert "'subset' requires at least one validator!" in str(e.value)
 
 @pytest.mark.parametrize("use_schema_string,use_data_string,expected_message_re", [
     (False, False, "^Error validating data '.*?' with schema '.*?'\n\t"),

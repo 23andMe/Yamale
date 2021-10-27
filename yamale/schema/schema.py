@@ -57,7 +57,7 @@ class Schema(object):
 
     def _validate_item(self, validator, data, path, strict, key):
         """
-        Fetch item from data at the postion key and validate with validator.
+        Fetch item from data at the position key and validate with validator.
 
         Returns an array of errors.
         """
@@ -69,7 +69,7 @@ class Schema(object):
             # Optional? Who cares.
             if isinstance(validator, val.Validator) and validator.is_optional:
                 return errors
-            # SHUT DOWN EVERTYHING
+            # SHUT DOWN EVERYTHING
             errors.append('%s: Required field missing' % path)
             return errors
 
@@ -109,6 +109,9 @@ class Schema(object):
 
         elif isinstance(validator, val.Any):
             errors += self._validate_any(validator, data, path, strict)
+
+        elif isinstance(validator, val.Subset):
+            errors += self._validate_subset(validator, data, path, strict)
 
         return errors
 
@@ -184,6 +187,32 @@ class Schema(object):
             for err in sub_errors:
                 errors += err
 
+        return errors
+
+    def _validate_subset(self, validator, data, path, strict):
+        def _internal_validate(internal_data):
+            sub_errors = []
+            for val in validator.validators:
+                err = self._validate(val, internal_data, path, strict)
+                if not err:
+                    break
+                sub_errors += err
+            else:
+                return sub_errors
+            return []
+
+        if not validator.validators:
+            return []
+
+        errors = []
+        if util.is_map(data):
+            for k, v in data.items():
+                errors += _internal_validate({k: v})
+        elif util.is_list(data):
+            for k in data:
+                errors += _internal_validate(k)
+        else:
+            errors += _internal_validate(data)
         return errors
 
     def _validate_primitive(self, validator, data, path):
