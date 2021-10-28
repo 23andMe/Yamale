@@ -1,9 +1,11 @@
 from __future__ import absolute_import
+import re
 import datetime
 import ipaddress
 
 from yamale.util import to_unicode
 from .base import Validator
+from .. import util
 
 
 class Constraint(object):
@@ -124,16 +126,125 @@ class Key(Constraint):
         return [self.fail % (e) for e in error_list]
 
 
+class StringEquals(Constraint):
+    keywords = {'equals': str, 'ignore_case': bool}
+    fail = '%s does not equal %s'
+
+    def _is_valid(self, value):
+        # Check if the function has only been called due to ignore_case
+        if self.equals is not None:
+            if self.ignore_case is not None:
+                if not self.ignore_case:
+                    return value == self.equals
+                else:
+                    return value.casefold() == self.equals.casefold()
+            else:
+                return value == self.equals
+        else:
+            return True
+
+    def _fail(self, value):
+        return self.fail % (value, self.equals)
+
+
+class StringStartsWith(Constraint):
+    keywords = {'starts_with': str, 'ignore_case': bool}
+    fail = '%s does not start with %s'
+
+    def _is_valid(self, value):
+        # Check if the function has only been called due to ignore_case
+        if self.starts_with is not None:
+            if self.ignore_case is not None:
+                if not self.ignore_case:
+                    return value.startswith(self.starts_with)
+                else:
+                    length = len(self.starts_with)
+                    if length <= len(value):
+                        return value[:length].casefold() == self.starts_with.casefold()
+                    else:
+                        return False
+            else:
+                return value.startswith(self.starts_with)
+        else:
+            return True
+
+    def _fail(self, value):
+        return self.fail % (value, self.starts_with)
+
+
+class StringEndsWith(Constraint):
+    keywords = {'ends_with': str, 'ignore_case': bool}
+    fail = '%s does not end with %s'
+
+    def _is_valid(self, value):
+        # Check if the function has only been called due to ignore_case
+        if self.ends_with is not None:
+            if self.ignore_case is not None:
+                if not self.ignore_case:
+                    return value.endswith(self.ends_with)
+                else:
+                    length = len(self.ends_with)
+                    if length <= len(value):
+                        return value[-length:].casefold() == self.ends_with.casefold()
+                    else:
+                        return False
+            else:
+                return value.endswith(self.ends_with)
+        else:
+            return True
+
+    def _fail(self, value):
+        return self.fail % (value, self.ends_with)
+
+
+class StringMatches(Constraint):
+    keywords = {'matches': str}
+    fail = '%s is not a regex match.'
+
+    _regex_flags = {'ignore_case': re.I, 'multiline': re.M, 'dotall': re.S}
+
+    def __init__(self, value_type, kwargs):
+        self._flags = 0
+        for k, v in util.get_iter(self._regex_flags):
+            self._flags |= v if kwargs.pop(k, False) else 0
+
+        super(StringMatches, self).__init__(value_type, kwargs)
+
+    def _is_valid(self, value):
+        if self.matches is not None:
+            regex = re.compile(self.matches, self._flags)
+            return regex.match(value)
+        else:
+            return True
+
+    def _fail(self, value):
+        return self.fail % (value)
+
+
 class CharacterExclude(Constraint):
-    keywords = {'exclude': str}
+    keywords = {'exclude': str, 'ignore_case': bool}
     fail = '\'%s\' contains excluded character \'%s\''
 
     def _is_valid(self, value):
-        for char in self.exclude:
-            if char in value:
-                self._failed_char = char
-                return False
-        return True
+        # Check if the function has only been called due to ignore_case
+        if self.exclude is not None:
+            for char in self.exclude:
+                if self.ignore_case is not None:
+                    if not self.ignore_case:
+                        if char in value:
+                            self._failed_char = char
+                            return False
+                    else:
+                        if char.casefold() in value.casefold():
+                            self._failed_char = char
+                            return False
+                else:
+                    if char in value:
+                        self._failed_char = char
+                        return False
+            return True
+        else:
+            return True
 
     def _fail(self, value):
         return self.fail % (value, self._failed_char)
