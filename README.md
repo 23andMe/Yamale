@@ -264,7 +264,7 @@ Some validators take keywords and some take arguments, some take both. For insta
 validator takes one or more constants as arguments and the `required` keyword:
 `enum('a string', 1, False, required=False)`
 
-### String - `str(min=int, max=int, equals=string, starts_with=string, ends_with=str, matches=regex, exclude=string)`
+### String - `str(min=int, max=int, equals=string, starts_with=string, ends_with=string, matches=regex, exclude=string, ignore_case=False, multiline=False, dotall=False)`
 Validates strings.
 - keywords
     - `min`: len(string) >= min
@@ -275,7 +275,14 @@ Validates strings.
     - `matches`: Validates the string against a given regex. Similar to the `regex()` validator,
       you can use `ignore_case`, `multiline` and `dotall`)
     - `ends_with`: Accepts only strings ending with given value (add `ignore_case=True` for case-insensitive checking)
-    - `exclude`: Rejects strings that contains any character in the excluded value.
+    - `exclude`: Rejects strings that contains any character in the excluded value
+    - `ignore_case`: Validates strings in a case-insensitive manner.
+    - `multiline`: `^` and `$` in a pattern match at the beginning and end of each line in a string
+       in addition to matching at the beginning and end of the entire string. (A pattern matches
+       at [the beginning of a string](https://docs.python.org/3/library/re.html#re.match) even in
+       multiline mode; see below for a workaround.); only allowed in conjunction with a `matches` keyword.
+    - `dotall`: `.` in a pattern matches newline characters in a validated string in addition to
+      matching every character that *isn't* a newline.; only allowed in conjunction with a `matches` keyword.
 
 Examples:
 - `str(max=10, exclude='?!')`: Allows only strings less than 11 characters that don't contain `?` or `!`.
