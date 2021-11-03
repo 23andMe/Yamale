@@ -116,7 +116,7 @@ try:
     print('Validation success! 👍')
 except YamaleError as e:
     print('Validation failed!\n')
-    for result in e.value.results:
+    for result in e.results:
         print("Error validating data '%s' with '%s'\n\t" % (result.data, result.schema))
         for error in result.errors:
             print('\t%s' % error)
