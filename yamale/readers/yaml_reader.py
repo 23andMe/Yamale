@@ -23,7 +23,7 @@ _parsers = {
 }
 
 
-def parse_yaml(path=None, parser='pyyaml', content=None):
+def parse_yaml(path: str=None, parser: str='pyyaml', content: str=None, encoding: str='utf-8'):
     try:
         parse = _parsers[parser.lower()]
     except KeyError:
@@ -31,7 +31,7 @@ def parse_yaml(path=None, parser='pyyaml', content=None):
     if (path is None and content is None) or (path is not None and content is not None):
         raise TypeError("Pass either path= or content=, not both")
     if path is not None:
-        with open(path) as f:
+        with open(path, encoding=encoding) as f:
             return parse(f)
     else:
         return parse(StringIO(content))

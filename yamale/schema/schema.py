@@ -50,7 +50,7 @@ class Schema(object):
             error = str(e) + ' at node \'%s\'' % str(path)
             raise SyntaxError(error)
 
-    def validate(self, data, data_name, strict):
+    def validate(self, data: str, data_name: str, strict: bool) -> ValidationResult:
         path = DataPath()
         errors = self._validate(self._schema, data, path, strict)
         return ValidationResult(data_name, self.name, errors)
@@ -75,7 +75,7 @@ class Schema(object):
 
         return self._validate(validator, data_item, path, strict)
 
-    def _validate(self, validator, data, path, strict):
+    def _validate(self, validator, data: str, path: DataPath, strict: bool):
         """
         Validate data with validator.
         Special handling of non-primitive validators.
