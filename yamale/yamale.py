@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import locale
 from typing import Any, List
 
 from yamale.schema.validationresults import ValidationResult
@@ -6,7 +7,7 @@ from .schema import Schema
 from .yamale_error import YamaleError
 
 
-def make_schema(path: str=None, parser: str='PyYAML', validators=None, content: str=None, encoding: str='utf-8') -> Schema:
+def make_schema(path: str=None, parser: str='PyYAML', validators=None, content: str=None, encoding: str=locale.getpreferredencoding(False)) -> Schema:
     """
     Reads YAML schemas from files or a string.
     :param path: Path to the schema file or directory.
@@ -35,7 +36,7 @@ def make_schema(path: str=None, parser: str='PyYAML', validators=None, content: 
     return s
 
 
-def make_data(path: str=None, parser: str='PyYAML', content: str=None, encoding: str='utf-8'):
+def make_data(path: str=None, parser: str='PyYAML', content: str=None, encoding: str=locale.getpreferredencoding(False)):
     """
     Reads a YAML file containing the data.
     :param path: Path to the YAML file or directory.

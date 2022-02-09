@@ -10,6 +10,7 @@
 
 import argparse
 import glob
+import locale
 import os
 from multiprocessing import Pool
 from .yamale_error import YamaleError
@@ -97,7 +98,7 @@ def _validate_dir(root, schema_name, cpus, parser, strict, encoding):
         raise ValueError('\n----\n'.join(set(error_messages)))
 
 
-def _router(root: str, schema_name: str, cpus: int, parser: str, strict: bool=True, encoding: str='utf-8'):
+def _router(root: str, schema_name: str, cpus: int, parser: str, strict: bool=True, encoding: str=locale.getpreferredencoding(False)):
     root = os.path.abspath(root)
     if os.path.isfile(root):
         _validate_single(root, schema_name, parser, strict, encoding)
@@ -117,8 +118,8 @@ def main():
                         help='YAML library to load files. Choices are "ruamel" or "pyyaml" (default).')
     parser.add_argument('--no-strict', action='store_true',
                         help='Disable strict mode, unexpected elements in the data will be accepted.')
-    parser.add_argument('-e', '--encoding', default='utf-8',
-                        help='Character encoding of the files. Default is utf-8.')
+    parser.add_argument('-e', '--encoding', default=locale.getpreferredencoding(False),
+                        help='Character encoding of the files. Default is the system default.')
     args = parser.parse_args()
     try:
         _router(args.path, args.schema, args.cpu_num, args.parser, not args.no_strict, args.encoding)
