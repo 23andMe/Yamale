@@ -120,10 +120,13 @@ def main():
     args = parser.parse_args()
     try:
         _router(args.path, args.schema, args.cpu_num, args.parser, not args.no_strict)
-        print('Validation success! 👍')
     except (SyntaxError, NameError, TypeError, ValueError) as e:
         print('Validation failed!\n%s' % str(e))
         exit(1)
+    try:
+        print('Validation success! 👍')
+    except UnicodeEncodeError:
+        print('Validation success!')
 
 
 if __name__ == '__main__':
