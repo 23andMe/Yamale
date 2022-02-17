@@ -97,8 +97,10 @@ def _validate_dir(root, schema_name, cpus, parser, strict):
         raise ValueError('\n----\n'.join(set(error_messages)))
 
 
-def _router(root, schema_name, cpus, parser, strict=True):
+def _router(root, schema_name, cpus, parser, strict=True, must_exist=False):
     root = os.path.abspath(root)
+    if must_exist and not os.path.exists(root):
+        raise ValueError("Path {} doesn't exist".format(root))
     if os.path.isfile(root):
         _validate_single(root, schema_name, parser, strict)
     else:
@@ -108,18 +110,20 @@ def _router(root, schema_name, cpus, parser, strict=True):
 def main():
     parser = argparse.ArgumentParser(description='Validate yaml files.')
     parser.add_argument('path', metavar='PATH', default='./', nargs='?',
-                        help='folder to validate. Default is current directory.')
+                        help='Folder to validate. Default is current directory.')
     parser.add_argument('-s', '--schema', default='schema.yaml',
-                        help='filename of schema. Default is schema.yaml.')
+                        help='Filename of schema. Default is schema.yaml.')
     parser.add_argument('-n', '--cpu-num', default=4, type=int,
-                        help='number of CPUs to use. Default is 4.')
+                        help='Number of CPUs to use. Default is 4.')
     parser.add_argument('-p', '--parser', default='pyyaml',
                         help='YAML library to load files. Choices are "ruamel" or "pyyaml" (default).')
     parser.add_argument('--no-strict', action='store_true',
                         help='Disable strict mode, unexpected elements in the data will be accepted.')
+    parser.add_argument('--must-exist', action='store_true',
+                        help='Fail if the path does not exist.')
     args = parser.parse_args()
     try:
-        _router(args.path, args.schema, args.cpu_num, args.parser, not args.no_strict)
+        _router(args.path, args.schema, args.cpu_num, args.parser, not args.no_strict, args.must_exist)
     except (SyntaxError, NameError, TypeError, ValueError) as e:
         print('Validation failed!\n%s' % str(e))
         exit(1)
