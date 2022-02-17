@@ -3,10 +3,11 @@ from setuptools import setup, find_packages
 
 readme = open('README.md', encoding='utf-8').read()
 license = open('LICENSE', encoding='utf-8').read()
+version = open('yamale/VERSION', encoding='utf-8').read().strip()
 
 setup(
     name='yamale',
-    version='4.0.3',
+    version=version,
     url='https://github.com/23andMe/Yamale',
     author='Bo Lopker',
     author_email='blopker@23andme.com',

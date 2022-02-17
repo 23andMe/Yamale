@@ -617,7 +617,7 @@ to ensure that tox is able to locate appropriate Pythons.
 Yamale uses Github Actions to upload new tags to PyPi.
 To release a new version:
 
-1. Make a commit with the new version in `setup.py`.
+1. Make a commit with the new version number in `yamale/VERSION`.
 1. Run tests for good luck.
 1. Run `make release`.
 
