@@ -1,9 +1,4 @@
-define VERSION_SCR
-import pkg_resources
-print(pkg_resources.require("yamale")[0].version)
-endef
-
-VERSION ?= $(shell python -c '$(VERSION_SCR)')
+VERSION ?= $(shell cat yamale/VERSION)
 
 all: test
 
