@@ -14,6 +14,7 @@ import os
 from multiprocessing import Pool
 from .yamale_error import YamaleError
 from .schema.validationresults import Result
+from .version import __version__
 
 import yamale
 
@@ -109,6 +110,7 @@ def main():
     parser = argparse.ArgumentParser(description='Validate yaml files.')
     parser.add_argument('path', metavar='PATH', default='./', nargs='?',
                         help='folder to validate. Default is current directory.')
+    parser.add_argument('-V', '--version', action='version', version=__version__)
     parser.add_argument('-s', '--schema', default='schema.yaml',
                         help='filename of schema. Default is schema.yaml.')
     parser.add_argument('-n', '--cpu-num', default=4, type=int,
