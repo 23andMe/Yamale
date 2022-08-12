@@ -6,6 +6,10 @@
 
     Just install Yamale:
         pip install yamale
+    And run with:
+        yamale
+          OR
+        python -m yamale
 """
 
 import argparse
