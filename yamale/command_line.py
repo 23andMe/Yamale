@@ -105,6 +105,8 @@ def _validate_dir(root, schema_name, cpus, parser, strict):
 def _router(root, schema_name, cpus, parser, strict=True, include=None):
     root = os.path.abspath(root)
     if include is not None:
+        if not os.path.isfile(include):
+            raise ValueError("Python include file '{}' not found.".format(include))
         from importlib.machinery import SourceFileLoader
         SourceFileLoader(os.path.basename(include), include).load_module()
         yamale.validators.validators.update_default_validators()
@@ -126,7 +128,7 @@ def main():
     parser.add_argument('-p', '--parser', default='pyyaml',
                         help='YAML library to load files. Choices are "ruamel" or "pyyaml" (default).')
     parser.add_argument('-i', '--include', default=None,
-                        help='Path of Python library to load for custom validators.')
+                        help='File path of Python library to load for custom validators.')
     parser.add_argument('--no-strict', action='store_true',
                         help='Disable strict mode, unexpected elements in the data will be accepted.')
     args = parser.parse_args()
