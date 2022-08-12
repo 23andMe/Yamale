@@ -102,8 +102,12 @@ def _validate_dir(root, schema_name, cpus, parser, strict):
         raise ValueError('\n----\n'.join(set(error_messages)))
 
 
-def _router(root, schema_name, cpus, parser, strict=True):
+def _router(root, schema_name, cpus, parser, strict=True, include=None):
     root = os.path.abspath(root)
+    if include is not None:
+        from importlib.machinery import SourceFileLoader
+        SourceFileLoader(os.path.basename(include), include).load_module()
+        yamale.validators.validators.update_default_validators()
     if os.path.isfile(root):
         _validate_single(root, schema_name, parser, strict)
     else:
@@ -126,12 +130,8 @@ def main():
     parser.add_argument('--no-strict', action='store_true',
                         help='Disable strict mode, unexpected elements in the data will be accepted.')
     args = parser.parse_args()
-    if args.include is not None:
-        import importlib.machinery
-        importlib.machinery.SourceFileLoader('yamalevalidators', args.include).load_module()
-        yamale.validators.validators.update_default_validators()
     try:
-        _router(args.path, args.schema, args.cpu_num, args.parser, not args.no_strict)
+        _router(args.path, args.schema, args.cpu_num, args.parser, not args.no_strict, args.include)
     except (SyntaxError, NameError, TypeError, ValueError) as e:
         print('Validation failed!\n%s' % str(e))
         exit(1)
