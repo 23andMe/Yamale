@@ -117,9 +117,15 @@ def main():
                         help='number of CPUs to use. Default is 4.')
     parser.add_argument('-p', '--parser', default='pyyaml',
                         help='YAML library to load files. Choices are "ruamel" or "pyyaml" (default).')
+    parser.add_argument('-i', '--include', default=None,
+                        help='Path of Python library to load for custom validators.')
     parser.add_argument('--no-strict', action='store_true',
                         help='Disable strict mode, unexpected elements in the data will be accepted.')
     args = parser.parse_args()
+    if args.include is not None:
+        import importlib.machinery
+        importlib.machinery.SourceFileLoader('yamalevalidators', args.include).load_module()
+        yamale.validators.validators.update_default_validators()
     try:
         _router(args.path, args.schema, args.cpu_num, args.parser, not args.no_strict)
     except (SyntaxError, NameError, TypeError, ValueError) as e:
