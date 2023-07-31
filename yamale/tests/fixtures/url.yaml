@@ -1,0 +1,5 @@
+---
+url_http: url()
+url_https: url()
+url_localhost: url()
+url_ftp: url()

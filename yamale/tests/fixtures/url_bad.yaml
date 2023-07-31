@@ -1,0 +1,5 @@
+---
+url_http: 'http://foo.bar/foo(bar)baz quux'
+url_https: 'https://.www.foo.bar./'
+url_localhost: 'http:// localhost.com'
+url_ftp: 'ftp://??/'

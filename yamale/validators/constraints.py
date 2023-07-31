@@ -3,6 +3,8 @@ import re
 import datetime
 import ipaddress
 
+import requests
+
 from yamale.util import to_unicode
 from .base import Validator
 from .. import util
@@ -263,3 +265,17 @@ class IpVersion(Constraint):
 
     def _fail(self, value):
         return self.fail % (value, self.version)
+
+class UrlReachable(Constraint):
+    keywords = {'reachable': bool, 'timeout': float}
+    fail = '{0} is not reachable'
+
+    def _is_valid(self, url):
+        if self.reachable:
+            try:
+                req = requests.head(url, allow_redirects=True, timeout=self.timeout)
+            except requests.exceptions.RequestException:
+                return False
+            return req.status_code == requests.codes.ok
+        else:
+            return True

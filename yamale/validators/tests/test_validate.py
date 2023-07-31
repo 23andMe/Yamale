@@ -142,3 +142,16 @@ def test_mac():
     assert not v.is_valid('ab:cd:ef:12:34:56:78')
     assert not v.is_valid('abcdefghijkl')
     assert not v.is_valid('1234567890ax')
+
+def test_url():
+    v = val.Url()
+    assert v.is_valid('http://foo.com/blah_blah')
+    assert v.is_valid('http://foo.com/blah_blah_(wikipedia)')
+    assert v.is_valid('https://www.example.com/foo/?bar=baz&inga=42&quux')
+    assert v.is_valid('http://userid@example.com/')
+    assert v.is_valid('ftp://foo.bar/baz')
+    assert not v.is_valid('http://foo.bar?q=Spaces should be encoded')
+    assert not v.is_valid('http://-error-.invalid/')
+    assert not v.is_valid(':// should fail')
+    assert not v.is_valid('rdar://1234')
+    assert not v.is_valid('http://?')

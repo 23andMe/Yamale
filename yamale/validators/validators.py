@@ -231,6 +231,22 @@ class Mac(Regex):
                 "[0-9a-fA-F]{4}([-:]?)[0-9a-fA-F]{4}(\\1[0-9a-fA-F]{4})$"),
         ]
 
+class Url(Regex):
+    """URL validator"""
+
+    tag = 'url'
+    constraints = [con.UrlReachable]
+
+    def __init__(self, *args, **kwargs):
+        super(Url, self).__init__(*args, **kwargs)
+        regex = re.compile(
+            r'^(?:http|ftp)s?://'
+            r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|'
+            r'localhost|'
+            r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'
+            r'(?::\d+)?'
+            r'(?:/?|[/?]\S+)$', re.IGNORECASE)
+        self.regexes = [regex]
 
 DefaultValidators = {}
 

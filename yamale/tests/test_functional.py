@@ -83,6 +83,12 @@ macs = {
     'good': 'mac_good.yaml'
 }
 
+urls = {
+    'schema': 'url.yaml',
+    'bad': 'url_bad.yaml',
+    'good': 'url_good.yaml'
+}
+
 nested_map = {
     'schema': 'nested_map.yaml',
     'good': 'nested_map_good.yaml'

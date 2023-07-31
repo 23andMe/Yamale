@@ -400,6 +400,18 @@ Validates MAC addresses.
 Examples:
 - `mac()`: Allows any valid MAC address
 
+### URL - `url()`
+Validates HTTP, HTTPS, FTP and FTPS URLs.
+
+- keywords
+    - `reachable`: Checks if the URL is reachable (add `timeout=t`, where `t` is the number of seconds to wait for a response).
+    - `timeout`: How many seconds to wait for the server to send data before giving up.
+
+Examples:
+- `url()`: Validate any HTTP, HTTPS, FTP or FTPS URL.
+- `url(reachable=True)`: Only URLs that are reachable.
+- `url(reachable=True, timeout=2.4)`: Only URLs that are reachable in less than 2.4 seconds.
+
 ### Any - `any([validators])`
 Validates against a union of types. Use when a node **must** contain **one and only one** of several types. It is valid
 if at least one of the listed validators is valid. If no validators are given, accept any value.
