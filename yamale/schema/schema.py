@@ -219,6 +219,9 @@ class Schema(object):
         errors = validator.validate(data)
 
         for i, error in enumerate(errors):
-            errors[i] = ('%s: ' % path) + error
+            if path:
+                errors[i] = ('%s: ' % path) + error
+            else:
+                errors[i] = error
 
         return errors
