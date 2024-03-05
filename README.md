@@ -16,7 +16,7 @@ to the syntax [here](https://github.com/Animosity/CraftIRC/wiki/Complete-idiot's
 
 Requirements
 ------------
-* Python 3.6+
+* Python 3.8+
 * PyYAML
 * ruamel.yaml (optional)
 
