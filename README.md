@@ -4,7 +4,7 @@ Yamale (ya·ma·lē)
 | :warning: Ensure that your schema definitions come from internal or trusted sources. Yamale does not protect against intentionally malicious schemas. |
 |:------------|
 
-<img src="https://github.com/23andMe/Yamale/blob/master/yamale.png?raw=true" alt="Yamale" width="400"/>
+<img src="https://github.com/23andMe/Yamale/blob/main/yamale.png?raw=true" alt="Yamale" width="400"/>
 
 A schema and validator for YAML.
 
@@ -35,7 +35,7 @@ building Python 3 from source; in all three cases, Apple's Command Line Tools (C
 may be required. See also [developers](#developers), below.
 
 ### Manual
-1. Download Yamale from: https://github.com/23andMe/Yamale/archive/master.zip
+1. Download Yamale from: https://github.com/23andMe/Yamale/archive/main.zip
 2. Unzip somewhere temporary
 3. Run `python setup.py install` (may have to prepend `sudo`)
 
@@ -420,7 +420,7 @@ validator.
 - keywords:
     - `allow_empty`: Allow the subset to be empty (and is, therefore, also optional). This overrides the `required`
 flag.
-      
+
 Examples:
 - `subset(int(), str())`: Validators against an integer, a string, or a list of either.
 - `subset(int(), str(), allow_empty=True)`: Same as above, but allows the empty set and makes the subset optional.

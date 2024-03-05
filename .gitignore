@@ -32,7 +32,7 @@ pip-delete-this-directory.txt
 # Unit test / coverage reports
 .tox/
 xunit/
-.coverage
+.coverage*
 .cache
 nosetests.xml
 coverage.xml
