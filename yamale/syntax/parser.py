@@ -17,11 +17,8 @@ def _validate_expr(call_node, validators):
     # Validate that all args are constant literals, validator names,  or other call nodes
     arg_values = call_node.args + [kw.value for kw in call_node.keywords]
     for arg in arg_values:
-        # In Python 3.8+, the following have been folded into ast.Constant.
-        constant_types = [
-            ast.Constant, ast.Num, ast.Str, ast.Bytes, ast.NameConstant]
         base_arg = arg.operand if isinstance(arg, ast.UnaryOp) else arg
-        if any(isinstance(base_arg, type) for type in constant_types):
+        if isinstance(base_arg, ast.Constant):
             continue
         elif isinstance(base_arg, ast.Name) and base_arg.id in validators:
             continue
