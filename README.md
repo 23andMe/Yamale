@@ -420,7 +420,7 @@ validator.
 - keywords:
     - `allow_empty`: Allow the subset to be empty (and is, therefore, also optional). This overrides the `required`
 flag.
-      
+
 Examples:
 - `subset(int(), str())`: Validators against an integer, a string, or a list of either.
 - `subset(int(), str(), allow_empty=True)`: Same as above, but allows the empty set and makes the subset optional.
