@@ -234,7 +234,9 @@ class Mac(Regex):
 
 DefaultValidators = {}
 
-for v in util.get_subclasses(Validator):
-    # Allow validator nodes to contain either tags or actual name
-    DefaultValidators[v.tag] = v
-    DefaultValidators[v.__name__] = v
+def update_default_validators():
+    for v in util.get_subclasses(Validator):
+        # Allow validator nodes to contain either tags or actual name
+        DefaultValidators[v.tag] = v
+        DefaultValidators[v.__name__] = v
+update_default_validators()

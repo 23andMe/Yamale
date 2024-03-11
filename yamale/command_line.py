@@ -6,6 +6,10 @@
 
     Just install Yamale:
         pip install yamale
+    And run with:
+        yamale
+          OR
+        python -m yamale
 """
 
 import argparse
@@ -98,8 +102,14 @@ def _validate_dir(root, schema_name, cpus, parser, strict):
         raise ValueError('\n----\n'.join(set(error_messages)))
 
 
-def _router(root, schema_name, cpus, parser, strict=True):
+def _router(root, schema_name, cpus, parser, strict=True, include=None):
     root = os.path.abspath(root)
+    if include is not None:
+        if not os.path.isfile(include):
+            raise ValueError("Python include file '{}' not found.".format(include))
+        from importlib.machinery import SourceFileLoader
+        SourceFileLoader(os.path.basename(include), include).load_module()
+        yamale.validators.validators.update_default_validators()
     if os.path.isfile(root):
         _validate_single(root, schema_name, parser, strict)
     else:
@@ -117,11 +127,13 @@ def main():
                         help='number of CPUs to use. Default is 4.')
     parser.add_argument('-p', '--parser', default='pyyaml',
                         help='YAML library to load files. Choices are "ruamel" or "pyyaml" (default).')
+    parser.add_argument('-i', '--include', default=None,
+                        help='File path of Python library to load for custom validators.')
     parser.add_argument('--no-strict', action='store_true',
                         help='Disable strict mode, unexpected elements in the data will be accepted.')
     args = parser.parse_args()
     try:
-        _router(args.path, args.schema, args.cpu_num, args.parser, not args.no_strict)
+        _router(args.path, args.schema, args.cpu_num, args.parser, not args.no_strict, args.include)
     except (SyntaxError, NameError, TypeError, ValueError) as e:
         print('Validation failed!\n%s' % str(e))
         exit(1)
