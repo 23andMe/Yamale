@@ -1,4 +1,5 @@
 import os
+import contextlib
 
 import pytest
 
@@ -8,6 +9,14 @@ from .. import yamale_error
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 parsers = ['pyyaml', 'PyYAML', 'ruamel']
+
+
+@contextlib.contextmanager
+def scoped_chandge_dir(new_dir):
+    cwd = os.getcwd()
+    os.chdir(new_dir)
+    try: yield
+    finally: os.chdir(cwd)
 
 
 @pytest.mark.parametrize('parser', parsers)
@@ -33,21 +42,29 @@ def test_good_yaml(parser):
     command_line._router(
         'yamale/tests/command_line_fixtures/yamls/good.yaml',
         'schema.yaml', 1, parser)
-    
+
 
 @pytest.mark.parametrize('parser', parsers)
 def test_good_relative_yaml(parser):
     command_line._router(
         'yamale/tests/command_line_fixtures/yamls/good.yaml',
         '../schema_dir/external.yaml', 1, parser)
-    
+
+
+@pytest.mark.parametrize('parser', parsers)
+def test_good_relative_schema_in_subfolder(parser):
+    with scoped_chandge_dir('yamale/tests/command_line_fixtures/schema_dir'):
+        command_line._router(
+            '../yamls/good.yaml',
+            'external.yaml', 1, parser)
+
 
 @pytest.mark.parametrize('parser', parsers)
 def test_external_glob_schema(parser):
     command_line._router(
         'yamale/tests/command_line_fixtures/yamls/good.yaml',
         os.path.join(dir_path, 'command_line_fixtures/schema_dir/ex*.yaml'), 1, parser)
-    
+
 
 def test_empty_schema_file():
     with pytest.raises(ValueError, match='is an empty file!'):
