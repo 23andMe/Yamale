@@ -4,6 +4,7 @@ from io import StringIO
 
 def _pyyaml(f):
     import yaml
+
     try:
         Loader = yaml.CSafeLoader
     except AttributeError:  # System does not have libyaml
@@ -13,17 +14,15 @@ def _pyyaml(f):
 
 def _ruamel(f):
     from ruamel.yaml import YAML
-    yaml = YAML(typ='safe')
+
+    yaml = YAML(typ="safe")
     return list(yaml.load_all(f))
 
 
-_parsers = {
-    'pyyaml': _pyyaml,
-    'ruamel': _ruamel
-}
+_parsers = {"pyyaml": _pyyaml, "ruamel": _ruamel}
 
 
-def parse_yaml(path=None, parser='pyyaml', content=None):
+def parse_yaml(path=None, parser="pyyaml", content=None):
     try:
         parse = _parsers[parser.lower()]
     except KeyError:

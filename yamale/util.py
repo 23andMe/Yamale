@@ -16,6 +16,7 @@ try:
         return unicode(s)
 
 except NameError:
+
     def isstr(s):
         return isinstance(s, str)
 
@@ -63,7 +64,7 @@ def get_subclasses(cls, _subclasses_yielded=None):
         _subclasses_yielded = set()
 
     # If the passed class is old- rather than new-style, raise an exception.
-    if not hasattr(cls, '__subclasses__'):
+    if not hasattr(cls, "__subclasses__"):
         raise TypeError('Old-style class "%s" unsupported.' % cls.__name__)
 
     # For each direct subclass of this class

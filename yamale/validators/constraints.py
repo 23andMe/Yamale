@@ -36,15 +36,15 @@ class Constraint(object):
         try:  # Try to convert value
             # Is this value one of the datetime types?
             if kwtype == datetime.date:
-                time = datetime.datetime.strptime(value, '%Y-%m-%d')
+                time = datetime.datetime.strptime(value, "%Y-%m-%d")
                 return datetime.date(time.year, time.month, time.day)
 
             if kwtype == datetime.datetime:
-                return datetime.datetime.strptime(value, '%Y-%m-%d %H:%M:%S')
+                return datetime.datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
 
             return kwtype(value)
         except (TypeError, ValueError):
-            raise SyntaxError('%s is not a %s' % (key, kwtype))
+            raise SyntaxError("%s is not a %s" % (key, kwtype))
 
     def is_valid(self, value):
         if not self.is_active:
@@ -56,14 +56,14 @@ class Constraint(object):
         return None
 
     def _fail(self, value):
-        return '\'%s\' violates %s.' % (value, self.__class__.__name__)
+        return "'%s' violates %s." % (value, self.__class__.__name__)
 
 
 class Min(Constraint):
-    fail = '%s is less than %s'
+    fail = "%s is less than %s"
 
     def __init__(self, value_type, kwargs):
-        self.keywords = {'min': value_type}
+        self.keywords = {"min": value_type}
         super(Min, self).__init__(value_type, kwargs)
 
     def _is_valid(self, value):
@@ -74,10 +74,10 @@ class Min(Constraint):
 
 
 class Max(Constraint):
-    fail = '%s is greater than %s'
+    fail = "%s is greater than %s"
 
     def __init__(self, value_type, kwargs):
-        self.keywords = {'max': value_type}
+        self.keywords = {"max": value_type}
         super(Max, self).__init__(value_type, kwargs)
 
     def _is_valid(self, value):
@@ -88,8 +88,8 @@ class Max(Constraint):
 
 
 class LengthMin(Constraint):
-    keywords = {'min': int}
-    fail = 'Length of %s is less than %s'
+    keywords = {"min": int}
+    fail = "Length of %s is less than %s"
 
     def _is_valid(self, value):
         return self.min <= len(value)
@@ -99,8 +99,8 @@ class LengthMin(Constraint):
 
 
 class LengthMax(Constraint):
-    keywords = {'max': int}
-    fail = 'Length of %s is greater than %s'
+    keywords = {"max": int}
+    fail = "Length of %s is greater than %s"
 
     def _is_valid(self, value):
         return self.max >= len(value)
@@ -110,8 +110,8 @@ class LengthMax(Constraint):
 
 
 class Key(Constraint):
-    keywords = {'key': Validator}
-    fail = 'Key error - %s'
+    keywords = {"key": Validator}
+    fail = "Key error - %s"
 
     def _is_valid(self, value):
         for k in value.keys():
@@ -127,8 +127,8 @@ class Key(Constraint):
 
 
 class StringEquals(Constraint):
-    keywords = {'equals': str, 'ignore_case': bool}
-    fail = '%s does not equal %s'
+    keywords = {"equals": str, "ignore_case": bool}
+    fail = "%s does not equal %s"
 
     def _is_valid(self, value):
         # Check if the function has only been called due to ignore_case
@@ -148,8 +148,8 @@ class StringEquals(Constraint):
 
 
 class StringStartsWith(Constraint):
-    keywords = {'starts_with': str, 'ignore_case': bool}
-    fail = '%s does not start with %s'
+    keywords = {"starts_with": str, "ignore_case": bool}
+    fail = "%s does not start with %s"
 
     def _is_valid(self, value):
         # Check if the function has only been called due to ignore_case
@@ -173,8 +173,8 @@ class StringStartsWith(Constraint):
 
 
 class StringEndsWith(Constraint):
-    keywords = {'ends_with': str, 'ignore_case': bool}
-    fail = '%s does not end with %s'
+    keywords = {"ends_with": str, "ignore_case": bool}
+    fail = "%s does not end with %s"
 
     def _is_valid(self, value):
         # Check if the function has only been called due to ignore_case
@@ -198,10 +198,10 @@ class StringEndsWith(Constraint):
 
 
 class StringMatches(Constraint):
-    keywords = {'matches': str}
-    fail = '%s is not a regex match.'
+    keywords = {"matches": str}
+    fail = "%s is not a regex match."
 
-    _regex_flags = {'ignore_case': re.I, 'multiline': re.M, 'dotall': re.S}
+    _regex_flags = {"ignore_case": re.I, "multiline": re.M, "dotall": re.S}
 
     def __init__(self, value_type, kwargs):
         self._flags = 0
@@ -222,8 +222,8 @@ class StringMatches(Constraint):
 
 
 class CharacterExclude(Constraint):
-    keywords = {'exclude': str, 'ignore_case': bool}
-    fail = '\'%s\' contains excluded character \'%s\''
+    keywords = {"exclude": str, "ignore_case": bool}
+    fail = "'%s' contains excluded character '%s'"
 
     def _is_valid(self, value):
         # Check if the function has only been called due to ignore_case
@@ -251,8 +251,8 @@ class CharacterExclude(Constraint):
 
 
 class IpVersion(Constraint):
-    keywords = {'version': int}
-    fail = 'IP version of %s is not %s'
+    keywords = {"version": int}
+    fail = "IP version of %s is not %s"
 
     def _is_valid(self, value):
         try:

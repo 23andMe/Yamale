@@ -1,5 +1,6 @@
 class Validator(object):
     """Base class for all Validators"""
+
     constraints = []
     value_type = None
 
@@ -8,15 +9,13 @@ class Validator(object):
         self.kwargs = kwargs
 
         # Is field required? Default is True
-        self.is_required = bool(kwargs.pop('required', True))
+        self.is_required = bool(kwargs.pop("required", True))
 
         # Can value be None if field is optional? Default is True
-        self._value_can_be_none = bool(kwargs.pop('none', True))
+        self._value_can_be_none = bool(kwargs.pop("none", True))
 
         # Construct all constraints
-        self._constraints_inst = self._create_constraints(self.constraints,
-                                                          self.value_type,
-                                                          kwargs)
+        self._constraints_inst = self._create_constraints(self.constraints, self.value_type, kwargs)
 
     def _create_constraints(self, constraint_classes, value_type, kwargs):
         constraints = []
@@ -39,7 +38,7 @@ class Validator(object):
 
     def _is_valid(self, value):
         """Validators must implement this. Return True if value is valid."""
-        raise NotImplementedError('You need to override this function')
+        raise NotImplementedError("You need to override this function")
 
     def get_name(self):
         return self.tag
@@ -74,14 +73,12 @@ class Validator(object):
 
     def fail(self, value):
         """Override to define a custom fail message"""
-        return '\'%s\' is not a %s.' % (value, self.get_name())
+        return "'%s' is not a %s." % (value, self.get_name())
 
     def __repr__(self):
-        return '%s(%s, %s)' % (self.__class__.__name__, self.args, self.kwargs)
+        return "%s(%s, %s)" % (self.__class__.__name__, self.args, self.kwargs)
 
     def __eq__(self, other):
         # Validators are equal if they have the same args and kwargs.
-        eq = [isinstance(other, self.__class__),
-              self.args == other.args,
-              self.kwargs == other.kwargs]
+        eq = [isinstance(other, self.__class__), self.args == other.args, self.kwargs == other.kwargs]
         return all(eq)

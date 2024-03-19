@@ -3,7 +3,7 @@ class Result(object):
         self.errors = errors
 
     def __str__(self):
-        return '\n'.join(self.errors)
+        return "\n".join(self.errors)
 
     def isValid(self):
         return len(self.errors) == 0
@@ -24,7 +24,7 @@ class ValidationResult(Result):
                 head_line_bits.append("'{}'".format(self.data))
             if self.schema:
                 head_line_bits.append("with schema '{}'".format(self.schema))
-            head_line = ' '.join(head_line_bits)
-            head_line += '\n\t'
-            error_str = head_line + '\n\t'.join(self.errors)
+            head_line = " ".join(head_line_bits)
+            head_line += "\n\t"
+            error_str = head_line + "\n\t".join(self.errors)
         return error_str

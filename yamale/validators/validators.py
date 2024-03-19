@@ -14,14 +14,17 @@ except ImportError:
 
 class String(Validator):
     """String validator"""
-    tag = 'str'
-    constraints = [con.LengthMin,
-                   con.LengthMax,
-                   con.CharacterExclude,
-                   con.StringEquals,
-                   con.StringStartsWith,
-                   con.StringEndsWith,
-                   con.StringMatches]
+
+    tag = "str"
+    constraints = [
+        con.LengthMin,
+        con.LengthMax,
+        con.CharacterExclude,
+        con.StringEquals,
+        con.StringStartsWith,
+        con.StringEndsWith,
+        con.StringMatches,
+    ]
 
     def _is_valid(self, value):
         return util.isstr(value)
@@ -29,8 +32,9 @@ class String(Validator):
 
 class Number(Validator):
     """Number/float validator"""
+
     value_type = float
-    tag = 'num'
+    tag = "num"
     constraints = [con.Min, con.Max]
 
     def _is_valid(self, value):
@@ -39,8 +43,9 @@ class Number(Validator):
 
 class Integer(Validator):
     """Integer validator"""
+
     value_type = int
-    tag = 'int'
+    tag = "int"
     constraints = [con.Min, con.Max]
 
     def _is_valid(self, value):
@@ -49,7 +54,8 @@ class Integer(Validator):
 
 class Boolean(Validator):
     """Boolean validator"""
-    tag = 'bool'
+
+    tag = "bool"
 
     def _is_valid(self, value):
         return isinstance(value, bool)
@@ -57,7 +63,8 @@ class Boolean(Validator):
 
 class Enum(Validator):
     """Enum validator"""
-    tag = 'enum'
+
+    tag = "enum"
 
     def __init__(self, *args, **kwargs):
         super(Enum, self).__init__(*args, **kwargs)
@@ -67,13 +74,14 @@ class Enum(Validator):
         return value in self.enums
 
     def fail(self, value):
-        return '\'%s\' not in %s' % (value, self.enums)
+        return "'%s' not in %s" % (value, self.enums)
 
 
 class Day(Validator):
     """Day validator. Format: YYYY-MM-DD"""
+
     value_type = date
-    tag = 'day'
+    tag = "day"
     constraints = [con.Min, con.Max]
 
     def _is_valid(self, value):
@@ -82,8 +90,9 @@ class Day(Validator):
 
 class Timestamp(Validator):
     """Timestamp validator. Format: YYYY-MM-DD HH:MM:SS"""
+
     value_type = datetime
-    tag = 'timestamp'
+    tag = "timestamp"
     constraints = [con.Min, con.Max]
 
     def _is_valid(self, value):
@@ -92,7 +101,8 @@ class Timestamp(Validator):
 
 class Map(Validator):
     """Map and dict validator"""
-    tag = 'map'
+
+    tag = "map"
     constraints = [con.LengthMin, con.LengthMax, con.Key]
 
     def __init__(self, *args, **kwargs):
@@ -105,7 +115,8 @@ class Map(Validator):
 
 class List(Validator):
     """List validator"""
-    tag = 'list'
+
+    tag = "list"
     constraints = [con.LengthMin, con.LengthMax]
 
     def __init__(self, *args, **kwargs):
@@ -118,11 +129,12 @@ class List(Validator):
 
 class Include(Validator):
     """Include validator"""
-    tag = 'include'
+
+    tag = "include"
 
     def __init__(self, *args, **kwargs):
         self.include_name = args[0]
-        self.strict = kwargs.pop('strict', None)
+        self.strict = kwargs.pop("strict", None)
         super(Include, self).__init__(*args, **kwargs)
 
     def _is_valid(self, value):
@@ -134,7 +146,8 @@ class Include(Validator):
 
 class Any(Validator):
     """Any of several types validator"""
-    tag = 'any'
+
+    tag = "any"
 
     def __init__(self, *args, **kwargs):
         self.validators = [val for val in args if isinstance(val, Validator)]
@@ -143,23 +156,25 @@ class Any(Validator):
     def _is_valid(self, value):
         return True
 
+
 class Subset(Validator):
     """Subset of several types validator"""
-    tag = 'subset'
+
+    tag = "subset"
 
     def __init__(self, *args, **kwargs):
         super(Subset, self).__init__(*args, **kwargs)
-        self._allow_empty_set = bool(kwargs.pop('allow_empty', False))
+        self._allow_empty_set = bool(kwargs.pop("allow_empty", False))
         self.validators = [val for val in args if isinstance(val, Validator)]
         if not self.validators:
-            raise ValueError('\'%s\' requires at least one validator!' % self.tag)
+            raise ValueError("'%s' requires at least one validator!" % self.tag)
 
     def _is_valid(self, value):
         return self.can_be_none or value is not None
 
     def fail(self, value):
         # Called in case `_is_valid` returns False
-        return '\'%s\' may not be an empty set.' % self.get_name()
+        return "'%s' may not be an empty set." % self.get_name()
 
     @property
     def is_optional(self):
@@ -172,8 +187,9 @@ class Subset(Validator):
 
 class Null(Validator):
     """Validates null"""
+
     value_type = None
-    tag = 'null'
+    tag = "null"
 
     def _is_valid(self, value):
         return value is None
@@ -181,18 +197,18 @@ class Null(Validator):
 
 class Regex(Validator):
     """Regular expression validator"""
-    tag = 'regex'
-    _regex_flags = {'ignore_case': re.I, 'multiline': re.M, 'dotall': re.S}
+
+    tag = "regex"
+    _regex_flags = {"ignore_case": re.I, "multiline": re.M, "dotall": re.S}
 
     def __init__(self, *args, **kwargs):
-        self.regex_name = kwargs.pop('name', None)
+        self.regex_name = kwargs.pop("name", None)
 
         flags = 0
         for k, v in util.get_iter(self._regex_flags):
             flags |= v if kwargs.pop(k, False) else 0
 
-        self.regexes = [re.compile(arg, flags)
-                        for arg in args if util.isstr(arg)]
+        self.regexes = [re.compile(arg, flags) for arg in args if util.isstr(arg)]
         super(Regex, self).__init__(*args, **kwargs)
 
     def _is_valid(self, value):
@@ -204,7 +220,8 @@ class Regex(Validator):
 
 class Ip(Validator):
     """IP address validator"""
-    tag = 'ip'
+
+    tag = "ip"
     constraints = [con.IpVersion]
 
     def _is_valid(self, value):
@@ -220,15 +237,14 @@ class Ip(Validator):
 
 class Mac(Regex):
     """MAC address validator"""
-    tag = 'mac'
+
+    tag = "mac"
 
     def __init__(self, *args, **kwargs):
         super(Mac, self).__init__(*args, **kwargs)
         self.regexes = [
-            re.compile(
-                "[0-9a-fA-F]{2}([-:]?)[0-9a-fA-F]{2}(\\1[0-9a-fA-F]{2}){4}$"),
-            re.compile(
-                "[0-9a-fA-F]{4}([-:]?)[0-9a-fA-F]{4}(\\1[0-9a-fA-F]{4})$"),
+            re.compile("[0-9a-fA-F]{2}([-:]?)[0-9a-fA-F]{2}(\\1[0-9a-fA-F]{2}){4}$"),
+            re.compile("[0-9a-fA-F]{4}([-:]?)[0-9a-fA-F]{4}(\\1[0-9a-fA-F]{4})$"),
         ]
 
 
