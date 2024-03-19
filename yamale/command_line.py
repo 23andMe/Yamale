@@ -52,6 +52,9 @@ def _find_schema(data_path, schema_name):
     """ Checks if `schema_name` is a valid file, if not
     searches in `data_path` for it. """
 
+    if os.path.isfile(schema_name):
+        return schema_name
+
     directory = os.path.dirname(data_path)
     path = glob.glob(os.path.join(directory, schema_name))
     for p in path:
