@@ -12,7 +12,7 @@ parsers = ["pyyaml", "PyYAML", "ruamel"]
 
 
 @contextlib.contextmanager
-def scoped_chandge_dir(new_dir):
+def scoped_change_dir(new_dir):
     cwd = os.getcwd()
     os.chdir(new_dir)
     try:
@@ -62,7 +62,7 @@ def test_good_relative_yaml(parser):
 
 @pytest.mark.parametrize("parser", parsers)
 def test_good_relative_schema_in_subfolder(parser):
-    with scoped_chandge_dir("yamale/tests/command_line_fixtures/schema_dir"):
+    with scoped_change_dir("yamale/tests/command_line_fixtures/schema_dir"):
         command_line._router("../yamls/good.yaml", "external.yaml", 1, parser)
 
 
