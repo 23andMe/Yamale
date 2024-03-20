@@ -2,6 +2,10 @@ VERSION ?= $(shell cat yamale/VERSION)
 
 all: test
 
+lint:
+	@ruff check --fix .
+	@ruff format .
+
 test:
 	@tox
 
@@ -15,4 +19,7 @@ release:
 	@git push --follow-tags --all
 	@git push --tags
 
-.PHONY: test tag coverage clean release
+install-hooks:
+	@pre-commit install -f --install-hooks -t pre-commit
+
+.PHONY: test lint tag coverage clean release install-hooks

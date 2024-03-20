@@ -1,27 +1,12 @@
-# ABCs for containers were moved to their own module
-try:
-    from collections.abc import Mapping, Set, Sequence
-except ImportError:
-    from collections import Mapping, Set, Sequence
+from collections.abc import Mapping, Sequence
 
 
-# Python 3 has no basestring, lets test it.
-try:
-    basestring  # attempt to evaluate basestring
+def isstr(s):
+    return isinstance(s, str)
 
-    def isstr(s):
-        return isinstance(s, basestring)
 
-    def to_unicode(s):
-        return unicode(s)
-
-except NameError:
-
-    def isstr(s):
-        return isinstance(s, str)
-
-    def to_unicode(s):
-        return s
+def to_unicode(s):
+    return s
 
 
 def is_list(obj):

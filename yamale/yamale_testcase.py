@@ -26,7 +26,7 @@ class YamaleTestCase(TestCase):
         if schema is None:
             return
 
-        if type(yaml) != list:
+        if not isinstance(yaml, list):
             yaml = [yaml]
 
         if base_dir is not None:

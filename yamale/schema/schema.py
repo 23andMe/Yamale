@@ -172,8 +172,8 @@ class Schema(object):
     def _validate_subset(self, validator, data, path, strict):
         def _internal_validate(internal_data):
             sub_errors = []
-            for val in validator.validators:
-                err = self._validate(val, internal_data, path, strict)
+            for v in validator.validators:
+                err = self._validate(v, internal_data, path, strict)
                 if not err:
                     break
                 sub_errors += err
