@@ -602,6 +602,11 @@ class TestYaml(YamaleTestCase):
 
 Developers
 ----------
+### Linting + Formatting
+Yamale is formatted with [ruff](https://github.com/astral-sh/ruff). There is a github action enforcing
+ruff formatting and linting rules. You can run this locally via `make lint` or by installing
+the pre-commit hooks via `make install-hooks`
+
 ### Testing
 Yamale uses [Tox](https://tox.readthedocs.org/en/latest/) to run its tests against multiple Python
 versions. To run tests, first checkout Yamale, install Tox, then run `make test` in Yamale's root

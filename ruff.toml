@@ -1,2 +1,5 @@
 line-length = 121
 indent-width = 4
+
+[lint]
+ignore = ["F401", "F403"]
