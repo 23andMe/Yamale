@@ -8,7 +8,7 @@ import yamale
 
 
 class YamaleTestCase(TestCase):
-    """ TestCase for easily validating YAML in your own tests.
+    """TestCase for easily validating YAML in your own tests.
     `schema`: String of path to the schema file to use. One schema file per test case.
     `yaml`: String or list of yaml files to validate. Accepts globs.
     `base_dir`: String path to prepend to all other paths. This is optional.
@@ -46,4 +46,3 @@ class YamaleTestCase(TestCase):
             if not result.isValid():
                 raise ValueError(result)
         return True
-

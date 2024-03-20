@@ -1,5 +1,4 @@
 class DataPath(object):
-
     def __init__(self, *path):
         self._path = path
 
@@ -9,7 +8,7 @@ class DataPath(object):
         return dp
 
     def __str__(self):
-        return '.'.join(map(str, (self._path)))
+        return ".".join(map(str, (self._path)))
 
     def __repr__(self):
-        return 'DataPath({})'.format(repr(self._path))
+        return "DataPath({})".format(repr(self._path))
