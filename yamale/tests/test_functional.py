@@ -20,6 +20,8 @@ maps = {"schema": "map.yaml", "bad": "map_bad.yaml", "bad2": "map_bad2.yaml", "g
 
 anys = {"schema": "any.yaml", "bad": "any_bad.yaml", "good": "any_good.yaml"}
 
+any_undefined = {"schema": "any_undefined_schema.yaml", "bad": "any_undefined.yaml"}
+
 list_include = {"schema": "list_include.yaml", "good": "list_include_good.yaml"}
 
 issue_22 = {"schema": "issue_22.yaml", "good": "issue_22_good.yaml"}
@@ -93,6 +95,7 @@ test_data = [
     lists,
     maps,
     anys,
+    any_undefined,
     list_include,
     issue_22,
     issue_50,
@@ -193,6 +196,10 @@ def test_bad_keywords():
 
 def test_bad_anys():
     assert count_exception_lines(anys["schema"], anys["bad"]) == 5
+
+
+def test_undefined_include():
+    assert count_exception_lines(any_undefined["schema"], any_undefined["bad"]) == 1
 
 
 def test_bad_regexes():
