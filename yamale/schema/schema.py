@@ -4,6 +4,12 @@ from .. import syntax, util
 from .. import validators as val
 
 
+class FatalValidationError(Exception):
+    def __init__(self, error):
+        super().__init__()
+        self.error = error
+
+
 class Schema(object):
     """
     Makes a Schema object from a schema dict.
@@ -45,7 +51,10 @@ class Schema(object):
 
     def validate(self, data, data_name, strict):
         path = DataPath()
-        errors = self._validate(self._schema, data, path, strict)
+        try:
+            errors = self._validate(self._schema, data, path, strict)
+        except FatalValidationError as e:
+            errors = [e.error]
         return ValidationResult(data_name, self.name, errors)
 
     def _validate_item(self, validator, data, path, strict, key):
@@ -91,7 +100,6 @@ class Schema(object):
 
         if isinstance(validator, val.Include):
             errors += self._validate_include(validator, data, path, strict)
-
         elif isinstance(validator, (val.Map, val.List)):
             errors += self._validate_map_list(validator, data, path, strict)
 
@@ -146,7 +154,7 @@ class Schema(object):
     def _validate_include(self, validator, data, path, strict):
         include_schema = self.includes.get(validator.include_name)
         if not include_schema:
-            return [("Include '%s' has not been defined." % validator.include_name)]
+            raise FatalValidationError("Include '%s' has not been defined." % validator.include_name)
         strict = strict if validator.strict is None else validator.strict
         return include_schema._validate(include_schema._schema, data, path, strict)
 
