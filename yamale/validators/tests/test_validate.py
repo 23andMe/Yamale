@@ -151,7 +151,7 @@ def test_semver():
     - https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string
     - https://regex101.com/r/Ly7O1x/3/
     """
-    v = val.Semver()
+    v = val.SemVer()
 
     assert v.is_valid("0.0.4")
     assert v.is_valid("1.2.3")
