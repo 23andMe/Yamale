@@ -38,6 +38,9 @@ nested_map = {"schema": "nested_map.yaml", "good": "nested_map_good.yaml"}
 
 top_level_map = {"schema": "top_level_map.yaml", "good": "top_level_map_good.yaml"}
 
+semver = {"schema": "semver_schema.yaml", "good": "semver_good.yaml", "bad": "semver_bad.yaml"}
+
+
 include_validator = {
     "schema": "include_validator.yaml",
     "good": "include_validator_good.yaml",
@@ -113,6 +116,7 @@ test_data = [
     nested_issue_54,
     map_key_constraint,
     numeric_bool_coercion,
+    semver,
     subset,
     subset_empty,
 ]
@@ -123,11 +127,6 @@ for d in test_data:
             d[key] = yamale.make_schema(get_fixture(d[key]))
         else:
             d[key] = yamale.make_data(get_fixture(d[key]))
-
-
-def test_tests():
-    """Make sure the test runner is working."""
-    assert 1 + 1 == 2
 
 
 def test_flat_make_schema():
@@ -143,9 +142,9 @@ def test_nested_schema():
 
 @pytest.mark.parametrize("data_map", test_data)
 def test_good(data_map):
-    for k, v in data_map.items():
+    for k, good_data in data_map.items():
         if k.startswith("good"):
-            yamale.validate(data_map["schema"], data_map[k])
+            yamale.validate(data_map["schema"], good_data)
 
 
 def test_bad_validate():
@@ -200,6 +199,10 @@ def test_bad_anys():
 
 def test_undefined_include():
     assert count_exception_lines(any_undefined["schema"], any_undefined["bad"]) == 1
+
+
+def test_bad_semver():
+    assert count_exception_lines(semver["schema"], semver["bad"]) == 1
 
 
 def test_bad_regexes():
