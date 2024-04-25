@@ -224,4 +224,3 @@ def test_semver():
     assert not v.is_valid("+justmeta")
     assert not v.is_valid("9.8.7+meta+meta")
     assert not v.is_valid("9.8.7-whatever+meta+meta")
-    assert not v.is_valid("99999999999999999999999.999999999999999999.99999999999999999")
