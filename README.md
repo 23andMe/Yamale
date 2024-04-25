@@ -400,6 +400,12 @@ Validates MAC addresses.
 Examples:
 - `mac()`: Allows any valid MAC address
 
+### SemVer (Semantic Versioning) - `semver()`
+Validates [Semantic Versioning](https://semver.org/) strings.
+
+Examples:
+- `semver()`: Allows any valid SemVer string
+
 ### Any - `any([validators])`
 Validates against a union of types. Use when a node **must** contain **one and only one** of several types. It is valid
 if at least one of the listed validators is valid. If no validators are given, accept any value.
