@@ -17,7 +17,10 @@ setup(
     license="MIT",
     packages=find_packages(),
     include_package_data=True,
-    install_requires=["pyyaml"],
+    install_requires=[
+        "pyyaml",
+        "ruamel.yaml",
+    ],
     python_requires=">=3.8",
     entry_points={
         "console_scripts": ["yamale=yamale.command_line:main"],
