@@ -98,18 +98,19 @@ def _validate_dir(root, schema_name, cpus, parser, strict):
         raise ValueError("\n----\n".join(set(error_messages)))
 
 
-def _router(root, schema_name, cpus, parser, strict=True):
-    root = os.path.abspath(root)
-    if os.path.isfile(root):
-        _validate_single(root, schema_name, parser, strict)
-    else:
-        _validate_dir(root, schema_name, cpus, parser, strict)
+def _router(paths, schema_name, cpus, parser, strict=True):
+    for path in paths:
+        path = os.path.abspath(path)
+        if os.path.isfile(path):
+            _validate_single(path, schema_name, parser, strict)
+        else:
+            _validate_dir(path, schema_name, cpus, parser, strict)
 
 
 def main():
     parser = argparse.ArgumentParser(description="Validate yaml files.")
     parser.add_argument(
-        "path", metavar="PATH", default="./", nargs="?", help="folder to validate. Default is current directory."
+        "paths", metavar="PATHS", default=["./"], nargs="*", help="Paths to validate, either directories or files. Default is the current directory."
     )
     parser.add_argument("-V", "--version", action="version", version=__version__)
     parser.add_argument("-s", "--schema", default="schema.yaml", help="filename of schema. Default is schema.yaml.")
@@ -125,7 +126,7 @@ def main():
     )
     args = parser.parse_args()
     try:
-        _router(args.path, args.schema, args.cpu_num, args.parser, not args.no_strict)
+        _router(args.paths, args.schema, args.cpu_num, args.parser, not args.no_strict)
     except (SyntaxError, NameError, TypeError, ValueError) as e:
         print("Validation failed!\n%s" % str(e))
         exit(1)
