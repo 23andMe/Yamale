@@ -50,6 +50,13 @@ def test_good_yaml(parser):
     command_line._router(["yamale/tests/command_line_fixtures/yamls/good.yaml"], "schema.yaml", 1, parser)
 
 
+def test_multiple_paths_good_yaml():
+    command_line._router([
+        "yamale/tests/command_line_fixtures/yamls/good.yaml",
+        "yamale/tests/command_line_fixtures/yamls/good2.yaml",
+    ], "schema.yaml", 1, "PyYAML")
+
+
 @pytest.mark.parametrize("parser", parsers)
 def test_good_relative_yaml(parser):
     command_line._router(
