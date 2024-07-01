@@ -57,6 +57,16 @@ def test_multiple_paths_good_yaml():
     ], "schema.yaml", 1, "PyYAML")
 
 
+def test_multiple_paths_bad_yaml():
+    with pytest.raises(ValueError) as e:
+        command_line._router([
+            "yamale/tests/command_line_fixtures/yamls/bad.yaml",
+            "yamale/tests/command_line_fixtures/yamls/required_keys_bad.yaml",
+        ], "schema.yaml", 1, "PyYAML")
+    assert "map.bad: '12.5' is not a str." in e.value.message
+    assert "map.key: Required field missing" in e.value.message
+
+
 @pytest.mark.parametrize("parser", parsers)
 def test_good_relative_yaml(parser):
     command_line._router(
