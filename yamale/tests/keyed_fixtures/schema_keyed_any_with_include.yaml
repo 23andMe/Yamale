@@ -1,0 +1,8 @@
+deploy: any(include('deploy-max'), include('deploy-branch'), required=False, key='strategy')
+---
+deploy-max:
+  strategy: enum('preview')
+  branch: list(enum('dev', 'tst', 'uat'))
+---
+deploy-branch:
+  strategy: enum('branch')
