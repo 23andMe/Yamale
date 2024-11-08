@@ -17,32 +17,33 @@ class YamaleTestCase(TestCase):
     schema = None
     yaml = None
     base_dir = None
+    errors = []
 
     def validate(self, validators=None):
-        schema = self.schema
-        yaml = self.yaml
-        base_dir = self.base_dir
+        return run_validate(self.schema, self.yaml, self.base_dir, validators)
 
-        if schema is None:
-            return
 
-        if not isinstance(yaml, list):
-            yaml = [yaml]
+def run_validate(schema, yaml, base_dir, validators=None):
+    if schema is None:
+        return
 
-        if base_dir is not None:
-            schema = os.path.join(base_dir, schema)
-            yaml = {os.path.join(base_dir, y) for y in yaml}
+    if not isinstance(yaml, list):
+        yaml = [yaml]
 
-        # Run yaml through glob and flatten list
-        yaml = set(itertools.chain(*map(glob.glob, yaml)))
+    if base_dir is not None:
+        schema = os.path.join(base_dir, schema)
+        yaml = {os.path.join(base_dir, y) for y in yaml}
 
-        # Remove schema from set of data files
-        yaml = yaml - {schema}
+    # Run yaml through glob and flatten list
+    yaml = set(itertools.chain(*map(glob.glob, yaml)))
 
-        yamale_schema = yamale.make_schema(schema, validators=validators)
-        yamale_data = itertools.chain(*map(yamale.make_data, yaml))
+    # Remove schema from set of data files
+    yaml = yaml - {schema}
 
-        for result in yamale.validate(yamale_schema, yamale_data):
-            if not result.isValid():
-                raise ValueError(result)
-        return True
+    yamale_schema = yamale.make_schema(schema, validators=validators)
+    yamale_data = itertools.chain(*map(yamale.make_data, yaml))
+
+    for result in yamale.validate(yamale_schema, yamale_data):
+        if not result.isValid():
+            raise ValueError(result)
+    return True
