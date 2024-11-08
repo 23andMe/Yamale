@@ -150,6 +150,7 @@ class Any(Validator):
     tag = "any"
 
     def __init__(self, *args, **kwargs):
+        self.key = str(kwargs.pop("key", ''))
         self.validators = [val for val in args if isinstance(val, Validator)]
         super(Any, self).__init__(*args, **kwargs)
 
@@ -165,6 +166,7 @@ class Subset(Validator):
     def __init__(self, *args, **kwargs):
         super(Subset, self).__init__(*args, **kwargs)
         self._allow_empty_set = bool(kwargs.pop("allow_empty", False))
+        self.key = str(kwargs.pop("key", ''))
         self.validators = [val for val in args if isinstance(val, Validator)]
         if not self.validators:
             raise ValueError("'%s' requires at least one validator!" % self.tag)
