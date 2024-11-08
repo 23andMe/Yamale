@@ -164,13 +164,14 @@ class Schema(object):
 
         errors = []
 
+        validators = self._get_include_validators_for_key(validator, data)
         sub_errors = []
-        for v in validator.validators:
+        for v in validators:
             err = self._validate(v, data, path, strict)
             if err:
                 sub_errors.append(err)
 
-        if len(sub_errors) == len(validator.validators):
+        if len(sub_errors) == len(validators):
             # All validators failed, add to errors
             for err in sub_errors:
                 errors += err
