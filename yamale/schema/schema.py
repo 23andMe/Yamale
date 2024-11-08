@@ -212,12 +212,15 @@ class Schema(object):
         field_value = internal_data[validator.key]
         result = []
         for v in validator.validators:
-            if not isinstance(v, val.Include): continue
+            if not isinstance(v, val.Include):
+                continue
 
             sub_validator = self.includes.get(v.include_name)
             sub_schema = sub_validator.dict
 
-            if validator.key not in sub_schema: continue
+            if validator.key not in sub_schema:
+                continue
+            
             field_validator = sub_schema[validator.key]
             if field_validator._is_valid(field_value):
                 result.append(v)

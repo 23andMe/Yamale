@@ -1,4 +1,5 @@
-import os, pytest
+import os
+import pytest
 from yamale import YamaleError
 import yamale.yamale_testcase as tc
 
@@ -26,7 +27,7 @@ def test_keyed_subset_with_include_should_succeed():
     yaml = "keyed_fixtures/data_keyed_subset_with_include_good.yaml"
 
     result = tc.run_validate(schema, yaml, base_dir)
-    assert result == True
+    assert result
 
 
 def test_keyed_any_with_include_should_fail_with_correct_message():
@@ -48,4 +49,4 @@ def test_keyed_any_with_include_should_succeed():
     schema = "keyed_fixtures/schema_keyed_any_with_include.yaml"
     yaml = "keyed_fixtures/data_keyed_any_with_include_good.yaml"
     result = tc.run_validate(schema, yaml, base_dir)
-    assert result == True
+    assert result
