@@ -1,0 +1,5 @@
+workloads:
+  - type: ui
+    name: test
+    file: test.docker
+    replicas: 14

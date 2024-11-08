@@ -1,0 +1,5 @@
+workloads:
+  - type: api
+    name: test
+    file: test.docker
+    replicas: 14

@@ -1,0 +1,12 @@
+workloads: subset(include('ui_service'), include('api_service'), key='type')
+---
+ui_service:
+  type: enum('ui')
+  name: str()
+  file: str()
+  replicas: num(required=False)
+---
+api_service:
+  type: enum('api')
+  name: str()
+  file: str()
