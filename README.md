@@ -406,11 +406,14 @@ Validates [Semantic Versioning](https://semver.org/) strings.
 Examples:
 - `semver()`: Allows any valid SemVer string
 
-### Any - `any([validators])`
+### Any - `any([validators], key='field_name')`
 Validates against a union of types. Use when a node **must** contain **one and only one** of several types. It is valid
 if at least one of the listed validators is valid. If no validators are given, accept any value.
 - arguments: validators to test values with (if none is given, allow any value; if one or more are given,
 one must be present)
+
+- keywords:
+    - `key`: Used to limit the validation of includes, the any validator will check if the specified field matches whats specified by each include validator before running the validator. 
 
 Examples:
 - `any(int(), null())`: Validates either an integer **or** a null value.
@@ -418,13 +421,14 @@ Examples:
 - `any(str(min=3, max=3),str(min=5, max=5),str(min=7, max=7))`: validates to a string that is exactly 3, 5, or 7 characters long
 - `any()`: Allows any value.
 
-### Subset - `subset([validators], allow_empty=False)`
+### Subset - `subset([validators], allow_empty=False, key='field_name')`
 Validates against a subset of types. Unlike the `Any` validator, this validators allows **one or more** of several types.
 As such, it *automatically validates against a list*. It is valid if all values can be validated against at least one
 validator.
 - arguments: validators to test with (at least one; if none is given, a `ValueError` exception will be raised)
 - keywords:
     - `allow_empty`: Allow the subset to be empty (and is, therefore, also optional). This overrides the `required`
+    - `key`: Limits the validation of includes, the subset validator will check if the specified field matches whats specified by each include validator before running the validator. 
 flag.
 
 Examples:
