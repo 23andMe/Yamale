@@ -206,7 +206,7 @@ class Schema(object):
         return errors
 
     def _get_include_validators_for_key(self, validator, internal_data):
-        if len(validator.key) == 0: 
+        if len(validator.key) == 0 or validator.key not in internal_data: 
             return validator.validators
         
         field_value = internal_data[validator.key]
