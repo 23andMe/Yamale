@@ -1,0 +1,7 @@
+urls:
+  - ""
+  - "-11.0.1"
+  - "http://256.256.256.256"
+  - "x://example-bad-protocol.com"
+  - "https://bad-domain"
+  - "http:///"
