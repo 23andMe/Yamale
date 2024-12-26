@@ -1,0 +1,8 @@
+-   id: yamale-schema-verify
+    name: check yaml schema with Yamale
+    description: prevents invalid yaml schemas from being committed.
+    entry: yamale
+    language: python
+    types: [yaml]
+    pass_filenames: false
+    stages: [pre-commit, pre-push, manual]
