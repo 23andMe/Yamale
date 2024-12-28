@@ -50,24 +50,26 @@ looking up the directory tree until it finds one. If Yamale can not find a schem
 Usage:
 
 ```bash
-usage: yamale [-h] [-s SCHEMA] [-n CPU_NUM] [-p PARSER] [--no-strict] [PATH]
+usage: yamale [-h] [-s SCHEMA] [-e PATTERN] [-p PARSER] [-n CPU_NUM] [-x] [-v] [-V] [PATH ...]
 
 Validate yaml files.
 
 positional arguments:
-  PATH                  folder to validate. Default is current directory.
+  PATH                  paths to validate, either directories or files. Default is the current directory.
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
   -s SCHEMA, --schema SCHEMA
                         filename of schema. Default is schema.yaml.
-  -n CPU_NUM, --cpu-num CPU_NUM
-                        number of CPUs to use. Default is 4.
+  -e PATTERN, --exclude PATTERN
+                        Python regex used to exclude files from validation. Any substring match of a files absolute path will be excluded. Uses deafult Python3 regex. Option can be supplied multiple times.
   -p PARSER, --parser PARSER
-                        YAML library to load files. Choices are "ruamel" or
-                        "pyyaml" (default).
-  --no-strict           Disable strict mode, unexpected elements in the data
-                        will be accepted.
+                        YAML library to load files. Choices are "ruamel" or "pyyaml" (default).
+  -n CPU_NUM, --cpu-num CPU_NUM
+                        number of child processes to spawn for validation. Default is 4. 'auto' to use CPU count
+  -x, --no-strict       disable strict mode, unexpected elements in the data will be accepted.
+  -v, --verbose         show verbose information
+  -V, --version         show program's version number and exit
 ```
 
 ### API

@@ -76,6 +76,19 @@ def test_multiple_paths_bad_yaml():
     assert "map.bad: '12.5' is not a int." in e.value.message
 
 
+def test_excludes():
+    command_line._router(
+        paths=[
+            "yamale/tests/command_line_fixtures/yamls/good.yaml",
+            "yamale/tests/command_line_fixtures/yamls/bad.yaml",
+        ],
+        schema_name="schema.yaml",
+        excludes="bad.yaml",
+        cpus=1,
+        parser="PyYAML",
+    )
+
+
 @pytest.mark.parametrize("parser", parsers)
 def test_good_relative_yaml(parser):
     command_line._router(

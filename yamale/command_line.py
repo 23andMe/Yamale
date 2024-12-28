@@ -65,7 +65,7 @@ def _find_schema(data_path, schema_name):
     return _find_data_path_schema(data_path, schema_name)
 
 
-def _validate_single(yaml_path, schema_name, parser, strict, should_exclude):
+def _validate_file(yaml_path, schema_name, parser, strict, should_exclude):
     if should_exclude(yaml_path):
         return
     print("Validating %s..." % yaml_path)
@@ -103,7 +103,7 @@ def _validate_dir(root, schema_name, cpus, parser, strict, should_exclude):
         raise ValueError("\n----\n".join(set(error_messages)))
 
 
-def _router(paths, schema_name, cpus, parser, excludes, strict=True, verbose=False):
+def _router(paths, schema_name, cpus, parser, excludes=None, strict=True, verbose=False):
     EXCLUDE_REGEXES = tuple(re.compile(e) for e in excludes) if excludes else tuple()
 
     def should_exclude(yaml_path):
@@ -117,7 +117,7 @@ def _router(paths, schema_name, cpus, parser, excludes, strict=True, verbose=Fal
         if os.path.isdir(path):
             _validate_dir(path, schema_name, cpus, parser, strict, should_exclude)
         else:
-            _validate_single(path, schema_name, parser, strict, should_exclude)
+            _validate_file(path, schema_name, parser, strict, should_exclude)
 
 
 def main():
@@ -132,7 +132,7 @@ def main():
         metavar="PATH",
         default=["./"],
         nargs="*",
-        help="Paths to validate, either directories or files. Default is the current directory.",
+        help="paths to validate, either directories or files. Default is the current directory.",
     )
     parser.add_argument("-s", "--schema", default="schema.yaml", help="filename of schema. Default is schema.yaml.")
     parser.add_argument(
@@ -153,15 +153,15 @@ def main():
         "--cpu-num",
         default=4,
         type=int_or_auto,
-        help="Number of child processes to spawn for validation. Default is 4. 'auto' to use CPU count",
+        help="number of child processes to spawn for validation. Default is 4. 'auto' to use CPU count",
     )
     parser.add_argument(
         "-x",
         "--no-strict",
         action="store_true",
-        help="Disable strict mode, unexpected elements in the data will be accepted.",
+        help="disable strict mode, unexpected elements in the data will be accepted.",
     )
-    parser.add_argument("-v", "--verbose", action="store_true", help="Show verbose information")
+    parser.add_argument("-v", "--verbose", action="store_true", help="show verbose information")
     parser.add_argument("-V", "--version", action="version", version=__version__)
     args = parser.parse_args()
     try:
