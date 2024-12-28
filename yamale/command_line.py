@@ -11,7 +11,8 @@ Just install Yamale:
 import argparse
 import glob
 import os
-from multiprocessing import Pool
+import re
+import multiprocessing
 from .yamale_error import YamaleError
 from .schema.validationresults import Result
 from .version import __version__
@@ -64,7 +65,9 @@ def _find_schema(data_path, schema_name):
     return _find_data_path_schema(data_path, schema_name)
 
 
-def _validate_single(yaml_path, schema_name, parser, strict):
+def _validate_single(yaml_path, schema_name, parser, strict, should_exclude):
+    if should_exclude(yaml_path):
+        return
     print("Validating %s..." % yaml_path)
     s = _find_schema(yaml_path, schema_name)
     if not s:
@@ -72,20 +75,22 @@ def _validate_single(yaml_path, schema_name, parser, strict):
     _validate(s, yaml_path, parser, strict, True)
 
 
-def _validate_dir(root, schema_name, cpus, parser, strict):
-    pool = Pool(processes=cpus)
+def _validate_dir(root, schema_name, cpus, parser, strict, should_exclude):
+    pool = multiprocessing.Pool(processes=cpus)
     res = []
     error_messages = []
     print("Finding yaml files...")
-    for root, dirs, files in os.walk(root):
+    for root, _, files in os.walk(root):
         for f in files:
             if (f.endswith(".yaml") or f.endswith(".yml")) and f != schema_name:
-                d = os.path.join(root, f)
-                s = _find_schema(d, schema_name)
-                if s:
-                    res.append(pool.apply_async(_validate, (s, d, parser, strict, False)))
+                yaml_path = os.path.join(root, f)
+                if should_exclude(yaml_path):
+                    continue
+                schema_path = _find_schema(yaml_path, schema_name)
+                if schema_path:
+                    res.append(pool.apply_async(_validate, (schema_path, yaml_path, parser, strict, False)))
                 else:
-                    print("No schema found for: %s" % d)
+                    print("No schema found for: %s" % yaml_path)
 
     print("Found %s yaml files." % len(res))
     print("Validating...")
@@ -98,16 +103,29 @@ def _validate_dir(root, schema_name, cpus, parser, strict):
         raise ValueError("\n----\n".join(set(error_messages)))
 
 
-def _router(paths, schema_name, cpus, parser, strict=True):
+def _router(paths, schema_name, cpus, parser, excludes, strict=True, verbose=False):
+    EXCLUDE_REGEXES = tuple(re.compile(e) for e in excludes) if excludes else tuple()
+
+    def should_exclude(yaml_path):
+        should_exclude = any(pattern.search(yaml_path) for pattern in EXCLUDE_REGEXES)
+        if should_exclude and verbose:
+            print("Skipping validation for %s due to exclude pattern" % yaml_path)
+        return should_exclude
+
     for path in paths:
         path = os.path.abspath(path)
         if os.path.isdir(path):
-            _validate_dir(path, schema_name, cpus, parser, strict)
+            _validate_dir(path, schema_name, cpus, parser, strict, should_exclude)
         else:
-            _validate_single(path, schema_name, parser, strict)
+            _validate_single(path, schema_name, parser, strict, should_exclude)
 
 
 def main():
+    def int_or_auto(num_cpu):
+        if num_cpu == "auto":
+            return multiprocessing.cpu_count()
+        return int(num_cpu)
+
     parser = argparse.ArgumentParser(description="Validate yaml files.")
     parser.add_argument(
         "paths",
@@ -116,9 +134,14 @@ def main():
         nargs="*",
         help="Paths to validate, either directories or files. Default is the current directory.",
     )
-    parser.add_argument("-V", "--version", action="version", version=__version__)
     parser.add_argument("-s", "--schema", default="schema.yaml", help="filename of schema. Default is schema.yaml.")
-    parser.add_argument("-n", "--cpu-num", default=4, type=int, help="number of CPUs to use. Default is 4.")
+    parser.add_argument(
+        "-e",
+        "--exclude",
+        metavar="PATTERN",
+        action="append",
+        help="Python regex used to exclude files from validation. Any substring match of a files absolute path will be excluded. Uses deafult Python3 regex. Option can be supplied multiple times.",
+    )
     parser.add_argument(
         "-p",
         "--parser",
@@ -126,11 +149,31 @@ def main():
         help='YAML library to load files. Choices are "ruamel" or "pyyaml" (default).',
     )
     parser.add_argument(
-        "--no-strict", action="store_true", help="Disable strict mode, unexpected elements in the data will be accepted."
+        "-n",
+        "--cpu-num",
+        default=4,
+        type=int_or_auto,
+        help="Number of child processes to spawn for validation. Default is 4. 'auto' to use CPU count",
     )
+    parser.add_argument(
+        "-x",
+        "--no-strict",
+        action="store_true",
+        help="Disable strict mode, unexpected elements in the data will be accepted.",
+    )
+    parser.add_argument("-v", "--verbose", action="store_true", help="Show verbose information")
+    parser.add_argument("-V", "--version", action="version", version=__version__)
     args = parser.parse_args()
     try:
-        _router(args.paths, args.schema, args.cpu_num, args.parser, not args.no_strict)
+        _router(
+            paths=args.paths,
+            schema_name=args.schema,
+            cpus=args.cpu_num,
+            parser=args.parser,
+            excludes=args.exclude,
+            strict=not args.no_strict,
+            verbose=args.verbose,
+        )
     except (SyntaxError, NameError, TypeError, ValueError) as e:
         print("Validation failed!\n%s" % str(e))
         exit(1)
