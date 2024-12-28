@@ -101,10 +101,10 @@ def _validate_dir(root, schema_name, cpus, parser, strict):
 def _router(paths, schema_name, cpus, parser, strict=True):
     for path in paths:
         path = os.path.abspath(path)
-        if os.path.isfile(path):
-            _validate_single(path, schema_name, parser, strict)
-        else:
+        if os.path.isdir(path):
             _validate_dir(path, schema_name, cpus, parser, strict)
+        else:
+            _validate_single(path, schema_name, parser, strict)
 
 
 def main():
