@@ -10,7 +10,7 @@ setup(
     version=version,
     url="https://github.com/23andMe/Yamale",
     author="Bo Lopker",
-    author_email="blopker@23andme.com",
+    author_email="dev-api@23andme.com",
     description="A schema and validator for YAML.",
     long_description=readme,
     long_description_content_type="text/markdown",
@@ -18,6 +18,7 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=["pyyaml"],
+    extras_requires={"ruamel": ["ruamel.yaml"]},
     python_requires=">=3.8",
     entry_points={
         "console_scripts": ["yamale=yamale.command_line:main"],
@@ -34,5 +35,6 @@ setup(
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
     ],
 )

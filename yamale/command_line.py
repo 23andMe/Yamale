@@ -110,7 +110,11 @@ def _router(paths, schema_name, cpus, parser, strict=True):
 def main():
     parser = argparse.ArgumentParser(description="Validate yaml files.")
     parser.add_argument(
-        "paths", metavar="PATHS", default=["./"], nargs="*", help="Paths to validate, either directories or files. Default is the current directory."
+        "paths",
+        metavar="PATH",
+        default=["./"],
+        nargs="*",
+        help="Paths to validate, either directories or files. Default is the current directory.",
     )
     parser.add_argument("-V", "--version", action="version", version=__version__)
     parser.add_argument("-s", "--schema", default="schema.yaml", help="filename of schema. Default is schema.yaml.")
