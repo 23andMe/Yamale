@@ -113,11 +113,13 @@ def _router(paths, schema_name, cpus, parser, excludes=None, strict=True, verbos
         return should_exclude
 
     for path in paths:
-        path = os.path.abspath(path)
-        if os.path.isdir(path):
-            _validate_dir(path, schema_name, cpus, parser, strict, should_exclude)
+        abs_path = os.path.abspath(path)
+        if not os.path.exists(abs_path):
+            raise ValueError(f"Path does not exist: {path}")
+        if os.path.isdir(abs_path):
+            _validate_dir(abs_path, schema_name, cpus, parser, strict, should_exclude)
         else:
-            _validate_file(path, schema_name, parser, strict, should_exclude)
+            _validate_file(abs_path, schema_name, parser, strict, should_exclude)
 
 
 def main():

@@ -139,6 +139,17 @@ def test_bad_dir():
         command_line._router("yamale/tests/command_line_fixtures/yamls", "schema.yaml", 4, "PyYAML")
 
 
+def test_bad_path_raises():
+    with pytest.raises(ValueError) as e:
+        command_line._router(
+            paths=["yamale/tests/command_line_fixtures/yamls/a path that does not exist.yaml"],
+            schema_name="schema.yaml",
+            cpus=1,
+            parser="PyYAML",
+        )
+    assert "Path does not exist" in str(e)
+
+
 def test_bad_strict():
     with pytest.raises(ValueError) as e:
         command_line._router(
