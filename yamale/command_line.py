@@ -68,7 +68,6 @@ def _find_schema(data_path, schema_name):
 def _validate_file(yaml_path, schema_name, parser, strict, should_exclude):
     if should_exclude(yaml_path):
         return
-    print("Validating %s..." % yaml_path)
     s = _find_schema(yaml_path, schema_name)
     if not s:
         raise ValueError("Invalid schema name for '{}' or schema not found.".format(schema_name))
@@ -79,7 +78,6 @@ def _validate_dir(root, schema_name, cpus, parser, strict, should_exclude):
     pool = multiprocessing.Pool(processes=cpus)
     res = []
     error_messages = []
-    print("Finding yaml files...")
     for root, _, files in os.walk(root):
         for f in files:
             if (f.endswith(".yaml") or f.endswith(".yml")) and f != schema_name:
@@ -90,10 +88,9 @@ def _validate_dir(root, schema_name, cpus, parser, strict, should_exclude):
                 if schema_path:
                     res.append(pool.apply_async(_validate, (schema_path, yaml_path, parser, strict, False)))
                 else:
-                    print("No schema found for: %s" % yaml_path)
+                    print(f"No schema found for: {yaml_path}")
 
-    print("Found %s yaml files." % len(res))
-    print("Validating...")
+    print(f"Found {len(res)} yaml files to validate...")
     for r in res:
         sub_results = r.get(timeout=300)
         error_messages.extend([str(sub_result) for sub_result in sub_results if not sub_result.isValid()])
@@ -114,8 +111,11 @@ def _router(paths, schema_name, cpus, parser, excludes=None, strict=True, verbos
 
     for path in paths:
         abs_path = os.path.abspath(path)
-        if not os.path.exists(abs_path):
+        if os.path.exists(abs_path):
+            print(f"Validating {path}...")
+        else:
             raise ValueError(f"Path does not exist: {path}")
+
         if os.path.isdir(abs_path):
             _validate_dir(abs_path, schema_name, cpus, parser, strict, should_exclude)
         else:
@@ -155,7 +155,7 @@ def main():
         "--cpu-num",
         default=4,
         type=int_or_auto,
-        help="number of child processes to spawn for validation. Default is 4. 'auto' to use CPU count",
+        help="number of child processes to spawn for validation. Default is 4. 'auto' to use CPU count.",
     )
     parser.add_argument(
         "-x",

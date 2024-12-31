@@ -18,7 +18,7 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=["pyyaml"],
-    extras_requires={"ruamel": ["ruamel.yaml"]},
+    extras_require={"ruamel": ["ruamel.yaml"]},
     python_requires=">=3.8",
     entry_points={
         "console_scripts": ["yamale=yamale.command_line:main"],
