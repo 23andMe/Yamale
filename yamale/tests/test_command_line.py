@@ -51,18 +51,28 @@ def test_good_yaml(parser):
 
 
 def test_multiple_paths_good_yaml():
-    command_line._router([
-        "yamale/tests/command_line_fixtures/yamls/good.yaml",
-        "yamale/tests/command_line_fixtures/yamls/good2.yaml",
-    ], "schema.yaml", 1, "PyYAML")
+    command_line._router(
+        [
+            "yamale/tests/command_line_fixtures/yamls/good.yaml",
+            "yamale/tests/command_line_fixtures/yamls/good2.yaml",
+        ],
+        "schema.yaml",
+        1,
+        "PyYAML",
+    )
 
 
 def test_multiple_paths_bad_yaml():
     with pytest.raises(ValueError) as e:
-        command_line._router([
-            "yamale/tests/command_line_fixtures/yamls/good.yaml",
-            "yamale/tests/command_line_fixtures/yamls/bad.yaml",
-        ], "schema.yaml", 1, "PyYAML")
+        command_line._router(
+            [
+                "yamale/tests/command_line_fixtures/yamls/good.yaml",
+                "yamale/tests/command_line_fixtures/yamls/bad.yaml",
+            ],
+            "schema.yaml",
+            1,
+            "PyYAML",
+        )
     assert "map.bad: '12.5' is not a int." in e.value.message
 
 
