@@ -26,7 +26,7 @@ Requirements
 Install
 -------
 ### pip
-```bash
+```
 $ pip install yamale
 # or to include ruamel.yaml as a dependency
 $ pip install yamale[ruamel]

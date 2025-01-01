@@ -104,10 +104,10 @@ def _router(paths, schema_name, cpus, parser, excludes=None, strict=True, verbos
     EXCLUDE_REGEXES = tuple(re.compile(e) for e in excludes) if excludes else tuple()
 
     def should_exclude(yaml_path):
-        should_exclude = any(pattern.search(yaml_path) for pattern in EXCLUDE_REGEXES)
-        if should_exclude and verbose:
+        has_match = any(pattern.search(yaml_path) for pattern in EXCLUDE_REGEXES)
+        if has_match and verbose:
             print("Skipping validation for %s due to exclude pattern" % yaml_path)
-        return should_exclude
+        return has_match
 
     for path in paths:
         abs_path = os.path.abspath(path)
@@ -134,7 +134,7 @@ def main():
         metavar="PATH",
         default=["./"],
         nargs="*",
-        help="paths to validate, either directories or files. Default is the current directory.",
+        help="Paths to validate, either directories or files. Default is the current directory.",
     )
     parser.add_argument("-s", "--schema", default="schema.yaml", help="filename of schema. Default is schema.yaml.")
     parser.add_argument(
@@ -142,7 +142,7 @@ def main():
         "--exclude",
         metavar="PATTERN",
         action="append",
-        help="Python regex used to exclude files from validation. Any substring match of a files absolute path will be excluded. Uses deafult Python3 regex. Option can be supplied multiple times.",
+        help="Python regex used to exclude files from validation. Any substring match of a file's absolute path will be excluded. Uses default Python3 regex. Option can be supplied multiple times.",
     )
     parser.add_argument(
         "-p",
@@ -155,13 +155,13 @@ def main():
         "--cpu-num",
         default=4,
         type=int_or_auto,
-        help="number of child processes to spawn for validation. Default is 4. 'auto' to use CPU count.",
+        help="Number of child processes to spawn for validation. Default is 4. 'auto' to use CPU count.",
     )
     parser.add_argument(
         "-x",
         "--no-strict",
         action="store_true",
-        help="disable strict mode, unexpected elements in the data will be accepted.",
+        help="Disable strict mode, unexpected elements in the data will be accepted.",
     )
     parser.add_argument("-v", "--verbose", action="store_true", help="show verbose information")
     parser.add_argument("-V", "--version", action="version", version=__version__)
