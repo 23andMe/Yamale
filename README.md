@@ -1,5 +1,10 @@
 Yamale (ya·ma·lē)
 =================
+[![Build Status](https://github.com/23andMe/Yamale/actions/workflows/run-tests.yml/badge.svg)](https://github.com/23andMe/Yamale/actions/workflows/run-tests.yml)
+[![PyPI](https://img.shields.io/pypi/v/yamale.svg)](https://pypi.python.org/pypi/yamale)
+[![downloads](https://static.pepy.tech/badge/yamale/month)](https://pepy.tech/project/yamale)
+[![versions](https://img.shields.io/pypi/pyversions/yamale.svg)](https://github.com/yamale/yamale)
+[![license](https://img.shields.io/github/license/23andMe/yamale.svg)](https://github.com/23andMe/Yamale/blob/master/LICENSE)
 
 | :warning: Ensure that your schema definitions come from internal or trusted sources. Yamale does not protect against intentionally malicious schemas. |
 |:------------|
@@ -11,8 +16,6 @@ A schema and validator for YAML.
 What's YAML? See the current spec [here](http://www.yaml.org/spec/1.2/spec.html) and an introduction
 to the syntax [here](https://github.com/Animosity/CraftIRC/wiki/Complete-idiot's-introduction-to-yaml).
 
-[![Build Status](https://github.com/23andMe/Yamale/actions/workflows/run-tests.yml/badge.svg)](https://github.com/23andMe/Yamale/actions/workflows/run-tests.yml)
-[![PyPI](https://img.shields.io/pypi/v/yamale.svg)](https://pypi.python.org/pypi/yamale)
 
 Requirements
 ------------
@@ -23,8 +26,10 @@ Requirements
 Install
 -------
 ### pip
-```bash
+```
 $ pip install yamale
+# or to include ruamel.yaml as a dependency
+$ pip install yamale[ruamel]
 ```
 
 NOTE: Some platforms, e.g., Mac OS, may ship with only Python 2 and may not have pip installed.
@@ -49,25 +54,28 @@ looking up the directory tree until it finds one. If Yamale can not find a schem
 
 Usage:
 
-```bash
-usage: yamale [-h] [-s SCHEMA] [-n CPU_NUM] [-p PARSER] [--no-strict] [PATH]
+```
+usage: yamale [-h] [-s SCHEMA] [-e PATTERN] [-p PARSER] [-n CPU_NUM] [-x] [-v] [-V] [PATH ...]
 
 Validate yaml files.
 
 positional arguments:
-  PATH                  folder to validate. Default is current directory.
+  PATH                  Paths to validate, either directories or files. Default is the current directory.
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
   -s SCHEMA, --schema SCHEMA
                         filename of schema. Default is schema.yaml.
-  -n CPU_NUM, --cpu-num CPU_NUM
-                        number of CPUs to use. Default is 4.
+  -e PATTERN, --exclude PATTERN
+                        Python regex used to exclude files from validation. Any substring match of a file's absolute path will be excluded. Uses
+                        default Python3 regex. Option can be supplied multiple times.
   -p PARSER, --parser PARSER
-                        YAML library to load files. Choices are "ruamel" or
-                        "pyyaml" (default).
-  --no-strict           Disable strict mode, unexpected elements in the data
-                        will be accepted.
+                        YAML library to load files. Choices are "ruamel" or "pyyaml" (default).
+  -n CPU_NUM, --cpu-num CPU_NUM
+                        Number of child processes to spawn for validation. Default is 4. 'auto' to use CPU count.
+  -x, --no-strict       Disable strict mode, unexpected elements in the data will be accepted.
+  -v, --verbose         show verbose information
+  -V, --version         show program's version number and exit
 ```
 
 ### API

@@ -76,6 +76,19 @@ def test_multiple_paths_bad_yaml():
     assert "map.bad: '12.5' is not a int." in e.value.message
 
 
+def test_excludes():
+    command_line._router(
+        paths=[
+            "yamale/tests/command_line_fixtures/yamls/good.yaml",
+            "yamale/tests/command_line_fixtures/yamls/bad.yaml",
+        ],
+        schema_name="schema.yaml",
+        excludes="bad.yaml",
+        cpus=1,
+        parser="PyYAML",
+    )
+
+
 @pytest.mark.parametrize("parser", parsers)
 def test_good_relative_yaml(parser):
     command_line._router(
@@ -124,6 +137,17 @@ def test_external_schema():
 def test_bad_dir():
     with pytest.raises(ValueError):
         command_line._router("yamale/tests/command_line_fixtures/yamls", "schema.yaml", 4, "PyYAML")
+
+
+def test_bad_path_raises():
+    with pytest.raises(ValueError) as e:
+        command_line._router(
+            paths=["yamale/tests/command_line_fixtures/yamls/a path that does not exist.yaml"],
+            schema_name="schema.yaml",
+            cpus=1,
+            parser="PyYAML",
+        )
+    assert "Path does not exist" in str(e)
 
 
 def test_bad_strict():
