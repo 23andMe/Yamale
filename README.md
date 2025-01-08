@@ -11,7 +11,7 @@ Yamale (ya·ma·lē)
 
 <img src="https://github.com/23andMe/Yamale/blob/master/yamale.png?raw=true" alt="Yamale" width="400"/>
 
-A schema and validator for YAML.
+TEST  A schema and validator for YAML.
 
 What's YAML? See the current spec [here](http://www.yaml.org/spec/1.2/spec.html) and an introduction
 to the syntax [here](https://github.com/Animosity/CraftIRC/wiki/Complete-idiot's-introduction-to-yaml).
