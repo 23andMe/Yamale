@@ -74,7 +74,8 @@ class Schema(object):
             # SHUT DOWN EVERYTHING
             errors.append("%s: Required field missing" % path)
             return errors
-
+        # Pass the field name to the validator
+        validator.field_name = key
         return self._validate(validator, data_item, path, strict)
 
     def _validate(self, validator, data, path, strict):

@@ -13,6 +13,8 @@ class Constraint(object):
     is_active = False
 
     def __init__(self, value_type, kwargs):
+        self.field_name = None # Added for custom field-aware messages
+        self.value_type = value_type  # Added for custom type-aware messages
         self._parseKwargs(kwargs)
 
     def _parseKwargs(self, kwargs):
