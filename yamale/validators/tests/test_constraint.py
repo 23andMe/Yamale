@@ -1,4 +1,5 @@
 import datetime
+
 from yamale import validators as val
 
 
@@ -158,20 +159,40 @@ def test_ip6():
     assert v.is_valid("2001:db8::")
     assert v.is_valid("2001:db8::/64")
 
+
 def test_field_name_propagation():
     """Test that field names are correctly propagated to constraints."""
 
     class TestConstraint(val.constraints.Constraint):
-        keywords = {'test': bool}
+        keywords = {"test": bool}
+
         def is_valid(self, value):
             return f"Field '{self.field_name}' was validated"
 
     class TestValidator(val.String):
-        tag = 'test_validator'
+        tag = "test_validator"
         constraints = [TestConstraint]
 
     v = TestValidator(test=True)
-    v.field_name = 'test_field'
-    result = v.validate('any_value')
+    v.field_name = "test_field"
+    result = v.validate("any_value")
     assert len(result) == 1
     assert result[0] == "Field 'test_field' was validated"
+
+
+def test_value_type_constraint_propagation():
+    """Test that constraints properly validate using value_type."""
+    v = val.Number(min=10.5)
+    assert v._constraints_inst[0].value_type == float
+
+    v = val.String(min=5)
+    assert v._constraints_inst[0].value_type == str
+
+    v = val.Integer(min=5)
+    assert v._constraints_inst[0].value_type == int
+
+    v = val.Day(min=datetime.date(2020, 1, 1))
+    assert v._constraints_inst[0].value_type == datetime.date
+
+    v = val.Timestamp(min=datetime.datetime(2020, 1, 1))
+    assert v._constraints_inst[0].value_type == datetime.datetime
