@@ -1,7 +1,7 @@
-from .datapath import DataPath
-from .validationresults import ValidationResult
 from .. import syntax, util
 from .. import validators as val
+from .datapath import DataPath
+from .validationresults import ValidationResult
 
 
 class FatalValidationError(Exception):
@@ -75,7 +75,8 @@ class Schema(object):
             errors.append("%s: Required field missing" % path)
             return errors
         # Pass the field name to the validator
-        validator.field_name = key
+        if isinstance(validator, val.Validator):
+            validator.field_name = key
         return self._validate(validator, data_item, path, strict)
 
     def _validate(self, validator, data, path, strict):
