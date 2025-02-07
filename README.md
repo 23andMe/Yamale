@@ -447,7 +447,7 @@ Examples:
 - `include('person')`
 
 ### Field Names in Constraints
-Constraints can now access the field name they're validating, enabling more descriptive error messages. This is particularly useful for custom constraints that need to provide field-specific messages.
+Constraints can access the field name they're validating, enabling descriptive error messages. This is particularly useful for custom constraints that need to provide field-specific messages.
 
 Example of a custom constraint using field names:
 
