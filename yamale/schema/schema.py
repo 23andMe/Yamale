@@ -2,7 +2,7 @@ from .datapath import DataPath
 from .validationresults import ValidationResult
 from .. import syntax, util
 from .. import validators as val
-
+from .. import yamale
 
 class FatalValidationError(Exception):
     def __init__(self, error):
@@ -24,6 +24,7 @@ class Schema(object):
         # if this schema is included it shares the includes with the top level
         # schema
         self.includes = {} if includes is None else includes
+        yamale.schema = self
 
     def add_include(self, type_dict):
         for include_name, custom_type in type_dict.items():
@@ -156,7 +157,12 @@ class Schema(object):
         if not include_schema:
             raise FatalValidationError("Include '%s' has not been defined." % validator.include_name)
         strict = strict if validator.strict is None else validator.strict
-        return include_schema._validate(include_schema._schema, data, path, strict)
+        errors = include_schema._validate(include_schema._schema, data, path, strict)
+        if errors:
+          errors += [ "%s: is not %s" % ( str(path) if len(path._path)>0 else '<document>', validator.include_name) ]
+        return errors
+
+
 
     def _validate_any(self, validator, data, path, strict):
         if not validator.validators:

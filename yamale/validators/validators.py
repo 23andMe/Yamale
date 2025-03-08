@@ -4,6 +4,7 @@ import ipaddress
 from .base import Validator
 from . import constraints as con
 from .. import util
+from .. import yamale
 
 # ABCs for containers were moved to their own module
 try:
@@ -138,7 +139,10 @@ class Include(Validator):
         super(Include, self).__init__(*args, **kwargs)
 
     def _is_valid(self, value):
-        return True
+        errors = []
+        if isinstance(value,str):
+            errors += yamale.schema.includes[self.include_name].validate( value, self.include_name, self.strict ).errors
+        return not errors
 
     def get_name(self):
         return self.include_name
