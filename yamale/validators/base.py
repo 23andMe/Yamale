@@ -18,8 +18,17 @@ class Validator(object):
         self._constraints_inst = self._create_constraints(self.constraints, self.value_type, kwargs)
 
     def _create_constraints(self, constraint_classes, value_type, kwargs):
+        from . import constraints as con
+        import itertools
+        from .. import util
+
+        universal_constraints = []
+        for constraint in util.get_subclasses(con.Constraint):
+            if constraint.universal:
+                universal_constraints.append( constraint )
+
         constraints = []
-        for constraint in constraint_classes:
+        for constraint in itertools.chain( constraint_classes, universal_constraints ):
             constraints.append(constraint(value_type, kwargs))
         return constraints
 
@@ -43,7 +52,7 @@ class Validator(object):
     def get_name(self):
         return self.tag
 
-    def validate(self, value):
+    def validate(self, value, path=None):
         """
         Check if ``value`` is valid.
 
@@ -51,7 +60,22 @@ class Validator(object):
         """
         errors = []
 
-        # Make sure the type validates first.
+        # Make sure pre_check constraints validates first.
+        for constraint in self._constraints_inst:
+            if constraint.pre_check:
+                if hasattr( constraint, '_is_valid_path' ):
+                  error = constraint.is_valid_path(path)
+
+                if hasattr( constraint, '_is_valid' ):
+                  error = constraint.is_valid(value)
+
+                if error:
+                    if isinstance(error, list):
+                        errors.extend(error)
+                    else:
+                        errors.append(error)
+                    return errors
+
         valid = self._is_valid(value)
         if not valid:
             errors.append(self.fail(value))
@@ -59,7 +83,12 @@ class Validator(object):
 
         # Then validate all the constraints second.
         for constraint in self._constraints_inst:
-            error = constraint.is_valid(value)
+            if hasattr( constraint, '_is_valid_path' ):
+              error = constraint.is_valid_path(path)
+
+            if hasattr( constraint, '_is_valid' ):
+              error = constraint.is_valid(value)
+
             if error:
                 if isinstance(error, list):
                     errors.extend(error)

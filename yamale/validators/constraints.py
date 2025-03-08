@@ -11,6 +11,8 @@ from .. import util
 class Constraint(object):
     keywords = {}  # Keywords and types accepted by this constraint
     is_active = False
+    pre_check = False
+    universal = False
 
     def __init__(self, value_type, kwargs):
         self._parseKwargs(kwargs)
@@ -29,7 +31,7 @@ class Constraint(object):
         # Activate this constraint
         self.is_active = True
 
-        if isinstance(value, kwtype):
+        if kwtype != None and isinstance(value, kwtype):
             # value already correct type, return
             return value
 
@@ -55,7 +57,19 @@ class Constraint(object):
 
         return None
 
+    def is_valid_path(self, value):
+        if not self.is_active:
+            return None
+
+        if not self._is_valid_path(value):
+            return self._fail_path(value)
+
+        return None
+
     def _fail(self, value):
+        return "'%s' violates %s." % (value, self.__class__.__name__)
+
+    def _fail_path(self, value):
         return "'%s' violates %s." % (value, self.__class__.__name__)
 
 
@@ -288,3 +302,32 @@ class IpPrefix(Constraint):
 
     def _fail(self, value):
         return "IP prefix of %s is not '%s'" % (value, self.prefix.value)
+
+
+class Validator_or_String:
+    def __init__(self, value):
+        self.value = value
+
+    def validate( self, value ):
+        if   isinstance( self.value, Validator ):
+            result = ( [] == self.value.validate( value ) )
+        elif type(self.value) is type(value):
+            result =         self.value == value
+        elif isinstance( self.value, str ):
+            result =         self.value == str(value)
+        else:
+            result = False
+        return result
+
+
+class NodeName(Constraint):
+    pre_check = True
+    universal = True
+    keywords  = {"name": Validator_or_String}
+
+    def _is_valid_path(self, path):
+        result = self.name.validate( path._path[-1] if len(path._path) > 0 else '<document>' )
+        return result
+
+    def _fail_path(self, path):
+        return [ "Node name '%s' is not '%s'" % ( (path._path[-1] if len(path._path) > 0 else '<document>'), str(self.name.value) ) ]
