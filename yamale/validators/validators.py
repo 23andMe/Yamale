@@ -226,17 +226,24 @@ class Ip(Validator):
     """IP address validator"""
 
     tag = "ip"
-    constraints = [con.IpVersion]
+    constraints = [con.IpVersion, con.IpPrefix]
+
+    def __init__(self, *args, **kwargs):
+        self.strict = bool(kwargs.get("strict", False))
+        super(Ip, self).__init__(*args, **kwargs)
 
     def _is_valid(self, value):
         return self.ip_address(value)
 
     def ip_address(self, value):
         try:
-            ipaddress.ip_interface(util.to_unicode(value))
+            ip = ipaddress.ip_network(util.to_unicode(value), self.strict)
         except ValueError:
             return False
         return True
+
+    def fail(self, value):
+        return "'%s' is not ip(%s)" % (value, str(self.kwargs) )
 
 
 class Mac(Regex):

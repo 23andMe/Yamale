@@ -263,3 +263,28 @@ class IpVersion(Constraint):
 
     def _fail(self, value):
         return self.fail % (value, self.version)
+
+
+class IpPrefixKeywords:
+    words = {'length', 'mask', 'any', 'none'}
+
+    def __init__(self, value):
+        self.value = value.lower()
+
+    def __instancecheck__(self, value):
+        return value.lower() in self.words
+
+
+class IpPrefix(Constraint):
+    keywords = {"prefix": IpPrefixKeywords}
+
+    def _is_valid(self, value):
+        return (    self.prefix       == None
+                 or self.prefix.value == 'length' and bool(re.match( r'^[^/]+/[0-9]+$',            value ))
+                 or self.prefix.value == 'mask'   and bool(re.match( r'^[^/]+/([0-9]+\.)+[0-9]+$', value ))
+                 or self.prefix.value == 'any'    and bool(re.match( r'^[^/]+/[0-9.]+$',           value ))
+                 or self.prefix.value == 'none'   and bool(re.match( r'^[^/]+$',                   value ))
+               )
+
+    def _fail(self, value):
+        return "IP prefix of %s is not '%s'" % (value, self.prefix.value)
