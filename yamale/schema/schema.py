@@ -161,9 +161,7 @@ class Schema(object):
         if errors:
           errors += [ "%s: is not %s" % ( str(path) if len(path._path)>0 else '<document>', validator.include_name) ]
         return errors
-
-
-
+      
     def _validate_any(self, validator, data, path, strict):
         if not validator.validators:
             return []
