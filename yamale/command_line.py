@@ -178,6 +178,7 @@ def main():
         )
     except (SyntaxError, NameError, TypeError, ValueError) as e:
         print("Validation failed!\n%s" % str(e))
+        # print( traceback.format_exc() )
         exit(1)
     try:
         print("Validation success! 👍")
