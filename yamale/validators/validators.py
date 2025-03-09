@@ -154,8 +154,31 @@ class Any(Validator):
     tag = "any"
 
     def __init__(self, *args, **kwargs):
-        self.validators = [val for val in args if isinstance(val, Validator)]
+        self.literals   = []
+        self.validators = []
+        for val in args:
+            if isinstance(val, Validator):
+                self.validators.append( val )
+            else:
+                self.literals.append( val )
+
+        if self.literals:
+            self.validators.append( Enum( *self.literals ) )
+
         super(Any, self).__init__(*args, **kwargs)
+
+    def _is_valid(self, value):
+        return True
+
+
+class NotAny(Validator):
+    """No one of several types validator"""
+
+    tag = "notany"
+ 
+    def __init__(self, *args, **kwargs):
+        self.validators = [ Any( *args, **kwargs ) ]
+        super(NotAny, self).__init__(*args, **kwargs)
 
     def _is_valid(self, value):
         return True
