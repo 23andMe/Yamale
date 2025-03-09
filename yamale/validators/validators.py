@@ -296,6 +296,31 @@ class SemVer(Regex):
             ),
         ]
 
+class FileLine(Validator):
+    """checks if the value is in a file line"""
+
+    tag = "file_line"
+
+    constraints = [
+        con.FileLine
+    ]
+
+    def __init__(self, *args, **kwargs):
+        self.filename = args
+        self.error    = ''
+        super(FileLine, self).__init__(*args, **dict( kwargs, filename=args ))
+
+    def _is_valid(self, value):
+        from pathlib import Path
+        for fn in self.filename:
+          f = Path(fn)
+          if not f.is_file():
+            self.error = f"file '{fn}' does not exists"
+        return not self.error
+
+    def fail(self, value):
+        return self.error
+
 
 DefaultValidators = {}
 

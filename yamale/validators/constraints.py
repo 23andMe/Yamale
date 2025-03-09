@@ -31,7 +31,7 @@ class Constraint(object):
         # Activate this constraint
         self.is_active = True
 
-        if kwtype != None and isinstance(value, kwtype):
+        if isinstance(value, kwtype):
             # value already correct type, return
             return value
 
@@ -46,7 +46,7 @@ class Constraint(object):
 
             return kwtype(value)
         except (TypeError, ValueError):
-            raise SyntaxError("%s is not a %s" % (key, kwtype))
+            raise SyntaxError("%s is not a %s" % (key, str(kwtype)))
 
     def is_valid(self, value):
         if not self.is_active:
@@ -279,25 +279,30 @@ class IpVersion(Constraint):
         return self.fail % (value, self.version)
 
 
-class IpPrefixKeywords:
-    words = {'length', 'mask', 'any', 'none'}
+class KeywordList_meta(type):
+    def __str__(self):
+        return f"one of {self.keywords}"
 
-    def __init__(self, value):
-        self.value = value.lower()
+def KeywordList_class( *keyword_list ):
+    class KeywordList(metaclass=KeywordList_meta):
+        keywords = keyword_list
 
-    def __instancecheck__(self, value):
-        return value.lower() in self.words
+        def __init__(self, value):
+            self.keyword = value.lower()
+            if self.keyword not in self.keywords:
+                raise ValueError
 
+    return KeywordList
 
 class IpPrefix(Constraint):
-    keywords = {"prefix": IpPrefixKeywords}
+    keywords = {"prefix": KeywordList_class('length', 'mask', 'any', 'none') }
 
     def _is_valid(self, value):
-        return (    self.prefix       == None
-                 or self.prefix.value == 'length' and bool(re.match( r'^[^/]+/[0-9]+$',            value ))
-                 or self.prefix.value == 'mask'   and bool(re.match( r'^[^/]+/([0-9]+\.)+[0-9]+$', value ))
-                 or self.prefix.value == 'any'    and bool(re.match( r'^[^/]+/[0-9.]+$',           value ))
-                 or self.prefix.value == 'none'   and bool(re.match( r'^[^/]+$',                   value ))
+        return (    self.prefix         == None
+                 or self.prefix.keyword == 'length' and bool(re.match( r'^[^/]+/[0-9]+$',            value ))
+                 or self.prefix.keyword == 'mask'   and bool(re.match( r'^[^/]+/([0-9]+\.)+[0-9]+$', value ))
+                 or self.prefix.keyword == 'any'    and bool(re.match( r'^[^/]+/[0-9.]+$',           value ))
+                 or self.prefix.keyword == 'none'   and bool(re.match( r'^[^/]+$',                   value ))
                )
 
     def _fail(self, value):
@@ -331,3 +336,51 @@ class NodeName(Constraint):
 
     def _fail_path(self, path):
         return [ "Node name '%s' is not '%s'" % ( (path._path[-1] if len(path._path) > 0 else '<document>'), str(self.name.value) ) ]
+
+
+class FileLine(Constraint):
+    keywords = {   "method": KeywordList_class('equals', 'contains', 'start_with', 'ends_with')
+                 , "filename": list
+                 , "ignore_case": bool
+                 , "matches" : str
+                 , "replace" : str
+               }
+
+    def _is_valid(self, value):
+        method      = self.method.keyword if self.method      else 'contains'
+        ignore_case = self.ignore_case    if self.ignore_case else False
+        matches     = self.matches        if self.matches     else '^.*$'
+        replace     = self.replace        if self.replace     else r'\g<0>'
+
+        self.error = ''
+
+        target, count = re.subn( matches, replace, value )
+        if count < 1:
+            self.error = f"{value} does not match to '{matches}'"
+        else:
+            target = value.lower() if ignore_case else target
+            match  = False
+            for fn in self.filename:
+                with open( fn, 'r') as f:
+                    for line in f:
+                        text = re.sub( r"\r\n|\r|\n", "", line )
+                        if ignore_case:
+                            text = text.lower()
+
+                        match = (    method == "equals"      and text == target
+                                  or method == "contains"    and target in text
+                                  or method == "starts_with" and text.startswith(target)
+                                  or method == "ends_with"   and text.endswith(target)
+                                )
+
+                        if match:
+                            break
+                    else:
+                      continue
+                    break
+            if not match:
+                self.error = f"{value} not found in {', '.join(self.filename)} by {method=} as '{target}'"
+        return not self.error
+
+    def _fail(self, value):
+        return self.error
