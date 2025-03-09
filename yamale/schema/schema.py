@@ -107,6 +107,11 @@ class Schema(object):
         elif isinstance(validator, val.Any):
             errors += self._validate_any(validator, data, path, strict)
 
+        elif isinstance(validator, val.NotAny):
+            sub_errors = self._validate_any(validator, data, path, strict)
+            if not sub_errors:
+                errors += [ "%s: %s is matched to %s" % ( str(path) if path and len(path._path)>0 else '<document>', data, str(validator.validators) ) ]
+
         elif isinstance(validator, val.Subset):
             errors += self._validate_subset(validator, data, path, strict)
 
@@ -180,6 +185,7 @@ class Schema(object):
                 errors += err
 
         return errors
+
 
     def _validate_subset(self, validator, data, path, strict):
         def _internal_validate(internal_data):
