@@ -105,12 +105,24 @@ class Schema(object):
             errors += self._validate_map_list(validator, data, path, strict)
 
         elif isinstance(validator, val.Any):
-            errors += self._validate_any(validator, data, path, strict)
+            sub_errors = self._validate_any(validator, data, path, strict)
+            if len(sub_errors) == len(validator.validators):
+                # All validators failed, add to errors
+                for err in sub_errors:
+                    errors += err
 
         elif isinstance(validator, val.NotAny):
             sub_errors = self._validate_any(validator, data, path, strict)
-            if not sub_errors:
+            if len(sub_errors) != len(validator.validators):
+                # One or more validators are matched, add to errors
                 errors += [ "%s: %s is matched to %s" % ( str(path) if path and len(path._path)>0 else '<document>', data, str(validator.validators) ) ]
+
+        elif isinstance(validator, val.All):
+            sub_errors = self._validate_any(validator, data, path, strict)
+            if len(sub_errors) > 0:
+                # One or more validators failed, add to errors
+                for err in sub_errors:
+                    errors += err
 
         elif isinstance(validator, val.Subset):
             errors += self._validate_subset(validator, data, path, strict)
@@ -171,20 +183,13 @@ class Schema(object):
         if not validator.validators:
             return []
 
-        errors = []
-
         sub_errors = []
         for v in validator.validators:
             err = self._validate(v, data, path, strict)
             if err:
                 sub_errors.append(err)
 
-        if len(sub_errors) == len(validator.validators):
-            # All validators failed, add to errors
-            for err in sub_errors:
-                errors += err
-
-        return errors
+        return sub_errors
 
 
     def _validate_subset(self, validator, data, path, strict):

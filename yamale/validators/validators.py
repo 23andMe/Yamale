@@ -135,18 +135,20 @@ class Include(Validator):
 
     def __init__(self, *args, **kwargs):
         self.include_name = args[0]
-        self.strict = kwargs.pop("strict", None)
+        self.strict       = kwargs.pop("strict", None)
         super(Include, self).__init__(*args, **kwargs)
 
     def _is_valid(self, value):
-        errors = []
+        self.errors = []
         if isinstance(value,str):
-            errors += yamale.schema.includes[self.include_name].validate( value, self.include_name, self.strict ).errors
-        return not errors
+            self.errors += yamale.schema.includes[self.include_name].validate( value, self.include_name, self.strict ).errors
+        return not self.errors
 
     def get_name(self):
         return self.include_name
 
+    def fail(self, value):
+        return "'%s' is not %s because %s" % (value, self.include_name, '; '.join( self.errors ) )
 
 class Any(Validator):
     """Any of several types validator"""
@@ -177,8 +179,21 @@ class NotAny(Validator):
     tag = "notany"
  
     def __init__(self, *args, **kwargs):
-        self.validators = [ Any( *args, **kwargs ) ]
+        self.validators = Any( *args, **kwargs ).validators
         super(NotAny, self).__init__(*args, **kwargs)
+
+    def _is_valid(self, value):
+        return True
+
+
+class All(Validator):
+    """All of several types validator"""
+
+    tag = "all"
+ 
+    def __init__(self, *args, **kwargs):
+        self.validators = Any( *args, **kwargs ).validators
+        super(All, self).__init__(*args, **kwargs)
 
     def _is_valid(self, value):
         return True

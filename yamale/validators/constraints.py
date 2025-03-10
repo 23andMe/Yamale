@@ -142,7 +142,7 @@ class Key(Constraint):
 
 class StringEquals(Constraint):
     keywords = {"equals": str, "ignore_case": bool}
-    fail = "%s does not equal %s"
+    fail = "'%s' does not equal '%s'"
 
     def _is_valid(self, value):
         # Check if the function has only been called due to ignore_case
@@ -163,7 +163,7 @@ class StringEquals(Constraint):
 
 class StringStartsWith(Constraint):
     keywords = {"starts_with": str, "ignore_case": bool}
-    fail = "%s does not start with %s"
+    fail = "'%s' does not start with '%s'"
 
     def _is_valid(self, value):
         # Check if the function has only been called due to ignore_case
@@ -188,7 +188,7 @@ class StringStartsWith(Constraint):
 
 class StringEndsWith(Constraint):
     keywords = {"ends_with": str, "ignore_case": bool}
-    fail = "%s does not end with %s"
+    fail = "'%s' does not end with '%s'"
 
     def _is_valid(self, value):
         # Check if the function has only been called due to ignore_case
@@ -213,7 +213,6 @@ class StringEndsWith(Constraint):
 
 class StringMatches(Constraint):
     keywords = {"matches": str}
-    fail = "%s is not a regex match."
 
     _regex_flags = {"ignore_case": re.I, "multiline": re.M, "dotall": re.S}
 
@@ -232,7 +231,11 @@ class StringMatches(Constraint):
             return True
 
     def _fail(self, value):
-        return self.fail % (value)
+        flags = []
+        for flag in self._regex_flags.keys():
+            if self._flags & self._regex_flags[flag]:
+              flags += flag
+        return "'%s' is not a regex match '%s' %s" % (value, self.matches, ', '.join(flags) )
 
 
 class CharacterExclude(Constraint):
@@ -306,7 +309,7 @@ class IpPrefix(Constraint):
                )
 
     def _fail(self, value):
-        return "IP prefix of %s is not '%s'" % (value, self.prefix.value)
+        return "IP prefix of %s is not '%s'" % (value, self.prefix.keyword)
 
 
 class Validator_or_String:
