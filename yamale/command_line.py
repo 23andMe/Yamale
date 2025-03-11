@@ -23,11 +23,11 @@ schemas = {}
 
 
 def _validate(schema_path, data_path, parser, strict, _raise_error):
-    schema = schemas.get(schema_path)
+    schema = schemas.get(schema_path[0])
     try:
         if not schema:
             schema = yamale.make_schema(schema_path, parser)
-            schemas[schema_path] = schema
+            schemas[schema_path[0]] = schema
     except (SyntaxError, ValueError) as e:
         results = [Result([str(e)])]
         if not _raise_error:
@@ -68,9 +68,14 @@ def _find_schema(data_path, schema_name):
 def _validate_file(yaml_path, schema_name, parser, strict, should_exclude):
     if should_exclude(yaml_path):
         return
-    s = _find_schema(yaml_path, schema_name)
-    if not s:
-        raise ValueError("Invalid schema name for '{}' or schema not found.".format(schema_name))
+    s = []
+    for sn in schema_name:
+        found = _find_schema(yaml_path, sn)
+        if not found:
+            raise ValueError("Invalid schema name for '{}' or schema not found.".format(sn))
+        else:
+            s.append( found )
+
     _validate(s, yaml_path, parser, strict, True)
 
 
@@ -136,7 +141,12 @@ def main():
         nargs="*",
         help="Paths to validate, either directories or files. Default is the current directory.",
     )
-    parser.add_argument("-s", "--schema", default="schema.yaml", help="filename of schema. Default is schema.yaml.")
+    parser.add_argument(
+        "-s", "--schema",
+        action="append",
+        default=["schema.yaml"],
+        help="filename of schema. Default is schema.yaml."
+    )
     parser.add_argument(
         "-e",
         "--exclude",
@@ -166,6 +176,10 @@ def main():
     parser.add_argument("-v", "--verbose", action="store_true", help="show verbose information")
     parser.add_argument("-V", "--version", action="version", version=__version__)
     args = parser.parse_args()
+
+    if len(args.schema) > 1:
+      del args.schema[0]
+
     try:
         _router(
             paths=args.paths,

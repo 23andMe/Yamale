@@ -342,11 +342,15 @@ class NodeName(Constraint):
 
 
 class FileLine(Constraint):
-    keywords = {   "method": KeywordList_class('equals', 'contains', 'start_with', 'ends_with')
-                 , "filename": list
+    keywords = {   "method"     : KeywordList_class('equals', 'contains', 'start_with', 'ends_with')
+                 , "filename"   : list
+                 , "encoding"   : str
                  , "ignore_case": bool
-                 , "matches" : str
-                 , "replace" : str
+                 , "matches"    : str
+                 , "replace"    : str
+
+                 , "found"      : str
+                 , "not_found"  : str
                }
 
     def _is_valid(self, value):
@@ -354,6 +358,28 @@ class FileLine(Constraint):
         ignore_case = self.ignore_case    if self.ignore_case else False
         matches     = self.matches        if self.matches     else '^.*$'
         replace     = self.replace        if self.replace     else r'\g<0>'
+
+        def exists_encoding( encoding ):
+            try:
+                import codecs
+                codecs.lookup( encoding )
+            except LookupError:
+                return False
+            return True
+
+        def detect_encoding(file_path):
+            with open(file_path, 'rb') as f:
+                raw = f.read(4)
+                if raw.startswith(b'\xef\xbb\xbf'):
+                    return 'utf-8-sig'
+                elif raw.startswith(b'\xff\xfe') or raw.startswith(b'\xfe\xff'):  #  UTF-16LE or UTF-16BE
+                    return 'utf-16'
+                else:
+                  #  try:
+                  #      raw.decode('ascii')
+                  #      return 'ascii'
+                  #  except UnicodeDecodeError:
+                        return 'utf-8'
 
         self.error = ''
 
@@ -364,16 +390,23 @@ class FileLine(Constraint):
             target = value.lower() if ignore_case else target
             match  = False
             for fn in self.filename:
-                with open( fn, 'r') as f:
+                if not self.encoding or not exists_encoding(self.encoding):
+                    encoding = detect_encoding( fn )
+                else:
+                    encoding = self.encoding
+
+                raw = target.encode(encoding=encoding).decode(encoding=encoding, errors='surrogateescape')
+
+                with open( fn, 'r', encoding=encoding, errors='surrogateescape' ) as f:
                     for line in f:
-                        text = re.sub( r"\r\n|\r|\n", "", line )
+                        text = line.replace("\n", "")
                         if ignore_case:
                             text = text.lower()
 
-                        match = (    method == "equals"      and text == target
-                                  or method == "contains"    and target in text
-                                  or method == "starts_with" and text.startswith(target)
-                                  or method == "ends_with"   and text.endswith(target)
+                        match = (    method == "equals"      and text == raw
+                                  or method == "contains"    and raw in text
+                                  or method == "starts_with" and text.startswith(raw)
+                                  or method == "ends_with"   and text.endswith(raw)
                                 )
 
                         if match:
@@ -383,6 +416,14 @@ class FileLine(Constraint):
                     break
             if not match:
                 self.error = f"{value} not found in {', '.join(self.filename)} by {method=} as '{target}'"
+                if self.not_found:
+                    with open( self.not_found, 'a+', encoding=encoding ) as f:
+                        f.write( f"{value}\t{target}\n" )
+            else:
+                if self.found:
+                    with open( self.found, 'a+', encoding=encoding ) as f:
+                        f.write( f"{value}\t{target}\n" )
+
         return not self.error
 
     def _fail(self, value):
