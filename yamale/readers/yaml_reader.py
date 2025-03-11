@@ -5,10 +5,24 @@ from io import StringIO
 def _pyyaml(f):
     import yaml
 
+    def unknown(loader, suffix, node):
+        if isinstance(node, yaml.ScalarNode):
+            constructor = loader.__class__.construct_scalar
+        elif isinstance(node, yaml.SequenceNode):
+            constructor = loader.__class__.construct_sequence
+        elif isinstance(node, yaml.MappingNode):
+            constructor = loader.__class__.construct_mapping
+
+        data = constructor(loader, node)
+        return data
+
     try:
         Loader = yaml.CSafeLoader
     except AttributeError:  # System does not have libyaml
         Loader = yaml.SafeLoader
+
+    yaml.add_multi_constructor('!', unknown, Loader=Loader)
+
     return list(yaml.load_all(f, Loader=Loader))
 
 

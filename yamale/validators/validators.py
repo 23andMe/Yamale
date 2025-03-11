@@ -141,7 +141,10 @@ class Include(Validator):
     def _is_valid(self, value):
         self.errors = []
         if isinstance(value,str):
-            self.errors += yamale.schema.includes[self.include_name].validate( value, self.include_name, self.strict ).errors
+            try:
+              self.errors += yamale.schema.includes[self.include_name].validate( value, self.include_name, self.strict ).errors
+            except KeyError:
+              self.errors = [ f"'{self.include_name}' is not included" ]
         return not self.errors
 
     def get_name(self):

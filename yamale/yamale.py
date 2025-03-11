@@ -8,21 +8,29 @@ def make_schema(path=None, parser="PyYAML", validators=None, content=None):
     # Import readers here so we can get version information in setup.py.
     from . import readers
 
-    raw_schemas = readers.parse_yaml(path, parser, content=content)
-    if not raw_schemas:
-        raise ValueError("{} is an empty file!".format(path))
-    # First document is the base schema
-    try:
-        s = Schema(raw_schemas[0], path, validators=validators)
-        # Additional documents contain Includes.
-        for raw_schema in raw_schemas[1:]:
-            s.add_include(raw_schema)
-    except (TypeError, SyntaxError) as e:
-        error = "Schema error in file %s\n" % path
-        error += str(e)
-        raise SyntaxError(error)
+    main_schema = None
 
-    return s
+    for p in path:
+        raw_schemas = readers.parse_yaml(p, parser, content=content)
+        if not raw_schemas:
+            raise ValueError("{} is an empty file!".format(p))
+        # First path, first document is the base schema
+        try:
+            if not main_schema:
+              main_schema = Schema(raw_schemas[0], p, validators=validators)
+            else:
+              main_schema.add_include(raw_schemas[0])
+
+            # Additional documents contain Includes.
+            for raw_schema in raw_schemas[1:]:
+                main_schema.add_include(raw_schema)
+
+        except (TypeError, SyntaxError) as e:
+            error = "Schema error in file %s\n" % path[0]
+            error += str(e)
+            raise SyntaxError(error)
+
+    return main_schema
 
 
 def make_data(path=None, parser="PyYAML", content=None):
