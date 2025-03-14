@@ -101,6 +101,7 @@ class Schema(object):
 
         if isinstance(validator, val.Include):
             errors += self._validate_include(validator, data, path, strict)
+
         elif isinstance(validator, (val.Map, val.List)):
             errors += self._validate_map_list(validator, data, path, strict)
 
@@ -108,21 +109,19 @@ class Schema(object):
             sub_errors = self._validate_any(validator, data, path, strict)
             if len(sub_errors) == len(validator.validators):
                 # All validators failed, add to errors
-                for err in sub_errors:
-                    errors += err
+                errors.extend(sub_errors)
 
         elif isinstance(validator, val.NotAny):
             sub_errors = self._validate_any(validator, data, path, strict)
             if len(sub_errors) != len(validator.validators):
                 # One or more validators are matched, add to errors
-                errors += [ "%s: %s is matched to %s" % ( str(path) if path and len(path._path)>0 else '<document>', data, str(validator.validators) ) ]
+                errors.append( "%s: %s is matched to %s" % ( str(path) if path and len(path._path)>0 else '<document>', data, str(validator.validators) ) )
 
         elif isinstance(validator, val.All):
             sub_errors = self._validate_any(validator, data, path, strict)
             if len(sub_errors) > 0:
                 # One or more validators failed, add to errors
-                for err in sub_errors:
-                    errors += err
+                errors.extend(sub_errors)
 
         elif isinstance(validator, val.Subset):
             errors += self._validate_subset(validator, data, path, strict)
@@ -188,7 +187,8 @@ class Schema(object):
             err = self._validate(v, data, path, strict)
             if err:
                 sub_errors.append(err)
-
+            else:
+                break
         return sub_errors
 
 
