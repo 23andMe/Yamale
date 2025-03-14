@@ -342,7 +342,7 @@ class NodeName(Constraint):
 
 
 class FileLine(Constraint):
-    keywords = {   "method"     : KeywordList_class('equals', 'contains', 'start_with', 'ends_with')
+    keywords = {   "method"     : KeywordList_class('equals', 'contains', 'starts_with', 'ends_with')
                  , "filename"   : list
                  , "encoding"   : str
                  , "ignore_case": bool
@@ -354,10 +354,11 @@ class FileLine(Constraint):
                }
 
     def _is_valid(self, value):
-        method      = self.method.keyword if self.method      else 'contains'
+        method      = self.method.keyword if self.method      else 'equals'
         ignore_case = self.ignore_case    if self.ignore_case else False
         matches     = self.matches        if self.matches     else '^.*$'
         replace     = self.replace        if self.replace     else r'\g<0>'
+        encoding    = self.encoding
 
         def exists_encoding( encoding ):
             try:
@@ -382,33 +383,27 @@ class FileLine(Constraint):
                         return 'utf-8'
 
         self.error = ''
-
         target, count = re.subn( matches, replace, value )
         if count < 1:
             self.error = f"{value} does not match to '{matches}'"
         else:
             target = value.lower() if ignore_case else target
-            match  = False
-            for fn in self.filename:
+            match  = not self.filename
+            for fn in    self.filename:
                 if not self.encoding or not exists_encoding(self.encoding):
                     encoding = detect_encoding( fn )
-                else:
-                    encoding = self.encoding
-
                 raw = target.encode(encoding=encoding).decode(encoding=encoding, errors='surrogateescape')
-
                 with open( fn, 'r', encoding=encoding, errors='surrogateescape' ) as f:
                     for line in f:
                         text = line.replace("\n", "")
                         if ignore_case:
                             text = text.lower()
 
-                        match = (    method == "equals"      and text == raw
+                        match = (    method == "equals"      and raw == text
                                   or method == "contains"    and raw in text
                                   or method == "starts_with" and text.startswith(raw)
                                   or method == "ends_with"   and text.endswith(raw)
                                 )
-
                         if match:
                             break
                     else:
@@ -418,12 +413,11 @@ class FileLine(Constraint):
                 self.error = f"{value} not found in {', '.join(self.filename)} by {method=} as '{target}'"
                 if self.not_found:
                     with open( self.not_found, 'a+', encoding=encoding ) as f:
-                        f.write( f"{value}\t{target}\n" )
+                        f.write( f"{value}\n" )
             else:
                 if self.found:
                     with open( self.found, 'a+', encoding=encoding ) as f:
-                        f.write( f"{value}\t{target}\n" )
-
+                        f.write( f"{value}\n" )
         return not self.error
 
     def _fail(self, value):
