@@ -1,5 +1,6 @@
 import re
-from datetime import date, datetime
+import datetime
+import dateutil.parser
 import ipaddress
 from .base import Validator
 from . import constraints as con
@@ -16,6 +17,7 @@ except ImportError:
 class String(Validator):
     """String validator"""
 
+    value_type = str
     tag = "str"
     constraints = [
         con.LengthMin,
@@ -27,8 +29,21 @@ class String(Validator):
         con.StringMatches,
     ]
 
+    def __init__(self, *args, **kwargs):
+        super(String, self).__init__(*args, **kwargs)
+
     def _is_valid(self, value):
-        return util.isstr(value)
+        if (    not isinstance(value, str)
+             or isinstance(value, bool)
+             or self.args and value not in self.args
+           ):
+            self.error = "'%s' is not a %s(%s,%s)" % ( value, self.__class__.__name__, self.args, self.kwargs )
+            return False
+        return True
+
+    def fail(self, value):
+        return self.error
+
 
 
 class Number(Validator):
@@ -38,8 +53,20 @@ class Number(Validator):
     tag = "num"
     constraints = [con.Min, con.Max]
 
+    def __init__(self, *args, **kwargs):
+        super(Number, self).__init__(*args, **kwargs)
+
     def _is_valid(self, value):
-        return isinstance(value, (int, float)) and not isinstance(value, bool)
+        if (    not isinstance(value, (int, float))
+             or isinstance(value, bool)
+             or self.args and value not in self.args
+           ):
+            self.error = "'%s' is not a %s(%s,%s)" % ( value, self.__class__.__name__, self.args, self.kwargs )
+            return False
+        return True
+
+    def fail(self, value):
+        return self.error
 
 
 class Integer(Validator):
@@ -49,8 +76,20 @@ class Integer(Validator):
     tag = "int"
     constraints = [con.Min, con.Max]
 
+    def __init__(self, *args, **kwargs):
+        super(Integer, self).__init__(*args, **kwargs)
+
     def _is_valid(self, value):
-        return isinstance(value, int) and not isinstance(value, bool)
+        if (    not isinstance(value, int)
+             or isinstance(value, bool)
+             or self.args and value not in self.args
+           ):
+            self.error = "'%s' is not a %s(%s,%s)" % ( value, self.__class__.__name__, self.args, self.kwargs )
+            return False
+        return True
+
+    def fail(self, value):
+        return self.error
 
 
 class Boolean(Validator):
@@ -58,8 +97,19 @@ class Boolean(Validator):
 
     tag = "bool"
 
+    def __init__(self, *args, **kwargs):
+        super(Boolean, self).__init__(*args, **kwargs)
+
     def _is_valid(self, value):
-        return isinstance(value, bool)
+        if (    not isinstance(value, bool)
+             or self.args and value not in self.args
+           ):
+            self.error = "'%s' is not a %s(%s,%s)" % ( value, self.__class__.__name__, self.args, self.kwargs )
+            return False
+        return True
+
+    def fail(self, value):
+        return self.error
 
 
 class Enum(Validator):
@@ -69,35 +119,58 @@ class Enum(Validator):
 
     def __init__(self, *args, **kwargs):
         super(Enum, self).__init__(*args, **kwargs)
-        self.enums = args
 
     def _is_valid(self, value):
-        return value in self.enums
+        return value in self.args
 
     def fail(self, value):
-        return "'%s' not in %s" % (value, self.enums)
+        return "'%s' not in %s" % (value, self.args)
 
 
 class Day(Validator):
     """Day validator. Format: YYYY-MM-DD"""
 
-    value_type = date
+    value_type = datetime.date
     tag = "day"
     constraints = [con.Min, con.Max]
 
+    def __init__(self, *args, **kwargs):
+        args = [ datetime.datetime.strptime( arg, '%Y-%m-%d').date()  for arg in args ]
+        super(Day, self).__init__(*args, **kwargs)
+
     def _is_valid(self, value):
-        return isinstance(value, date)
+        if (    not isinstance(value, datetime.date)
+             or self.args and value not in self.args
+           ):
+            self.error = "'%s' is not a %s(%s,%s)" % ( value, self.__class__.__name__, self.args, self.kwargs )
+            return False
+        return True
+
+    def fail(self, value):
+        return self.error
 
 
 class Timestamp(Validator):
     """Timestamp validator. Format: YYYY-MM-DD HH:MM:SS"""
 
-    value_type = datetime
+    value_type = datetime.datetime
     tag = "timestamp"
     constraints = [con.Min, con.Max]
 
+    def __init__(self, *args, **kwargs):
+        args = [ dateutil.parser.parse( arg )  for arg in args ]
+        super(Timestamp, self).__init__(*args, **kwargs)
+
     def _is_valid(self, value):
-        return isinstance(value, datetime)
+        if (    not isinstance(value, datetime.datetime)
+             or self.args and value not in self.args
+           ):
+            self.error = "'%s' is not a %s(%s,%s)" % ( value, self.__class__.__name__, self.args, self.kwargs )
+            return False
+        return True
+
+    def fail(self, value):
+        return self.error
 
 
 class Map(Validator):
