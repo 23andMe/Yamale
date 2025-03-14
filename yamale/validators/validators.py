@@ -286,6 +286,85 @@ class Ip(Validator):
     def fail(self, value):
         return "'%s' is not ip(%s)" % (value, str(self.kwargs) )
 
+class FQDN(Validator):
+    """FQDN validator"""
+
+    tag = 'fqdn'
+
+    def __init__(self, *args, **kwargs):
+        self.matches   = kwargs.get("matches", '^((?P<host>[^.]+)\.)?([^.]+\.)+[^.]+[.]?$') # hostname.domain.tld
+        self.resolve   = kwargs.get("resolve", False)
+        self.nameType  = kwargs.get("type", 'host')
+        self.minLabels = kwargs.get("min", 2  )
+        self.maxLabels = kwargs.get("max", 255)
+        if self.nameType not in ( 'domain', 'host' ):
+            raise ValueError( f"'{self.nameType}' is not one of ('domain', 'host')" )
+        super(FQDN, self).__init__(*args, **kwargs)
+
+
+    def is_valid_fqdn(self, fqdn ):
+        if not isinstance(fqdn, str) or len(fqdn) < 1 or len(fqdn) > 254:
+          return False
+        try:
+            import ipaddress
+            ipaddress.ip_address(fqdn)
+            return False
+        except ValueError:
+            pass
+
+        if self.matches:
+          match = re.match( self.matches, fqdn )
+          if not match:
+              return False
+
+        if fqdn[-1] == ".":
+            fqdn = fqdn[:-1]
+        labels = fqdn.split(".")
+        if len(labels) < self.minLabels or len(labels) > self.maxLabels:
+            return False
+        for l in labels:
+            if len(l) < 1 or len(l) > 63:
+              return False
+
+        if self.resolve:
+            is_domain = False
+            is_host   = False
+            try:
+                import dns.resolver
+                canon     = dns.resolver.canonical_name( fqdn+'.' )
+                for t in ("SOA", "NS", "MX" ):
+                    try:
+                        dns.resolver.resolve(canon, t)
+                        is_domain = True
+                        break
+                    except( dns.resolver.NoAnswer, dns.resolver.NXDOMAIN, dns.resolver.NoNameservers ):
+                        pass
+                for t in ("A", "AAAA"):
+                    try:
+                        dns.resolver.resolve(canon, t)
+                        is_host = True
+                        break
+                    except( dns.resolver.NoAnswer, dns.resolver.NXDOMAIN, dns.resolver.NoNameservers ):
+                        pass
+            except( dns.resolver.NoAnswer, dns.resolver.NXDOMAIN, dns.resolver.NoNameservers ):
+                pass
+
+            return (    self.nameType == 'domain'    and is_domain
+                     or self.nameType == 'host'      and is_host
+                   )
+        elif self.matches:
+            res =  (    self.nameType == 'domain' and ( 'host' not in match.groupdict()  or  not match['host'] )
+                     or self.nameType == 'host'   and ( 'host'     in match.groupdict()  and     match['host'] )
+                   )
+            return res
+        return True
+
+    def _is_valid(self, value):
+       return self.is_valid_fqdn( value )
+
+    def fail(self, value):
+        return "'%s' is not fqdn(%s)" % (value, str(self.kwargs) )
+
 
 class Mac(Regex):
     """MAC address validator"""
