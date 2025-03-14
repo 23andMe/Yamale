@@ -135,7 +135,7 @@ class Day(Validator):
     constraints = [con.Min, con.Max]
 
     def __init__(self, *args, **kwargs):
-        args = [ datetime.datetime.strptime( arg, '%Y-%m-%d').date()  for arg in args ]
+        args = [ dateutil.parser.parse( arg ).date() for arg in args ]
         super(Day, self).__init__(*args, **kwargs)
 
     def _is_valid(self, value):
