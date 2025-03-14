@@ -139,12 +139,14 @@ class Include(Validator):
         super(Include, self).__init__(*args, **kwargs)
 
     def _is_valid(self, value):
+        if isinstance( value, dict ) or isinstance( value, list ):
+            return True
+
         self.errors = []
-        if isinstance(value,str):
-            try:
-              self.errors += yamale.schema.includes[self.include_name].validate( value, self.include_name, self.strict ).errors
-            except KeyError:
-              self.errors = [ f"'{self.include_name}' is not included" ]
+        try:
+            self.errors += yamale.schema.includes[self.include_name].validate( value, self.include_name, self.strict ).errors
+        except KeyError:
+            self.errors = [ f"'{self.include_name}' is not included" ]
         return not self.errors
 
     def get_name(self):
@@ -173,7 +175,20 @@ class Any(Validator):
         super(Any, self).__init__(*args, **kwargs)
 
     def _is_valid(self, value):
-        return True
+        if isinstance( value, dict ) or isinstance( value, list ):
+            return True
+
+        self.error = ''
+        for v in self.validators:
+            if v._is_valid(value):
+                break
+        else:
+            self.error = "'%s' does not match %s(%s,%s)" % ( value, self.__class__.__name__, self.args, self.kwargs )
+
+        return not self.error
+
+    def fail(self, value):
+        return self.error
 
 
 class NotAny(Validator):
@@ -186,7 +201,19 @@ class NotAny(Validator):
         super(NotAny, self).__init__(*args, **kwargs)
 
     def _is_valid(self, value):
-        return True
+        if isinstance( value, dict ) or isinstance( value, list ):
+            return True
+
+        self.error = ''
+        for v in self.validators:
+            if v._is_valid(value):
+                self.error =  "'%s' matches to %s(%s,%s)" % ( value, self.__class__.__name__, self.args, self.kwargs )
+                break
+
+        return not self.error
+
+    def fail(self, value):
+        return self.error
 
 
 class All(Validator):
@@ -199,7 +226,19 @@ class All(Validator):
         super(All, self).__init__(*args, **kwargs)
 
     def _is_valid(self, value):
-        return True
+        if isinstance( value, dict ) or isinstance( value, list ):
+            return True
+
+        self.error = ''
+        for v in self.validators:
+            if not v._is_valid(value):
+                self.error =  "'%s' does not match to %s(%s,%s)" % ( value, self.__class__.__name__, self.args, self.kwargs )
+                break
+
+        return not self.error
+
+    def fail(self, value):
+        return self.error
 
 
 class Subset(Validator):

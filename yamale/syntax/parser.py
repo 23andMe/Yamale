@@ -2,9 +2,8 @@ import ast
 
 from .. import validators as val
 
-safe_globals = ("True", "False", "None")
+safe_globals = ("True", "False", "None" )
 safe_builtins = dict((f, __builtins__[f]) for f in safe_globals)
-
 
 def _validate_expr(call_node, validators):
     # Validate that the expression uses a known, registered validator.
@@ -31,9 +30,19 @@ def _validate_expr(call_node, validators):
 def parse(validator_string, validators=None):
     validators = validators or val.DefaultValidators
     try:
-        tree = ast.parse(validator_string, mode="eval")
+        import datetime
+        if validator_string == None:
+          tree = ast.parse( f"null()", mode="eval")
+        elif isinstance( validator_string, datetime.datetime ):
+          tree = ast.parse( f"timestamp('{str(validator_string)}')", mode="eval")
+        elif isinstance( validator_string, datetime.date ):
+          tree = ast.parse( f"day('{str(validator_string)}')", mode="eval")
+        elif not isinstance(validator_string,str):
+          tree = ast.parse( f"enum({repr(validator_string)})", mode="eval")
+        else:
+          tree = ast.parse( validator_string, mode="eval")
         _validate_expr(tree.body, validators)
         # evaluate with access to a limited global scope only
         return eval(compile(tree, "<ast>", "eval"), {"__builtins__": safe_builtins}, validators)
     except (SyntaxError, NameError, TypeError) as e:
-        raise SyntaxError("Invalid schema expression: '%s'. " % validator_string + str(e))
+        raise SyntaxError("Invalid schema expression: '%s' %s: %s" % (repr(validator_string), type(validator_string), str(e)) )
