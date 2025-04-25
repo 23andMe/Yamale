@@ -224,3 +224,25 @@ def test_semver():
     assert not v.is_valid("+justmeta")
     assert not v.is_valid("9.8.7+meta+meta")
     assert not v.is_valid("9.8.7-whatever+meta+meta")
+
+
+def test_all():
+    """Test the All validator"""
+    # Test with numeric validators
+    v = val.All(val.Number(min=5), val.Number(max=10))
+    assert v.is_valid(7)  # Should pass both validators
+    assert not v.is_valid(4)  # Fails min=5
+    assert not v.is_valid(11)  # Fails max=10
+
+    # Test with string validators
+    v = val.All(val.String(min=2), val.String(max=5))
+    assert v.is_valid("abc")  # Passes both
+    assert not v.is_valid("a")  # Fails min=2
+    assert not v.is_valid("abcdef")  # Fails max=5
+
+    # Test with mixed validators
+    v = val.All(val.String(), val.Regex(r"^[a-z]+$"))
+    assert v.is_valid("abc")  # String that matches regex
+    assert not v.is_valid(123)  # Not a string
+    assert not v.is_valid("123")  # String but fails regex
+    assert not v.is_valid("abc123")  # String but fails regex

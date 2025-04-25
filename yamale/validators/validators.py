@@ -157,6 +157,31 @@ class Any(Validator):
         return True
 
 
+class All(Validator):
+    """All validators must succeed validator"""
+
+    tag = "all"
+
+    def __init__(self, *args, **kwargs):
+        self.validators = [val for val in args if isinstance(val, Validator)]
+        super(All, self).__init__(*args, **kwargs)
+
+    def _is_valid(self, value):
+        return True
+
+    def is_valid(self, value):
+        # Override to validate against all validators
+        if not self._is_valid(value):
+            return False
+
+        # All validators must succeed
+        for validator in self.validators:
+            if not validator.is_valid(value):
+                return False
+
+        return True
+
+
 class Subset(Validator):
     """Subset of several types validator"""
 

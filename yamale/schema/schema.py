@@ -106,6 +106,9 @@ class Schema(object):
         elif isinstance(validator, val.Any):
             errors += self._validate_any(validator, data, path, strict)
 
+        elif isinstance(validator, val.All):
+            errors += self._validate_all(validator, data, path, strict)
+
         elif isinstance(validator, val.Subset):
             errors += self._validate_subset(validator, data, path, strict)
 
@@ -173,6 +176,20 @@ class Schema(object):
         if len(sub_errors) == len(validator.validators):
             # All validators failed, add to errors
             for err in sub_errors:
+                errors += err
+
+        return errors
+
+    def _validate_all(self, validator, data, path, strict):
+        if not validator.validators:
+            return []
+
+        errors = []
+        print("validator.validators", validator.validators)
+        # With 'all', every validator must succeed
+        for v in validator.validators:
+            err = self._validate(v, data, path, strict)
+            if err:
                 errors += err
 
         return errors
