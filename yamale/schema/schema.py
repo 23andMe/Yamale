@@ -185,7 +185,6 @@ class Schema(object):
             return []
 
         errors = []
-        print("validator.validators", validator.validators)
         # With 'all', every validator must succeed
         for v in validator.validators:
             err = self._validate(v, data, path, strict)
