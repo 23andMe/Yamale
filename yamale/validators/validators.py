@@ -169,17 +169,34 @@ class All(Validator):
     def _is_valid(self, value):
         return True
 
-    def is_valid(self, value):
-        # Override to validate against all validators
-        if not self._is_valid(value):
-            return False
+    def validate(self, value):
+        """
+        Override to validate against all validators.
+        Returns a list of all errors from all validators.
+        """
+        # First check base validator conditions
+        errors = []
 
-        # All validators must succeed
+        # Make sure the type validates first
+        valid = self._is_valid(value)
+        if not valid:
+            errors.append(self.fail(value))
+            return errors
+
+        # Then validate all the constraints
+        for constraint in self._constraints_inst:
+            error = constraint.is_valid(value)
+            if error:
+                if isinstance(error, list):
+                    errors.extend(error)
+                else:
+                    errors.append(error)
+
+        # Now validate against all child validators
         for validator in self.validators:
-            if not validator.is_valid(value):
-                return False
+            errors.extend(validator.validate(value))
 
-        return True
+        return errors
 
 
 class Subset(Validator):
