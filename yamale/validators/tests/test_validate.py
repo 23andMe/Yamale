@@ -139,11 +139,31 @@ def test_mac():
     assert v.is_valid("AB-CD-EF-12-34-56")
     assert v.is_valid("ABCD-EF12-3456")
 
+    # Cisco dotted notation
+    assert v.is_valid("0000.dead.beef")
+    assert v.is_valid("1234.5678.90ab")
+    assert v.is_valid("1234.5678.90AB")
+    assert v.is_valid("abcd.ef12.3456")
+    assert v.is_valid("ABCD.EF12.3456")
+
     assert not v.is_valid("qwertyuiop")
     assert not v.is_valid("qw-er-ty-12-34-56")
     assert not v.is_valid("ab:cd:ef:12:34:56:78")
     assert not v.is_valid("abcdefghijkl")
     assert not v.is_valid("1234567890ax")
+
+    # Invalid dotted notation tests
+    assert not v.is_valid("1234.5678.90a")  # incomplete last segment
+    assert not v.is_valid("1234.5678.90abcd")  # too long last segment
+    assert not v.is_valid("123.5678.90ab")  # short first segment
+    assert not v.is_valid("1234.567.90ab")  # short middle segment
+    assert not v.is_valid("qwer.tyui.opas")  # invalid hex characters
+    assert not v.is_valid("1234.5678")  # missing segment
+    assert not v.is_valid("1234.5678.90ab.1234")  # too many segments
+    assert not v.is_valid("1234:5678.90ab")  # mixed delimiters (colon and dot)
+    assert not v.is_valid("1234-5678.90ab")  # mixed delimiters (hyphen and dot)
+    assert not v.is_valid("1234.5678:90ab")  # mixed delimiters (dot and colon)
+    assert not v.is_valid("1234.5678-90ab")  # mixed delimiters (dot and hyphen)
 
 
 def test_semver():

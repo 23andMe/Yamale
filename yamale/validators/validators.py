@@ -244,7 +244,7 @@ class Mac(Regex):
         super(Mac, self).__init__(*args, **kwargs)
         self.regexes = [
             re.compile(r"[0-9a-fA-F]{2}([-:]?)[0-9a-fA-F]{2}(\1[0-9a-fA-F]{2}){4}$"),
-            re.compile(r"[0-9a-fA-F]{4}([-:]?)[0-9a-fA-F]{4}(\1[0-9a-fA-F]{4})$"),
+            re.compile(r"[0-9a-fA-F]{4}([-.:]?)[0-9a-fA-F]{4}(\1[0-9a-fA-F]{4})$"),
         ]
 
 
