@@ -153,6 +153,7 @@ def test_mac():
     assert not v.is_valid("1234567890ax")
 
     # Invalid dotted notation tests
+    assert not v.is_valid("0000&dead&beef")  # random special character as delimiter
     assert not v.is_valid("1234.5678.90a")  # incomplete last segment
     assert not v.is_valid("1234.5678.90abcd")  # too long last segment
     assert not v.is_valid("123.5678.90ab")  # short first segment
