@@ -157,6 +157,48 @@ class Any(Validator):
         return True
 
 
+class All(Validator):
+    """All validators must succeed validator"""
+
+    tag = "all"
+
+    def __init__(self, *args, **kwargs):
+        self.validators = [val for val in args if isinstance(val, Validator)]
+        super(All, self).__init__(*args, **kwargs)
+
+    def _is_valid(self, value):
+        return True
+
+    def validate(self, value):
+        """
+        Override to validate against all validators.
+        Returns a list of all errors from all validators.
+        """
+        # First check base validator conditions
+        errors = []
+
+        # Make sure the type validates first
+        valid = self._is_valid(value)
+        if not valid:
+            errors.append(self.fail(value))
+            return errors
+
+        # Then validate all the constraints
+        for constraint in self._constraints_inst:
+            error = constraint.is_valid(value)
+            if error:
+                if isinstance(error, list):
+                    errors.extend(error)
+                else:
+                    errors.append(error)
+
+        # Now validate against all child validators
+        for validator in self.validators:
+            errors.extend(validator.validate(value))
+
+        return errors
+
+
 class Subset(Validator):
     """Subset of several types validator"""
 

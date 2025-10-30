@@ -1,0 +1,9 @@
+number_range: 12  # Over max limit
+password: "pass"  # Too short and missing required characters
+email: "invalid-email"  # Not a valid email format
+mixed_list:
+  - 42
+  - 150  # Over max limit
+  - 15
+nested:
+  value: 5  # Under min limit
