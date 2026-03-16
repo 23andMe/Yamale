@@ -5,10 +5,6 @@ def isstr(s):
     return isinstance(s, str)
 
 
-def to_unicode(s):
-    return s
-
-
 def is_list(obj):
     return isinstance(obj, Sequence) and not isstr(obj)
 
