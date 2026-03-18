@@ -1,37 +1,43 @@
 from collections.abc import Mapping, Sequence
+from typing import Any, Iterable, Iterator, KeysView, Optional, Set, Type, TypeVar, Union
 
 
-def isstr(s):
+T = TypeVar("T")
+
+
+def isstr(s: Any) -> bool:
     return isinstance(s, str)
 
 
-def to_unicode(s):
+def to_unicode(s: T) -> T:
     return s
 
 
-def is_list(obj):
+def is_list(obj: Any) -> bool:
     return isinstance(obj, Sequence) and not isstr(obj)
 
 
-def is_map(obj):
+def is_map(obj: Any) -> bool:
     return isinstance(obj, Mapping)
 
 
-def get_keys(obj):
+def get_keys(obj: Any) -> Optional[Union[KeysView[Any], range]]:
     if is_map(obj):
         return obj.keys()
     elif is_list(obj):
         return range(len(obj))
 
 
-def get_iter(iterable):
+def get_iter(iterable: Union[Mapping[Any, Any], Iterable[Any]]) -> Iterable[tuple[Any, Any]]:
     if isinstance(iterable, Mapping):
         return iterable.items()
     else:
         return enumerate(iterable)
 
 
-def get_subclasses(cls, _subclasses_yielded=None):
+def get_subclasses(
+    cls: Type[Any], _subclasses_yielded: Optional[Set[Type[Any]]] = None
+) -> Iterator[Type[Any]]:
     """
     Generator recursively yielding all subclasses of the passed class (in
     depth-first order).

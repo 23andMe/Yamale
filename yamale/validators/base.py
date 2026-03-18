@@ -1,10 +1,13 @@
+from typing import Any, Dict, List, Type
+
+
 class Validator(object):
     """Base class for all Validators"""
 
     constraints = []
     value_type = None
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         self.args = args
         self.kwargs = kwargs
 
@@ -17,33 +20,35 @@ class Validator(object):
         # Construct all constraints
         self._constraints_inst = self._create_constraints(self.constraints, self.value_type, kwargs)
 
-    def _create_constraints(self, constraint_classes, value_type, kwargs):
+    def _create_constraints(
+        self, constraint_classes: List[Type[Any]], value_type: Any, kwargs: Dict[str, Any]
+    ) -> List[Any]:
         constraints = []
         for constraint in constraint_classes:
             constraints.append(constraint(value_type, kwargs))
         return constraints
 
     @property
-    def tag(self):
+    def tag(self) -> Type["Validator"]:
         return self.__class__
 
     @property
-    def is_optional(self):
+    def is_optional(self) -> bool:
         return not self.is_required
 
     @property
-    def can_be_none(self):
+    def can_be_none(self) -> bool:
         """Check if value for optional field can be None."""
         return self._value_can_be_none
 
-    def _is_valid(self, value):
+    def _is_valid(self, value: Any) -> bool:
         """Validators must implement this. Return True if value is valid."""
         raise NotImplementedError("You need to override this function")
 
-    def get_name(self):
+    def get_name(self) -> Any:
         return self.tag
 
-    def validate(self, value):
+    def validate(self, value: Any) -> List[str]:
         """
         Check if ``value`` is valid.
 
@@ -68,17 +73,17 @@ class Validator(object):
 
         return errors
 
-    def is_valid(self, value):
+    def is_valid(self, value: Any) -> bool:
         return self.validate(value) == []
 
-    def fail(self, value):
+    def fail(self, value: Any) -> str:
         """Override to define a custom fail message"""
         return "'%s' is not a %s." % (value, self.get_name())
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "%s(%s, %s)" % (self.__class__.__name__, self.args, self.kwargs)
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any) -> bool:
         # Validators are equal if they have the same args and kwargs.
         eq = [isinstance(other, self.__class__), self.args == other.args, self.kwargs == other.kwargs]
         return all(eq)
