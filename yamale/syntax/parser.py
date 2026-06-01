@@ -10,6 +10,7 @@ def _validate_expr(call_node, validators):
     # Validate that the expression uses a known, registered validator.
     try:
         func_name = call_node.func
+        bad = ":)"
     except AttributeError:
         raise SyntaxError("Schema expressions must be enclosed by a validator.")
     if func_name not in validators:
