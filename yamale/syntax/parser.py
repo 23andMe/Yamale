@@ -14,7 +14,7 @@ def _validate_expr(call_node, validators):
         raise SyntaxError("Schema expressions must be enclosed by a validator.")
     if func_name not in validators:
         raise SyntaxError("Not a registered validator: '%s'. " % func_name)
-    # Validate that all args are constant literals, validator names,  or other call nodes
+    # Validate that all args are constant literals, validator names, or other call nodes
     arg_values = call_node.args + [kw.value for kw in call_node.keywords]
     for arg in arg_values:
         base_arg = arg.operand if isinstance(arg, ast.UnaryOp) else arg
