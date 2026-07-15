@@ -229,7 +229,7 @@ class Ip(Validator):
 
     def ip_address(self, value):
         try:
-            ipaddress.ip_interface(util.to_unicode(value))
+            ipaddress.ip_interface(value)
         except ValueError:
             return False
         return True
