@@ -446,6 +446,7 @@ Validates included structures. Must supply the name of a valid include.
 Examples:
 - `include('person')`
 
+
 ### Custom validators
 It is also possible to add your own custom validators. This is an advanced topic, but here is an
 example of adding a `Date` validator and using it in a schema as `date()`
@@ -467,6 +468,38 @@ validators[Date.tag] = Date
 schema = yamale.make_schema('./schema.yaml', validators=validators)
 # Then use `schema` as normal
 ```
+
+#### Field Names in Constraints
+Constraints can access the field name they're validating, enabling descriptive error messages. This is particularly useful for custom constraints that need to provide field-specific messages.
+
+Example of a custom constraint using field names:
+
+```yaml
+password: str(deprecated=True)
+phone: int(deprecated=True)
+postcard: include('postcard', deprecated=True)
+```
+
+```python
+class Deprecated(Constraint):
+    """Custom Deprecated constraint"""
+    keywords = {"deprecated": bool}
+    customn_field_messages = {
+        "password": "The `password` field is deprecated. Please replace with SSO config",
+        "phone": "The `phone`field is deprecated. Please remove"
+    }
+
+    def fail(self, value) -> str:
+        # Use field-specific message if available
+        if self.field_name in self.customn_field_messages:
+            return self.customn_field_messages[self.field_name]
+        # Otherwise use a generic message with the field name
+        return f'Field {self.field_name} is deprecated. Please remove this field.'
+```
+
+This will produce different messages based on which field is being validated:
+- For `password` and `phone`: Shows the detailed migration message
+- For `postcard`: Shows the generic deprecation message
 
 Examples
 --------
