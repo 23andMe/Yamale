@@ -1,0 +1,6 @@
+number_range: all(num(min=5), num(max=10))
+password: all(str(min=8), regex('^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).*$'))
+email: all(str(), regex('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'))
+mixed_list: list(all(num(min=0), num(max=100)))
+nested:
+  value: all(int(min=10), int(max=20))

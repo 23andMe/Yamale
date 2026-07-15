@@ -40,6 +40,7 @@ top_level_map = {"schema": "top_level_map.yaml", "good": "top_level_map_good.yam
 
 semver = {"schema": "semver_schema.yaml", "good": "semver_good.yaml", "bad": "semver_bad.yaml"}
 
+alls = {"schema": "all.yaml", "good": "all_good.yaml", "bad": "all_bad.yaml"}
 
 include_validator = {
     "schema": "include_validator.yaml",
@@ -117,6 +118,7 @@ test_data = [
     map_key_constraint,
     numeric_bool_coercion,
     semver,
+    alls,
     subset,
     subset_empty,
 ]
@@ -203,6 +205,10 @@ def test_undefined_include():
 
 def test_bad_semver():
     assert count_exception_lines(semver["schema"], semver["bad"]) == 1
+
+
+def test_bad_all():
+    assert count_exception_lines(alls["schema"], alls["bad"]) == 6
 
 
 def test_bad_regexes():
