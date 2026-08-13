@@ -1,3 +1,2 @@
 include *.md LICENSE
 include yamale/VERSION
-include yamale/tests/fixtures/*.yaml
