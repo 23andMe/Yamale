@@ -1,11 +1,13 @@
 from __future__ import absolute_import
-import re
+
 import datetime
 import ipaddress
+import re
 
 from yamale.util import to_unicode
-from .base import Validator
+
 from .. import util
+from .base import Validator
 
 
 class Constraint(object):
@@ -13,6 +15,8 @@ class Constraint(object):
     is_active = False
 
     def __init__(self, value_type, kwargs):
+        self.field_name = None  # Added for custom field-aware messages
+        self.value_type = value_type  # Added for custom type-aware messages
         self._parseKwargs(kwargs)
 
     def _parseKwargs(self, kwargs):
