@@ -1,21 +1,24 @@
+from typing import List, Optional
+
+
 class Result(object):
-    def __init__(self, errors):
+    def __init__(self, errors: List[str]) -> None:
         self.errors = errors
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "\n".join(self.errors)
 
-    def isValid(self):
+    def isValid(self) -> bool:
         return len(self.errors) == 0
 
 
 class ValidationResult(Result):
-    def __init__(self, data, schema, errors):
+    def __init__(self, data: Optional[str], schema: str, errors: List[str]) -> None:
         super(ValidationResult, self).__init__(errors)
         self.data = data
         self.schema = schema
 
-    def __str__(self):
+    def __str__(self) -> str:
         if self.isValid():
             error_str = "'%s' is Valid" % self.data
         else:

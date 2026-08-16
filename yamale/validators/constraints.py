@@ -2,6 +2,7 @@ from __future__ import absolute_import
 import re
 import datetime
 import ipaddress
+from typing import Any, Dict, List, Optional, Type, Union
 
 from yamale.util import to_unicode
 from .base import Validator
@@ -12,15 +13,15 @@ class Constraint(object):
     keywords = {}  # Keywords and types accepted by this constraint
     is_active = False
 
-    def __init__(self, value_type, kwargs):
+    def __init__(self, value_type: Type[Any], kwargs: Dict[str, Any]) -> None:
         self._parseKwargs(kwargs)
 
-    def _parseKwargs(self, kwargs):
+    def _parseKwargs(self, kwargs: Dict[str, Any]) -> None:
         for kwarg, kwtype in self.keywords.items():
             value = self.get_kwarg(kwargs, kwarg, kwtype)
             setattr(self, kwarg, value)
 
-    def get_kwarg(self, kwargs, key, kwtype):
+    def get_kwarg(self, kwargs: Dict[str, Any], key: str, kwtype: Type[Any]) -> Optional[Any]:
         try:
             value = kwargs[key]
         except KeyError:
@@ -46,7 +47,7 @@ class Constraint(object):
         except (TypeError, ValueError):
             raise SyntaxError("%s is not a %s" % (key, kwtype))
 
-    def is_valid(self, value):
+    def is_valid(self, value: Any) -> Optional[Union[str, List[str]]]:
         if not self.is_active:
             return None
 
@@ -55,35 +56,35 @@ class Constraint(object):
 
         return None
 
-    def _fail(self, value):
+    def _fail(self, value: Any) -> Union[str, List[str]]:
         return "'%s' violates %s." % (value, self.__class__.__name__)
 
 
 class Min(Constraint):
     fail = "%s is less than %s"
 
-    def __init__(self, value_type, kwargs):
+    def __init__(self, value_type: Type[Any], kwargs: Dict[str, Any]) -> None:
         self.keywords = {"min": value_type}
         super(Min, self).__init__(value_type, kwargs)
 
-    def _is_valid(self, value):
+    def _is_valid(self, value: Any) -> bool:
         return self.min <= value
 
-    def _fail(self, value):
+    def _fail(self, value: Any) -> str:
         return self.fail % (value, self.min)
 
 
 class Max(Constraint):
     fail = "%s is greater than %s"
 
-    def __init__(self, value_type, kwargs):
+    def __init__(self, value_type: Type[Any], kwargs: Dict[str, Any]) -> None:
         self.keywords = {"max": value_type}
         super(Max, self).__init__(value_type, kwargs)
 
-    def _is_valid(self, value):
+    def _is_valid(self, value: Any) -> bool:
         return self.max >= value
 
-    def _fail(self, value):
+    def _fail(self, value: Any) -> str:
         return self.fail % (value, self.max)
 
 
@@ -94,7 +95,7 @@ class LengthMin(Constraint):
     def _is_valid(self, value):
         return self.min <= len(value)
 
-    def _fail(self, value):
+    def _fail(self, value: Any) -> str:
         return self.fail % (value, self.min)
 
 
@@ -105,7 +106,7 @@ class LengthMax(Constraint):
     def _is_valid(self, value):
         return self.max >= len(value)
 
-    def _fail(self, value):
+    def _fail(self, value: Any) -> str:
         return self.fail % (value, self.max)
 
 
@@ -119,7 +120,7 @@ class Key(Constraint):
                 return False
         return True
 
-    def _fail(self, value):
+    def _fail(self, value: Any) -> List[str]:
         error_list = []
         for k in value.keys():
             error_list.extend(self.key.validate(k))
@@ -143,7 +144,7 @@ class StringEquals(Constraint):
         else:
             return True
 
-    def _fail(self, value):
+    def _fail(self, value: str) -> str:
         return self.fail % (value, self.equals)
 
 
@@ -151,7 +152,7 @@ class StringStartsWith(Constraint):
     keywords = {"starts_with": str, "ignore_case": bool}
     fail = "%s does not start with %s"
 
-    def _is_valid(self, value):
+    def _is_valid(self, value: str) -> bool:
         # Check if the function has only been called due to ignore_case
         if self.starts_with is not None:
             if self.ignore_case is not None:
@@ -168,7 +169,7 @@ class StringStartsWith(Constraint):
         else:
             return True
 
-    def _fail(self, value):
+    def _fail(self, value: str) -> str:
         return self.fail % (value, self.starts_with)
 
 
@@ -176,7 +177,7 @@ class StringEndsWith(Constraint):
     keywords = {"ends_with": str, "ignore_case": bool}
     fail = "%s does not end with %s"
 
-    def _is_valid(self, value):
+    def _is_valid(self, value: str) -> bool:
         # Check if the function has only been called due to ignore_case
         if self.ends_with is not None:
             if self.ignore_case is not None:
@@ -193,7 +194,7 @@ class StringEndsWith(Constraint):
         else:
             return True
 
-    def _fail(self, value):
+    def _fail(self, value: str) -> str:
         return self.fail % (value, self.ends_with)
 
 
@@ -203,17 +204,17 @@ class StringMatches(Constraint):
 
     _regex_flags = {"ignore_case": re.I, "multiline": re.M, "dotall": re.S}
 
-    def __init__(self, value_type, kwargs):
+    def __init__(self, value_type: Type[Any], kwargs: Dict[str, Any]) -> None:
         self._flags = 0
         for k, v in util.get_iter(self._regex_flags):
             self._flags |= v if kwargs.pop(k, False) else 0
 
         super(StringMatches, self).__init__(value_type, kwargs)
 
-    def _is_valid(self, value):
+    def _is_valid(self, value: str) -> bool:
         if self.matches is not None:
             regex = re.compile(self.matches, self._flags)
-            return regex.match(value)
+            return bool(regex.match(value))
         else:
             return True
 

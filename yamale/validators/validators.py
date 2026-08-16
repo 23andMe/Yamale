@@ -26,7 +26,7 @@ class String(Validator):
         con.StringMatches,
     ]
 
-    def _is_valid(self, value):
+    def _is_valid(self, value: object) -> bool:
         return util.isstr(value)
 
 
@@ -37,7 +37,7 @@ class Number(Validator):
     tag = "num"
     constraints = [con.Min, con.Max]
 
-    def _is_valid(self, value):
+    def _is_valid(self, value: object) -> bool:
         return isinstance(value, (int, float)) and not isinstance(value, bool)
 
 
@@ -48,7 +48,7 @@ class Integer(Validator):
     tag = "int"
     constraints = [con.Min, con.Max]
 
-    def _is_valid(self, value):
+    def _is_valid(self, value: object) -> bool:
         return isinstance(value, int) and not isinstance(value, bool)
 
 

@@ -1,4 +1,5 @@
 import ast
+from typing import Dict, Optional, Type
 
 from .. import validators as val
 
@@ -6,7 +7,7 @@ safe_globals = ("True", "False", "None")
 safe_builtins = dict((f, __builtins__[f]) for f in safe_globals)
 
 
-def _validate_expr(call_node, validators):
+def _validate_expr(call_node: ast.Call, validators: Dict[str, Type[val.Validator]]) -> None:
     # Validate that the expression uses a known, registered validator.
     try:
         func_name = call_node.func.id
@@ -28,7 +29,9 @@ def _validate_expr(call_node, validators):
             raise SyntaxError("Argument values must either be constant literals, or else " "reference other validators.")
 
 
-def parse(validator_string, validators=None):
+def parse(
+    validator_string: str, validators: Optional[Dict[str, Type[val.Validator]]] = None
+) -> val.Validator:
     validators = validators or val.DefaultValidators
     try:
         tree = ast.parse(validator_string, mode="eval")

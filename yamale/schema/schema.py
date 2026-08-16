@@ -1,11 +1,16 @@
+from typing import Any, Dict, List, Optional, Type, Union
+
 from .datapath import DataPath
 from .validationresults import ValidationResult
 from .. import syntax, util
 from .. import validators as val
 
+Container = Union[Dict[Any, Any], List[Any]]
+SchemaNode = Union[val.Validator, Container]
+
 
 class FatalValidationError(Exception):
-    def __init__(self, error):
+    def __init__(self, error: str) -> None:
         super().__init__()
         self.error = error
 
@@ -16,7 +21,13 @@ class Schema(object):
     Still acts like a dict.
     """
 
-    def __init__(self, schema_dict, name="", validators=None, includes=None):
+    def __init__(
+        self,
+        schema_dict: Any,
+        name: str = "",
+        validators: Optional[Dict[str, Type[val.Validator]]] = None,
+        includes: Optional[Dict[str, "Schema"]] = None,
+    ) -> None:
         self.validators = validators or val.DefaultValidators
         self.dict = schema_dict
         self.name = name
@@ -25,12 +36,12 @@ class Schema(object):
         # schema
         self.includes = {} if includes is None else includes
 
-    def add_include(self, type_dict):
+    def add_include(self, type_dict: Dict[str, Any]) -> None:
         for include_name, custom_type in type_dict.items():
             t = Schema(custom_type, name=include_name, validators=self.validators, includes=self.includes)
             self.includes[include_name] = t
 
-    def _process_schema(self, path, schema_data, validators):
+    def _process_schema(self, path: DataPath, schema_data: Any, validators: Dict[str, Type[val.Validator]]) -> Any:
         """
         Go through a schema and construct validators.
         """
@@ -41,7 +52,9 @@ class Schema(object):
             schema_data = self._parse_schema_item(path, schema_data, validators)
         return schema_data
 
-    def _parse_schema_item(self, path, expression, validators):
+    def _parse_schema_item(
+        self, path: DataPath, expression: str, validators: Dict[str, Type[val.Validator]]
+    ) -> val.Validator:
         try:
             return syntax.parse(expression, validators)
         except SyntaxError as e:
@@ -49,7 +62,7 @@ class Schema(object):
             error = str(e) + " at node '%s'" % str(path)
             raise SyntaxError(error)
 
-    def validate(self, data, data_name, strict):
+    def validate(self, data: Any, data_name: Optional[str], strict: bool) -> ValidationResult:
         path = DataPath()
         try:
             errors = self._validate(self._schema, data, path, strict)
@@ -57,7 +70,7 @@ class Schema(object):
             errors = [e.error]
         return ValidationResult(data_name, self.name, errors)
 
-    def _validate_item(self, validator, data, path, strict, key):
+    def _validate_item(self, validator: SchemaNode, data: Any, path: DataPath, strict: bool, key: Any) -> List[str]:
         """
         Fetch item from data at the position key and validate with validator.
 
@@ -77,7 +90,7 @@ class Schema(object):
 
         return self._validate(validator, data_item, path, strict)
 
-    def _validate(self, validator, data, path, strict):
+    def _validate(self, validator: SchemaNode, data: Any, path: DataPath, strict: bool) -> List[str]:
         """
         Validate data with validator.
         Special handling of non-primitive validators.
@@ -111,7 +124,7 @@ class Schema(object):
 
         return errors
 
-    def _validate_static_map_list(self, validator, data, path, strict):
+    def _validate_static_map_list(self, validator: Container, data: Any, path: DataPath, strict: bool) -> List[str]:
         if util.is_map(validator) and not util.is_map(data):
             return ["%s : '%s' is not a map" % (path, data)]
 
@@ -131,7 +144,7 @@ class Schema(object):
             errors += self._validate_item(sub_validator, data, path, strict, key)
         return errors
 
-    def _validate_map_list(self, validator, data, path, strict):
+    def _validate_map_list(self, validator: Union[val.Map, val.List], data: Any, path: DataPath, strict: bool) -> List[str]:
         errors = []
 
         if not validator.validators:
@@ -151,14 +164,14 @@ class Schema(object):
 
         return errors
 
-    def _validate_include(self, validator, data, path, strict):
+    def _validate_include(self, validator: val.Include, data: Any, path: DataPath, strict: bool) -> List[str]:
         include_schema = self.includes.get(validator.include_name)
         if not include_schema:
             raise FatalValidationError("Include '%s' has not been defined." % validator.include_name)
         strict = strict if validator.strict is None else validator.strict
         return include_schema._validate(include_schema._schema, data, path, strict)
 
-    def _validate_any(self, validator, data, path, strict):
+    def _validate_any(self, validator: val.Any, data: Any, path: DataPath, strict: bool) -> List[str]:
         if not validator.validators:
             return []
 
@@ -177,8 +190,8 @@ class Schema(object):
 
         return errors
 
-    def _validate_subset(self, validator, data, path, strict):
-        def _internal_validate(internal_data):
+    def _validate_subset(self, validator: val.Subset, data: Any, path: DataPath, strict: bool) -> List[str]:
+        def _internal_validate(internal_data: Any) -> List[str]:
             sub_errors = []
             for v in validator.validators:
                 err = self._validate(v, internal_data, path, strict)
@@ -203,7 +216,7 @@ class Schema(object):
             errors += _internal_validate(data)
         return errors
 
-    def _validate_primitive(self, validator, data, path):
+    def _validate_primitive(self, validator: val.Validator, data: Any, path: DataPath) -> List[str]:
         errors = validator.validate(data)
 
         for i, error in enumerate(errors):

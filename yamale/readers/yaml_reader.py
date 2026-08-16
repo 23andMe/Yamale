@@ -1,8 +1,9 @@
 from __future__ import absolute_import
 from io import StringIO
+from typing import Any, Callable, Dict, List, Optional, TextIO
 
 
-def _pyyaml(f):
+def _pyyaml(f: TextIO) -> List[Any]:
     import yaml
 
     try:
@@ -12,17 +13,17 @@ def _pyyaml(f):
     return list(yaml.load_all(f, Loader=Loader))
 
 
-def _ruamel(f):
+def _ruamel(f: TextIO) -> List[Any]:
     from ruamel.yaml import YAML
 
     yaml = YAML(typ="safe")
     return list(yaml.load_all(f))
 
 
-_parsers = {"pyyaml": _pyyaml, "ruamel": _ruamel}
+_parsers: Dict[str, Callable[[TextIO], List[Any]]] = {"pyyaml": _pyyaml, "ruamel": _ruamel}
 
 
-def parse_yaml(path=None, parser="pyyaml", content=None):
+def parse_yaml(path: Optional[str] = None, parser: str = "pyyaml", content: Optional[str] = None) -> List[Any]:
     try:
         parse = _parsers[parser.lower()]
     except KeyError:

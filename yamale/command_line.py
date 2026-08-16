@@ -13,6 +13,7 @@ import glob
 import os
 import re
 import multiprocessing
+from typing import Callable, List, Optional
 from .yamale_error import YamaleError
 from .schema.validationresults import Result
 from .version import __version__
@@ -22,7 +23,7 @@ import yamale
 schemas = {}
 
 
-def _validate(schema_path, data_path, parser, strict, _raise_error):
+def _validate(schema_path: str, data_path: str, parser: str, strict: bool, _raise_error: bool) -> list[Result]:
     schema = schemas.get(schema_path)
     try:
         if not schema:
@@ -37,7 +38,7 @@ def _validate(schema_path, data_path, parser, strict, _raise_error):
     return yamale.validate(schema, data, strict, _raise_error)
 
 
-def _find_data_path_schema(data_path, schema_name):
+def _find_data_path_schema(data_path: str, schema_name: str) -> Optional[str]:
     """Starts in the data file folder and recursively looks
     in parents for `schema_name`"""
     if not data_path or data_path == os.path.abspath(os.sep) or data_path == ".":
@@ -49,7 +50,7 @@ def _find_data_path_schema(data_path, schema_name):
     return path[0]
 
 
-def _find_schema(data_path, schema_name):
+def _find_schema(data_path: str, schema_name: str) -> Optional[str]:
     """Checks if `schema_name` is a valid file, if not
     searches in `data_path` for it."""
 
@@ -65,7 +66,13 @@ def _find_schema(data_path, schema_name):
     return _find_data_path_schema(data_path, schema_name)
 
 
-def _validate_file(yaml_path, schema_name, parser, strict, should_exclude):
+def _validate_file(
+    yaml_path: str,
+    schema_name: str,
+    parser: str,
+    strict: bool,
+    should_exclude: Callable[[str], bool],
+) -> None:
     if should_exclude(yaml_path):
         return
     s = _find_schema(yaml_path, schema_name)
@@ -74,9 +81,16 @@ def _validate_file(yaml_path, schema_name, parser, strict, should_exclude):
     _validate(s, yaml_path, parser, strict, True)
 
 
-def _validate_dir(root, schema_name, cpus, parser, strict, should_exclude):
+def _validate_dir(
+    root: str,
+    schema_name: str,
+    cpus: int,
+    parser: str,
+    strict: bool,
+    should_exclude: Callable[[str], bool],
+) -> None:
     pool = multiprocessing.Pool(processes=cpus)
-    res = []
+    res: List[multiprocessing.pool.AsyncResult] = []
     error_messages = []
     for root, _, files in os.walk(root):
         for f in files:
@@ -100,10 +114,18 @@ def _validate_dir(root, schema_name, cpus, parser, strict, should_exclude):
         raise ValueError("\n----\n".join(set(error_messages)))
 
 
-def _router(paths, schema_name, cpus, parser, excludes=None, strict=True, verbose=False):
+def _router(
+    paths: List[str],
+    schema_name: str,
+    cpus: int,
+    parser: str,
+    excludes: Optional[List[str]] = None,
+    strict: bool = True,
+    verbose: bool = False,
+) -> None:
     EXCLUDE_REGEXES = tuple(re.compile(e) for e in excludes) if excludes else tuple()
 
-    def should_exclude(yaml_path):
+    def should_exclude(yaml_path: str) -> bool:
         has_match = any(pattern.search(yaml_path) for pattern in EXCLUDE_REGEXES)
         if has_match and verbose:
             print("Skipping validation for %s due to exclude pattern" % yaml_path)
@@ -122,8 +144,8 @@ def _router(paths, schema_name, cpus, parser, excludes=None, strict=True, verbos
             _validate_file(abs_path, schema_name, parser, strict, should_exclude)
 
 
-def main():
-    def int_or_auto(num_cpu):
+def main() -> None:
+    def int_or_auto(num_cpu: str) -> int:
         if num_cpu == "auto":
             return multiprocessing.cpu_count()
         return int(num_cpu)
