@@ -426,6 +426,41 @@ Examples:
 - `any(str(min=3, max=3),str(min=5, max=5),str(min=7, max=7))`: validates to a string that is exactly 3, 5, or 7 characters long
 - `any()`: Allows any value.
 
+### All - `all([validators])`
+
+Validates against a conjunction of validators. Use when a value must satisfy **all** of the specified validators. Unlike the `Any` validator which requires just one validator to pass, this validator requires that **every** validator passes for the value to be considered valid.
+* arguments: validators to test values with (at least one should be provided)
+
+The `all()` validator is particularly valuable when combining heterogeneous validators that cannot be easily combined using existing syntax, especially when custom validators are involved.
+
+Examples:
+* `all(str(), regex('^[A-Z][a-z]+$'))`: Validates that the value is both a string and matches the pattern for capitalized words.
+* `all(num(min=0), num(max=100))`: Ensures a number is both non-negative and less than or equal to 100.
+
+Here's a more realistic example with custom validators:
+
+```yaml
+# Schema
+username: all(
+  str(min=3, max=20),                   # Basic string length requirements
+  regex('^[a-zA-Z0-9_]+$'),             # Only alphanumeric and underscore allowed
+  not_blacklisted()                     # Custom validator to check against blacklisted names
+)
+password: all(
+  str(min=8),                           # Minimum length requirement
+  has_uppercase(),                      # Custom validator for at least one uppercase character
+  has_digit(),                          # Custom validator for at least one digit
+  has_special_char()                    # Custom validator for at least one special character
+)
+email: all(
+  str(),                                # Must be a string
+  regex('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'), # Basic email format validation
+  email_domain_exists()                 # Custom validator that checks if the domain exists
+)
+```
+
+Where `not_blacklisted()`, `has_uppercase()`, `has_digit()`, `has_special_char()`, and `email_domain_exists()` would be custom validators you define for your specific requirements.
+
 ### Subset - `subset([validators], allow_empty=False)`
 Validates against a subset of types. Unlike the `Any` validator, this validators allows **one or more** of several types.
 As such, it *automatically validates against a list*. It is valid if all values can be validated against at least one

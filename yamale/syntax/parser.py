@@ -25,7 +25,7 @@ def _validate_expr(call_node, validators):
         elif isinstance(base_arg, ast.Call):
             _validate_expr(base_arg, validators)
         else:
-            raise SyntaxError("Argument values must either be constant literals, or else " "reference other validators.")
+            raise SyntaxError("Argument values must either be constant literals, or else reference other validators.")
 
 
 def parse(validator_string, validators=None):

@@ -1,0 +1,9 @@
+number_range: 7
+password: "Password123"
+email: "test@example.com"
+mixed_list:
+  - 42
+  - 78
+  - 15
+nested:
+  value: 15
