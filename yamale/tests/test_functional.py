@@ -28,6 +28,14 @@ issue_22 = {"schema": "issue_22.yaml", "good": "issue_22_good.yaml"}
 
 issue_50 = {"schema": "issue_50.yaml", "good": "issue_50_good.yaml"}
 
+issue_269 = {
+    "schema": "issue_269.yaml",
+    "good": "issue_269_good.yaml",
+    "good2": "issue_269_good2.yaml",
+    "good3": "issue_269_good3.yaml",
+    "bad": "issue_269_bad.yaml",
+}
+
 regexes = {"schema": "regex.yaml", "bad": "regex_bad.yaml", "good": "regex_good.yaml"}
 
 ips = {"schema": "ip.yaml", "bad": "ip_bad.yaml", "good": "ip_good.yaml"}
@@ -102,6 +110,7 @@ test_data = [
     list_include,
     issue_22,
     issue_50,
+    issue_269,
     regexes,
     ips,
     macs,
@@ -195,6 +204,10 @@ def test_bad_keywords():
 
 def test_bad_anys():
     assert count_exception_lines(anys["schema"], anys["bad"]) == 5
+
+
+def test_bad_issue_269():
+    assert count_exception_lines(issue_269["schema"], issue_269["bad"]) == 2
 
 
 def test_undefined_include():
