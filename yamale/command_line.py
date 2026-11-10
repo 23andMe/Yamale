@@ -78,6 +78,7 @@ def _validate_dir(root, schema_name, cpus, parser, strict, should_exclude):
     pool = multiprocessing.Pool(processes=cpus)
     res = []
     error_messages = []
+    missing_schemas = []
     for root, _, files in os.walk(root):
         for f in files:
             if (f.endswith(".yaml") or f.endswith(".yml")) and f != schema_name:
@@ -89,6 +90,7 @@ def _validate_dir(root, schema_name, cpus, parser, strict, should_exclude):
                     res.append(pool.apply_async(_validate, (schema_path, yaml_path, parser, strict, False)))
                 else:
                     print(f"No schema found for: {yaml_path}")
+                    missing_schemas.append(yaml_path)
 
     print(f"Found {len(res)} yaml files to validate...")
     for r in res:
@@ -96,6 +98,12 @@ def _validate_dir(root, schema_name, cpus, parser, strict, should_exclude):
         error_messages.extend([str(sub_result) for sub_result in sub_results if not sub_result.isValid()])
     pool.close()
     pool.join()
+    if missing_schemas:
+        error_messages.append(
+            "No schema found for {} file(s):\n{}".format(
+                len(missing_schemas), "\n".join(sorted(set(missing_schemas)))
+            )
+        )
     if error_messages:
         raise ValueError("\n----\n".join(set(error_messages)))
 

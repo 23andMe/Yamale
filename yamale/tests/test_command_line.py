@@ -139,6 +139,13 @@ def test_bad_dir():
         command_line._router("yamale/tests/command_line_fixtures/yamls", "schema.yaml", 4, "PyYAML")
 
 
+def test_dir_without_schema_fails(tmp_path):
+    data = tmp_path / "data.yaml"
+    data.write_text("a: 1\n")
+    with pytest.raises(ValueError, match="No schema found"):
+        command_line._router([str(tmp_path)], "schema.yaml", 1, "PyYAML")
+
+
 def test_bad_path_raises():
     with pytest.raises(ValueError) as e:
         command_line._router(
