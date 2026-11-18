@@ -1,0 +1,4 @@
+list_literals: list('a1', str(matches='b[0-9]+'), 'c3')
+map_literals: map('a1', str(matches='b[0-9]+'), 'c3')
+subset_literals: subset('a1', str(matches='b[0-9]+'), 'c3')
+subset_only_literals: subset('a', 'b')

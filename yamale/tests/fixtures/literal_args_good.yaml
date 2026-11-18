@@ -1,0 +1,4 @@
+list_literals: [a1, b7, c3]
+map_literals: {x: a1, y: b7, z: c3}
+subset_literals: [a1, b7, c3]
+subset_only_literals: [a, b]

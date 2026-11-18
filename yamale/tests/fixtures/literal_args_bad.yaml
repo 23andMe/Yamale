@@ -1,0 +1,4 @@
+list_literals: [a1, zzz]
+map_literals: {x: zzz}
+subset_literals: [zzz]
+subset_only_literals: [c]
