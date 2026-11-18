@@ -151,6 +151,9 @@ class Any(Validator):
 
     def __init__(self, *args, **kwargs):
         self.validators = [val for val in args if isinstance(val, Validator)]
+        literals = [val for val in args if not isinstance(val, Validator)]
+        if literals:
+            self.validators.append(Enum(*literals))
         super(Any, self).__init__(*args, **kwargs)
 
     def _is_valid(self, value):
