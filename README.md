@@ -364,7 +364,8 @@ Examples:
 Validates lists. If one or more validators are passed to `list()` only nodes that pass at
 least one of those validators will be accepted.
 
-- arguments: one or more validators to test values with
+- arguments: one or more validators to test values with. You can also pass constants, which are tested for
+equality like `enum()`.
 - keywords
     - `min`: len(list) >= min
     - `max`: len(list) <= max
@@ -373,13 +374,15 @@ Examples:
 - `list()`: Validates any list
 - `list(include('custom'), int(), min=4)`: Only validates lists that contain the `custom` include
   or integers and contains a minimum of 4 items.
+- `list('red', 'green', int())`: Only validates lists whose items are `'red'`, `'green'` or integers.
 
 ### Map - `map([validators], key=validator, min=int, max=int)`
 Validates maps. Use when you want a node to contain freeform data. Similar to `List`, `Map` takes
 one or more validators to run against the values of its nodes, and only nodes that pass at least
 one of those validators will be accepted. By default, only the values of nodes are validated and
 the keys aren't checked.
-- arguments: one or more validators to test values with
+- arguments: one or more validators to test values with. You can also pass constants, which are tested for
+equality like `enum()`.
 - keywords
     - `key`: A validator for the keys of the map.
     - `min`: len(map) >= min
@@ -390,6 +393,7 @@ Examples:
 - `map(str(), int())`: Only validates maps whose values are strings or integers.
 - `map(str(), key=int())`: Only validates maps whose keys are integers and values are strings. `1: one` would be valid but `'1': one` would not.
 - `map(str(), min=1)`: Only validates a non-empty map.
+- `map('low', 'high')`: Only validates maps whose values are `'low'` or `'high'`.
 
 ### IP Address - `ip()`
 Validates IPv4 and IPv6 addresses.
@@ -418,19 +422,21 @@ Examples:
 Validates against a union of types. Use when a node **must** contain **one and only one** of several types. It is valid
 if at least one of the listed validators is valid. If no validators are given, accept any value.
 - arguments: validators to test values with (if none is given, allow any value; if one or more are given,
-one must be present)
+one must be present). You can also pass constants, which are tested for equality like `enum()`.
 
 Examples:
 - `any(int(), null())`: Validates either an integer **or** a null value.
 - `any(num(), include('vector'))`: Validates **either** a number **or** an included 'vector' type.
 - `any(str(min=3, max=3),str(min=5, max=5),str(min=7, max=7))`: validates to a string that is exactly 3, 5, or 7 characters long
+- `any('a1', str(matches='b[0-9]+'), 'c3')`: Validates `'a1'`, `'c3'`, or a string that matches `b[0-9]+`.
 - `any()`: Allows any value.
 
 ### Subset - `subset([validators], allow_empty=False)`
 Validates against a subset of types. Unlike the `Any` validator, this validators allows **one or more** of several types.
 As such, it *automatically validates against a list*. It is valid if all values can be validated against at least one
 validator.
-- arguments: validators to test with (at least one; if none is given, a `ValueError` exception will be raised)
+- arguments: validators or constants to test with (at least one; if none is given, a `ValueError` exception will be
+raised). Constants are tested for equality like `enum()`.
 - keywords:
     - `allow_empty`: Allow the subset to be empty (and is, therefore, also optional). This overrides the `required`
 flag.
@@ -438,6 +444,7 @@ flag.
 Examples:
 - `subset(int(), str())`: Validators against an integer, a string, or a list of either.
 - `subset(int(), str(), allow_empty=True)`: Same as above, but allows the empty set and makes the subset optional.
+- `subset('read', 'write')`: Validates `'read'`, `'write'`, or a list of either.
 
 ### Include - `include(include_name)`
 Validates included structures. Must supply the name of a valid include.

@@ -77,6 +77,15 @@ class Enum(Validator):
         return "'%s' not in %s" % (value, self.enums)
 
 
+def _validators_from_args(args):
+    validators = [val for val in args if isinstance(val, Validator)]
+    # Bare validator names such as `num` parse to classes, not constants.
+    literals = [val for val in args if not isinstance(val, (Validator, type))]
+    if literals:
+        validators.append(Enum(*literals))
+    return validators
+
+
 class Day(Validator):
     """Day validator. Format: YYYY-MM-DD"""
 
@@ -107,7 +116,7 @@ class Map(Validator):
 
     def __init__(self, *args, **kwargs):
         super(Map, self).__init__(*args, **kwargs)
-        self.validators = [val for val in args if isinstance(val, Validator)]
+        self.validators = _validators_from_args(args)
 
     def _is_valid(self, value):
         return isinstance(value, Mapping)
@@ -121,7 +130,7 @@ class List(Validator):
 
     def __init__(self, *args, **kwargs):
         super(List, self).__init__(*args, **kwargs)
-        self.validators = [val for val in args if isinstance(val, Validator)]
+        self.validators = _validators_from_args(args)
 
     def _is_valid(self, value):
         return isinstance(value, Sequence) and not util.isstr(value)
@@ -150,10 +159,7 @@ class Any(Validator):
     tag = "any"
 
     def __init__(self, *args, **kwargs):
-        self.validators = [val for val in args if isinstance(val, Validator)]
-        literals = [val for val in args if not isinstance(val, Validator)]
-        if literals:
-            self.validators.append(Enum(*literals))
+        self.validators = _validators_from_args(args)
         super(Any, self).__init__(*args, **kwargs)
 
     def _is_valid(self, value):
@@ -168,7 +174,7 @@ class Subset(Validator):
     def __init__(self, *args, **kwargs):
         super(Subset, self).__init__(*args, **kwargs)
         self._allow_empty_set = bool(kwargs.pop("allow_empty", False))
-        self.validators = [val for val in args if isinstance(val, Validator)]
+        self.validators = _validators_from_args(args)
         if not self.validators:
             raise ValueError("'%s' requires at least one validator!" % self.tag)
 

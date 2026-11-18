@@ -36,6 +36,8 @@ issue_269 = {
     "bad": "issue_269_bad.yaml",
 }
 
+literal_args = {"schema": "literal_args.yaml", "good": "literal_args_good.yaml", "bad": "literal_args_bad.yaml"}
+
 regexes = {"schema": "regex.yaml", "bad": "regex_bad.yaml", "good": "regex_good.yaml"}
 
 ips = {"schema": "ip.yaml", "bad": "ip_bad.yaml", "good": "ip_good.yaml"}
@@ -111,6 +113,7 @@ test_data = [
     issue_22,
     issue_50,
     issue_269,
+    literal_args,
     regexes,
     ips,
     macs,
@@ -208,6 +211,19 @@ def test_bad_anys():
 
 def test_bad_issue_269():
     assert count_exception_lines(issue_269["schema"], issue_269["bad"]) == 2
+
+
+def test_bad_literal_args():
+    exp = [
+        "list_literals.1: zzz is not a regex match.",
+        "list_literals.1: 'zzz' not in ('a1', 'c3')",
+        "map_literals.x: zzz is not a regex match.",
+        "map_literals.x: 'zzz' not in ('a1', 'c3')",
+        "subset_literals: zzz is not a regex match.",
+        "subset_literals: 'zzz' not in ('a1', 'c3')",
+        "subset_only_literals: 'c' not in ('a', 'b')",
+    ]
+    match_exception_lines(literal_args["schema"], literal_args["bad"], exp)
 
 
 def test_undefined_include():

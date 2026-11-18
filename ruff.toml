@@ -2,4 +2,5 @@ line-length = 121
 indent-width = 4
 
 [lint]
+select = ["E4", "E7", "E9", "F"]
 ignore = ["F401", "F403"]
