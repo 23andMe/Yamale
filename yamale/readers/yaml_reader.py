@@ -9,14 +9,20 @@ def _pyyaml(f):
         Loader = yaml.CSafeLoader
     except AttributeError:  # System does not have libyaml
         Loader = yaml.SafeLoader
-    return list(yaml.load_all(f, Loader=Loader))
+    try:
+        return list(yaml.load_all(f, Loader=Loader))
+    except yaml.YAMLError as e:
+        raise ValueError("Could not parse YAML: {}".format(e)) from e
 
 
 def _ruamel(f):
-    from ruamel.yaml import YAML
+    from ruamel.yaml import YAML, YAMLError
 
     yaml = YAML(typ="safe")
-    return list(yaml.load_all(f))
+    try:
+        return list(yaml.load_all(f))
+    except YAMLError as e:
+        raise ValueError("Could not parse YAML: {}".format(e)) from e
 
 
 _parsers = {"pyyaml": _pyyaml, "ruamel": _ruamel}
