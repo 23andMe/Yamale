@@ -1,20 +1,22 @@
+import ipaddress
 import re
 from datetime import date, datetime
-import ipaddress
-from .base import Validator
-from . import constraints as con
+
 from .. import util
+from . import constraints as con
+from .base import Validator
 
 # ABCs for containers were moved to their own module
 try:
-    from collections.abc import Sequence, Mapping
+    from collections.abc import Mapping, Sequence
 except ImportError:
-    from collections import Sequence, Mapping
+    from collections import Mapping, Sequence
 
 
 class String(Validator):
     """String validator"""
 
+    value_type = str
     tag = "str"
     constraints = [
         con.LengthMin,

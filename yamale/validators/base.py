@@ -7,6 +7,7 @@ class Validator(object):
     def __init__(self, *args, **kwargs):
         self.args = args
         self.kwargs = kwargs
+        self.field_name = None
 
         # Is field required? Default is True
         self.is_required = bool(kwargs.pop("required", True))
@@ -59,6 +60,7 @@ class Validator(object):
 
         # Then validate all the constraints second.
         for constraint in self._constraints_inst:
+            constraint.field_name = self.field_name
             error = constraint.is_valid(value)
             if error:
                 if isinstance(error, list):
