@@ -1,23 +1,7 @@
 from pytest import raises
 
 from .. import parser as par
-from yamale.validators.validators import (
-    Validator,
-    String,
-    Regex,
-    Number,
-    Integer,
-    Boolean,
-    List,
-    Day,
-    Timestamp,
-    Ip,
-    Mac,
-)
-
-
-def test_eval():
-    assert eval("String()") == String()
+from yamale.validators.validators import Validator, String, Regex, Number, Integer, Boolean, List, Day, Timestamp, Ip, Mac
 
 
 def test_types():
@@ -32,6 +16,16 @@ def test_types():
     assert par.parse("list(str())") == List(String())
     assert par.parse("ip()") == Ip()
     assert par.parse("mac()") == Mac()
+
+
+def test_nested_type_reference():
+    parsed = par.parse("list(list(num, min=2, max=2), min=2, max=2)")
+    assert parsed == List(List(Number, min=2, max=2), min=2, max=2)
+
+
+def test_unary_constants():
+    parsed = par.parse("num(min=-1, max=+1)")
+    assert parsed == Number(min=-1, max=1)
 
 
 def test_custom_type():
