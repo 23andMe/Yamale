@@ -3,7 +3,6 @@ import re
 import datetime
 import ipaddress
 
-from yamale.util import to_unicode
 from .base import Validator
 from .. import util
 
@@ -256,7 +255,7 @@ class IpVersion(Constraint):
 
     def _is_valid(self, value):
         try:
-            ip = ipaddress.ip_interface(to_unicode(value))
+            ip = ipaddress.ip_interface(value)
         except ValueError:
             return False
         return self.version == ip.version
